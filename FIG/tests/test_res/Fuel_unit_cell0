@@ -1,0 +1,105 @@
+%%---Pebble bed(here means unit cell) from input file
+pbed 3 4 "fpb_pos.inp"
+%%---Pebbles in the unit cell(pbed)
+%%---surf for fuel  pebbles
+surf 1 sph 0.000000 0.000000 0.000000 1.250000
+surf 2 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 41 7 CentralGraphite -1
+cell 42 7 fill 6 1 -2
+cell 43 7 Shell 2
+%%---surf for fuel  pebbles
+surf 3 sph 0.000000 0.000000 0.000000 1.250000
+surf 4 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 44 10 CentralGraphite -3
+cell 45 10 fill 9 3 -4
+cell 46 10 Shell 4
+%%---surf for fuel  pebbles
+surf 5 sph 0.000000 0.000000 0.000000 1.250000
+surf 6 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 47 13 CentralGraphite -5
+cell 48 13 fill 12 5 -6
+cell 49 13 Shell 6
+%%---surf for fuel  pebbles
+surf 7 sph 0.000000 0.000000 0.000000 1.250000
+surf 8 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 50 16 CentralGraphite -7
+cell 51 16 fill 15 7 -8
+cell 52 16 Shell 8
+%%---surf for fuel  pebbles
+surf 9 sph 0.000000 0.000000 0.000000 1.250000
+surf 10 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 53 19 CentralGraphite -9
+cell 54 19 fill 18 9 -10
+cell 55 19 Shell 10
+%%---surf for fuel  pebbles
+surf 11 sph 0.000000 0.000000 0.000000 1.250000
+surf 12 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 56 22 CentralGraphite -11
+cell 57 22 fill 21 11 -12
+cell 58 22 Shell 12
+%%---surf for fuel  pebbles
+surf 13 sph 0.000000 0.000000 0.000000 1.250000
+surf 14 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 59 25 CentralGraphite -13
+cell 60 25 fill 24 13 -14
+cell 61 25 Shell 14
+%%---surf for fuel  pebbles
+surf 15 sph 0.000000 0.000000 0.000000 1.250000
+surf 16 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 62 28 CentralGraphite -15
+cell 63 28 fill 27 15 -16
+cell 64 28 Shell 16
+%%---surf for fuel  pebbles
+surf 17 sph 0.000000 0.000000 0.000000 1.250000
+surf 18 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 65 31 CentralGraphite -17
+cell 66 31 fill 30 17 -18
+cell 67 31 Shell 18
+%%---surf for fuel  pebbles
+surf 19 sph 0.000000 0.000000 0.000000 1.250000
+surf 20 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 68 34 CentralGraphite -19
+cell 69 34 fill 33 19 -20
+cell 70 34 Shell 20
+%%---surf for fuel  pebbles
+surf 21 sph 0.000000 0.000000 0.000000 1.250000
+surf 22 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 71 37 CentralGraphite -21
+cell 72 37 fill 36 21 -22
+cell 73 37 Shell 22
+%%---surf for fuel  pebbles
+surf 23 sph 0.000000 0.000000 0.000000 1.250000
+surf 24 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 74 40 CentralGraphite -23
+cell 75 40 fill 39 23 -24
+cell 76 40 Shell 24
+%%---surf for fuel  pebbles
+surf 25 sph 0.000000 0.000000 0.000000 1.250000
+surf 26 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 77 43 CentralGraphite -25
+cell 78 43 fill 42 25 -26
+cell 79 43 Shell 26
+%%---surf for fuel  pebbles
+surf 27 sph 0.000000 0.000000 0.000000 1.250000
+surf 28 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 80 46 CentralGraphite -27
+cell 81 46 fill 45 27 -28
+cell 82 46 Shell 28
+%%---FCC unit cell lattice
+surf 157 cube 0. 0. 0. 4.550820
+cell 84  87 fill 3 -157
+lat 47 6 0. 0. 4.55082000 87

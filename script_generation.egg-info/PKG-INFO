@@ -1,0 +1,21 @@
+Metadata-Version: 1.1
+Name: script-generation
+Version: 0.0.0
+Summary: python package for generating serpent input script for FHR
+Home-page: UNKNOWN
+Author: Xin Wang
+Author-email: xin.wang@berkeley.edu
+License: BSD 3-Clause License
+Description: UNKNOWN
+Platform: any
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Education
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD 3-Clause
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: Physics
+Classifier: Topic :: Software Development :: Libraries :: Python Modules

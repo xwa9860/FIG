@@ -1,0 +1,117 @@
+set title "FHR unit cell model"
+% --- Cross section data library file path:
+set acelib "/usr/local/serpent/xsdata/endfb7/sss_endfb7u.xsdata"
+
+%----------------- TRISO particle
+particle 1
+fuel       0.0200
+buffer     0.0300 
+PyC        0.0335 
+SiC        0.0370
+PyC        0.0405  
+matrix
+
+
+%----------------- TRISO particle lattice
+% infinit 3D lattice : lat <u0> <type> <x0> <y0> <p>
+lat 10 6 0. 0. 0.0875 1 
+%pitch slightly larger than particle diameter to match packing fraction 40%
+
+%----------------- Fuel pebbles
+%Pebble
+surf 100 sph  0. 0. 0. 1.25000 % inner graphite core 
+surf 110 sph  0. 0. 0. 1.40000 % triso particle layer outer diam 
+surf 120 sph  0. 0. 0. 1.50000 % pebble diameter 
+
+cell 100 100 moderator        -100
+cell 110 100 fill 10           100 -110
+cell 120 100 shell             110
+
+%Coolant
+surf 200 inf
+cell 200 200 flibe -200
+
+%----------------- Bed(Unit cell) of pebbles-- positions are given in file pebbles_position.inp
+    %pbed <u0> <uf> "<inputfile>" [<options>]
+    %<u0> is the universe number of the dispersed medium
+    %<uf> is the universe filling the space between the particles / pebbles
+    %<inputfile> is the input file containing the particle / pebble coordinates
+    %<options> are the options
+
+pbed 1000 200 "pebbles_position_i.inp"
+
+
+%---------------- Put the pebed(unit cell) in a cube of 4.55082 cm size
+surf 300 cube 0. 0. 0. 4.55082%2.27541
+cell 300 0 fill 1000  -300
+cell 400 0 outside    300
+
+
+%----------------- Reflecting boundary conditions
+set bc 2
+
+% ---------------- Materials --- [ mat <name> <dens - g/cm3> [<options>]; <iso 1> <frac 1>; <iso 2> <frac 2>]
+
+% Fuel Mix (800 C - Scattering Kernel at 727 C)
+mat fuel -10.5
+92235.12c 19.9 
+92238.12c 80.1 
+12000.12c 150.0 
+8016.12c 100.0
+
+% buffer
+mat buffer -1.05 moder grph 6000
+6000.12c  5.26449E-02
+
+% SiC
+mat SiC -3.18 
+6000.12c  4.77240E-02
+14028.12c  4.77240E-02
+
+% PyC
+mat PyC -1.90 moder grph 6000
+6000.12c  9.52621E-02
+
+% matrix
+mat matrix -1.74 moder grph 6000 
+6000.12c    9.52621E-02
+5010.12c    9.64977E-09
+5011.12c    3.90864E-08
+
+%   Graphite in the pebble moderator core (750 C - Scattering Kernel at 727 C)
+mat moderator -1.74 moder grph 6000
+6000.12c  1.
+%mt21   grph.64t
+%
+%   Graphite in the pebble shell (690 C - Scattering Kernel at 727 C)
+mat shell -1.75         moder grph 6000  
+6000.12c    8.77414E-02
+5010.12c    9.64977E-09
+5011.12c    3.90864E-08
+
+%
+%   Salt in the Core - 2LiF-BeF2 - (655 C)
+mat flibe -2.00
+3006.12c  3.28E-07
+3007.12c  2.38358E-02
+4009.12c  1.19185E-02
+9019.12c  4.76740E-02
+
+therm grph gre7.20t
+
+%-------------------- Neutron population and criticality cycles:
+
+set pop 10000 300 50
+
+%-------------------- Geometry plot
+plot 3 500 500 [0 -2.27541 2.27541 -2.27541 2.27541]
+plot 3 500 500 [2.27541 -2.27541 2.27541 -2.27541 2.27541]
+plot 1 500 500
+%
+%-------------------- Detectors
+ene 1 4 cas23
+det 1 de 1
+
+det 2 dm fuel % total flux in material fuel
+det 3 dr -6 fuel dt 3 2 % [dr 18 fuel : fission in fuel] [dt 3(devide) 2(result of det 2)]
+
