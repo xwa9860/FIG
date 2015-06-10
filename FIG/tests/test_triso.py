@@ -10,7 +10,7 @@ TEMP = [800, 900, 1000, 800, 800, 800, 800, 800, 770]
 
 i = 1
 fuel_name = 'fuel%d' % i
-fuel_input = 'fuel_mat/average/fuel_comp%d' % 1
+fuel_input = '../fuel_mat/average/fuel_comp%d' % 1
 fuel = Fuel(TEMP[1], fuel_name, fuel_input)
 tr = Triso(TEMP[2:7], fuel)
 #fuelpebble = FuelPebble(tr, TEMP[0], TEMP[8])

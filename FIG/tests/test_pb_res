@@ -1,11 +1,9 @@
-%%---------------Fuel pebble
 %%---surf for fuel pebbles
 surf 1 sph 0.000000 0.000000 0.000000 1.250000
 surf 2 sph 0.000000 0.000000 0.000000 1.400000
-surf 3 sph 0.000000 0.000000 0.000000 1.500000
-cell 3 0 CentralGraphite -1
-cell 4 0 fill 4 1 -2
-cell 5 0 Shell 2 -3
+%%---Fuel pebble
+cell 3 5 CentralGraphite -1
+cell 4 5 fill 4 1 -2
 %---Triso particle 
 particle 2
 fuel1 0.0200
@@ -16,15 +14,8 @@ oPyC 0.0405
 Matrix
 %%---Triso  lattice
 lat 4 6 0. 0. 0.08860629 2
-%%---------------Coolant
-surf 4 cube 0.00 0.00 0.00 1.50
-cell 2 0 Flibe800 3 -4
-%%---------------the cube
-%with a = 1.50, packing fraction is 0.52, 
-%the real PF is 0.6, impossible with a single sphere in a cube
-cell 6 0 fill 5
-cell 7 0 outside 4
-%%----------------Materials
+cell 5 5 Shell 2
+
 mat CentralGraphite -1.740000E+00 moder grph_CentralGraphite 6000 tmp 800.000000
  6000.06c 1.0
 therm grph_CentralGraphite gre7.18t
@@ -356,12 +347,13 @@ mat Matrix -1.750000E+00 moder grph_Matrix 6000 tmp 800.000000
 5010.06c 9.64977E-09
 5011.06c 3.90864E-08
 therm grph_Matrix gre7.18t
+%%---Coolant
+surf 3 inf
+cell 2 3 Flibe800 -3
 
 mat Flibe800 -2.022817E+00 tmp 800.000000
  3006.06c 0.00020000
 3007.06c 1.999800
 4009.06c 1.000000
  9019.06c 4.000000
-%%---------------------Run options
-set pop 1000 100 10
-set ures 1
+

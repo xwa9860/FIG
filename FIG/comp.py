@@ -15,7 +15,7 @@ class Comp(CmpObj):
     '''
 
     def __init__(self, temp, name, mat_list, gen=Gen(), fill = None):
-        assert isinstance(temp, FloatType), "temp is not a number:%r" % temp
+        assert isinstance(temp, FloatType) or isinstance(temp, int), "temp is not a number:%r" % temp
         assert isinstance(name, StringType), "name is not a string:%r" % name
         assert isinstance(
             mat_list, ListType), "%r mat_list is not a list:%r" % (
