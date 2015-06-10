@@ -14,8 +14,7 @@ class Gen:
         self.univ.setId(id)
 
     def parse(self, a_comp, type):
-        pass
-
+        return ''
     def parse_capture_det(self, a_comp, type):
         if type == 's':
             str_list = []
@@ -32,26 +31,31 @@ class AnnularCompGen(Gen):
 
     def parse(self, a_anComp, type):
         if type == 's':
-            i = 0
-            if len(a_anComp.filling) > 1:
-                print '%s.filling is more than one' %a_anComp.name
+            # generate cell cid uid fill uid/ mat nb
+            if not a_anComp.fill == None:
+                print '%s has a filling universe' %a_anComp.name
+                fill_card = 'fill %d ' % a_anComp.fill.gen.univ.id
             else:
-                for fil in a_anComp.filling:
-                    fill_card = ''
-                    if isinstance(fil, Mat):
-                        fill_card += fil.name
-                    else:
-                        fill_card += 'fill %d ' % fil.gen.univ.id
-                    cell_text = (
-                        'cell %d %d %s ' %
-                        (a_anComp.gen.cell.id,
-                        a_anComp.gen.univ.id,
-                        fill_card))
-                text = ''
-                for s in a_anComp.surf_list:
-                    if s:
-                        text += s.text
-                        cell_text += ('%d ' % (math.pow(-1, i)*s.id))
-                    i=i+1
-                text += cell_text + '\n'
-                return text
+                assert len(a_anComp.mat_list) == 1, \
+                    '''%s has more than one material: %s, should be
+                    separated into multiple component.''' %(
+                        a_anComp.name, a_anComp.mat_list)
+                fill_card = a_anComp.mat_list[0].name
+            cell_text = (
+                'cell %d %d %s ' % (
+                    a_anComp.gen.cell.id,
+                    a_anComp.gen.univ.id,
+                    fill_card))
+            # generate surfaces
+            text = ''
+            i = 0
+            for surf in a_anComp.surf_list:
+                if surf:
+                    text += surf.text
+                    cell_text += ('%d ' % (math.pow(-1, i)*surf.id))
+                i = i+1
+            text += cell_text + '\n'
+            # generate higher level universes that fills this component
+            if not a_anComp.fill == None:
+                text += a_anComp.fill.generate_output()
+            return text

@@ -14,22 +14,21 @@ class CoreGen(Gen):
             str_list.append('set title "FHR core"\n' +
                             #'set acelib "/usr/local/SERPENT/xsdata/endfb7/sss_endfb7u.xsdata"\n'
                             'set acelib "/global/home/groups/ac_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"\n')
-
+            filename = 'coreComponents'
+            str_list.append('include  "%s"' %filename)
             # define geometry, cells, universe in the core
             univ = Universe()
+            comp_str = []
             for key1 in a_core.comp_dict:
-                str_list.append('\n%%---%s\n' % key1)
+                comp_str.append('\n%%---%s\n' % key1)
                 for key2 in a_core.comp_dict[key1].comp_dict:
-                    str_list.append('%%---%s\n' % key2)
+                    comp_str.append('%%---%s\n' % key2)
                     a_core.comp_dict[key1].comp_dict[
                         key2].gen.set_univId(univ.id)
-                    str_list.append(
+                    comp_str.append(
                         a_core.comp_dict[key1].comp_dict[key2].generate_output()
                     )
-            # define the lower level universes
-            for fil in a_core.filling:
-                str_list.append(fil.generate_output())
-
+            open(filename, 'w+').write(''.join(comp_str))
 
             # define the whole core as universe 0, and cell 'outside'
             a_core.whole_core.gen.set_univId(0)

@@ -17,7 +17,7 @@ class CoolantGen(Gen):
             str_list = []
             str_list.append(
                 '%%---Coolant\n' +
-                'surf %d inf\ncell %d %d %s -%d\n' %
-                (surf.id, self.cell.id, self.univ.id,
-                 list(a_cool.filling)[0].name, surf.id))
+                'surf %d inf\n' %surf.id +
+                'cell %d %d %s -%d\n' %
+                (self.cell.id, self.univ.id, a_cool.mat[0].name, surf.id))
             return ''.join(str_list)

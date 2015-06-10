@@ -2,58 +2,44 @@
 from triso_gen import TrisoGen
 from triso_gen import TrisoLatticeGen
 from comp import Comp
-from mat import Fuel, Buffer, iPyC, SiC, oPyC, Matrix
-from sets import Set
-
+from mat import Buffer, iPyC, SiC, oPyC, Matrix
+import math
 
 class Triso(Comp):
 
     def __init__(self, temp_list, fuel, dr_config=None):
-        if not len(temp_list) == 5:
-            print 'temp_list for triso particle has wrong number of\
-                    temperature values, expected 5, got %d' %len(temp_list)
-        else:
-            if not dr_config:
-                self.dr_config = {
-                    fuel.name: .02,
-                    'Buffer': .01,
-                    'iPyC': .0035,
-                    'SiC': .0035,
-                    'oPyC': .0035,
-                    'Matrix': .013573935
-                }
-            # material
-            self.mat_list = [
-                fuel,
-                Buffer(temp_list[0]),
-                iPyC(temp_list[1]),
-                SiC(temp_list[2]),
-                oPyC(temp_list[3]),
-                Matrix(temp_list[4])
-            ]
-            name = 'triso'+fuel.name
-            # self.filling = {
-            #     fuel.name: fuel,
-            #     'Buffer': Buffer(self.temp),
-            #     'iPyC': iPyC(self.temp),
-            #     'SiC': SiC(self.temp),
-            #     'oPyC': oPyC(self.temp),
-            #     'Matrix': Matrix(self.temp)
-            # }
-            self.temp = temp_list[1] # triso temp defined as fuel temp, which is expected to be the highest
-            # thus most important to safety analysis
-            self.filling = Set(self.mat_list)
-            self.calculate_r()
-            Comp.__init__(self, temp_list, name, self.filling, TrisoGen())
+        assert len(temp_list) == 5, '''temp_list for triso particle needs 5
+        temperature values, expected 5, got %d''' %len(temp_list)
+        if not dr_config:
+            self.dr_config = {
+                'Fuel': .02,
+                'Buffer': .01,
+                'iPyC': .0035,
+                'SiC': .0035,
+                'oPyC': .0035,
+            }
+        # material
+        self.mat_list = [
+            fuel,
+            Buffer(temp_list[0]),
+            iPyC(temp_list[1]),
+            SiC(temp_list[2]),
+            oPyC(temp_list[3]),
+            Matrix(temp_list[4])
+        ]
+        name = 'triso'+fuel.name
+        self.calculate_r()
+        Comp.__init__(self, fuel.temp, name, self.mat_list, TrisoGen())
+        # triso temp defined as fuel temp, which is expected to be the highest
+        # thus most important to safety analysis
 
     def calculate_r(self):
         self.r_config = {}
-        self.r_config[
-            self.mat_list[0].name] = self.dr_config[
-            self.mat_list[0].name]
-        for i in xrange(1, len(self.mat_list)):
-            prev_name = self.mat_list[i-1].name
-            curr_name = self.mat_list[i].name
+        self.r_config[self.mat_list[0].__class__.__name__] =\
+        self.dr_config[self.mat_list[0].__class__.__name__]
+        for i in xrange(1, len(self.mat_list)-1):
+            prev_name = self.mat_list[i-1].__class__.__name__
+            curr_name = self.mat_list[i].__class__.__name__
             self.r_config[curr_name] = self.r_config[
                 prev_name] + self.dr_config[curr_name]
 
@@ -86,13 +72,13 @@ class Triso(Comp):
 
 class TrisoLattice(Comp):
 
-    def __init__(self, triso_particle, pitch):
+    def __init__(self, triso_particle, pf = 0.4):
+        '''pf: packing fraction
+        '''
         self.triso_particle = triso_particle
         self.temp = triso_particle.temp
         self.name = 'trisoLat'+triso_particle.name
-        self.pitch = pitch   # to be calculated from packing fraction
-        # self.filling = {
-        #     'triso': self.triso_particle
-        # }.update(self.triso_particle.filling)
-        self.filling = Set([self.triso_particle])|self.triso_particle.filling
-        Comp.__init__(self, self.temp, self.name, self.filling, TrisoLatticeGen())
+        self.pitch = (4/3.0*math.pi*triso_particle.r_config['oPyC']**3/pf)**(1/3.0)
+        self.mat_list = self.triso_particle.mat_list
+        Comp.__init__(self, self.temp, self.name, self.mat_list,
+                      TrisoLatticeGen())

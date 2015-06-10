@@ -1,73 +1,40 @@
 #!/usr/bin/python
 from gen import Gen, AnnularCompGen
 from serp_concept import CylSurf, ConeSurf, PzSurf
-from mat import Mat
-from sets import Set
 from comparable_object import CmpObj
+from types import *
+from mat import Mat
 
 
 class Comp(CmpObj):
 
-    def __init__(self, temp, name, filling, gen=Gen()):
-        self.filling = filling
+    '''
+    a Comp is a component in the reactor core
+    TRISO particle, fuel pebble, reflector or any physical component are
+    all inherant from this class
+    '''
+
+    def __init__(self, temp, name, mat_list, gen=Gen(), fill = None):
+        assert isinstance(temp, FloatType), "temp is not a number:%r" % temp
+        assert isinstance(name, StringType), "name is not a string:%r" % name
+        assert isinstance(
+            mat_list, ListType), "%r mat_list is not a list:%r" % (
+            name, mat_list)
+        assert all(isinstance(x, Mat) for x in mat_list), '''mat_list contains
+        non mat object: %r''' % mat_list
+        self.mat_list = mat_list  # self.collect_mat()
         self.gen = gen
-        self.matSet = self.collect_mat_from_filling(self.filling)
+        self.fill = fill
         CmpObj.__init__(self, temp, name)
 
-    def collect_mat_from_filling(self, filling):
-        matSet = Set()
-        for fil in filling:
-            if isinstance(fil, Mat):
-                matSet = matSet | Set([fil])
-            else:
-                if hasattr(fil, 'filling'):
-                    matSet = matSet | self.collect_mat_from_filling(fil.filling)
-                else:
-                    print 'error, %s is type %s, has no attribute filling' % \
-                        (fil.name, fil.__class__.__name__)
-        return matSet
-
     def generate_output(self):
+        '''
+        using generator to generate output
+        '''
         return self.gen.parse(self, 's')
 
     def generate_capture_detector(self):
         return self.gen.parse_capture_det(self, 's')
-
-    def __eq__(self, other):
-        id_check = True
-        if hasattr(self.gen, 'cell'):
-            id_check = (self.gen.cell.id == other.gen.cell.id)
-        elif hasattr(self.gen, 'univ'):
-            id_check = (self.gen.univ.id == other.gen.univ.id)
-        else:
-            print 'this comp has no cell id or univ id'
-        return (isinstance(other, self.__class__) and
-                self.temp == other.temp and
-                self.name == other.name and
-                id_check
-                )
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        if not isinstance(self.name, str):
-            print self.name
-            print 'is not string but %s' % type(self.name)
-        else:
-            if hasattr(self.gen, 'cell'):
-                return hash(self.__class__.__name__ +
-                            self.name +
-                            str(self.gen.cell.id) +
-                            str(self.temp))
-            elif hasattr(self.gen, 'univ'):
-                return hash(self.__class__.__name__ +
-                            self.name +
-                            str(self.gen.univ.id) +
-                            str(self.temp))
-            else:
-                return hash(self.__class__.__name__+self.name +
-                            str(self.temp))
 
 
 class AnnularComp(Comp):
@@ -80,18 +47,19 @@ class AnnularComp(Comp):
             self,
             temp,
             name,
-            filling,
+            mat_list,
             surf_i,
             surf_o,
             surf_t=None,
-            surf_b=None):
-        Comp.__init__(self, temp, name, filling, AnnularCompGen())
+            surf_b=None,
+            fill = None):
+        Comp.__init__(self, temp, name, mat_list, AnnularCompGen(), fill = fill)
         self.surf_list = []
         self.surf_list.append(surf_i)
         self.surf_list.append(surf_o)
         self.surf_list.append(surf_b)
         self.surf_list.append(surf_t)
-        self.filling = filling
+
 
 
 class TruncConeComp(AnnularComp):
@@ -100,26 +68,27 @@ class TruncConeComp(AnnularComp):
             self,
             temp,
             name,
-            filling,
+            mat_list,
             zb,
             zt,
             z_cone,
             h_cone,
             r,
             x=0,
-            y=0):
+            y=0,
+            fill = None):
         tsurf = PzSurf(zt)
         bsurf = PzSurf(zb)
         osurf = ConeSurf(r, h_cone, z_cone, x, y)
-        AnnularComp.__init__(self,  temp, name, filling, None, osurf,
-                             tsurf, bsurf)
+        AnnularComp.__init__(self, temp, name, mat_list, None, osurf,
+                             tsurf, bsurf, fill)
 
 
 class AnnuCylComp(AnnularComp):
     # a component between two cylinders
 
-    def __init__(self,  temp, name, filling, ri, ro, zb, zt,
-                 xi=0.0, yi=0.0, xo=0.0, yo=0.0):
+    def __init__(self, temp, name, mat_list, ri, ro, zb, zt,
+                 xi=0.0, yi=0.0, xo=0.0, yo=0.0, fill=None):
         self.ri = ri
         self.ro = ro
         self.zb = zb
@@ -132,15 +101,15 @@ class AnnuCylComp(AnnularComp):
         surf_o = CylSurf(ro, zb, zt)
         tsurf = PzSurf(zt)
         bsurf = PzSurf(zb)
-        AnnularComp.__init__(self,  temp, name, filling,
-                             surf_i, surf_o, tsurf, bsurf)
+        AnnularComp.__init__(self, temp, name, mat_list,
+                             surf_i, surf_o, tsurf, bsurf, fill)
 
 
 class AnnuCylConeComp(AnnularComp):
     # a component inside a cylinder and outside of a cone
 
-    def __init__(self,  temp, name, filling, ri, hi, zi, ro, zb, zt,
-                 xi=0.0, yi=0.0, xo=0.0, yo=0.0):
+    def __init__(self, temp, name, mat_list, ri, hi, zi, ro, zb, zt,
+                 xi=0.0, yi=0.0, xo=0.0, yo=0.0, fill=None):
         self.ri = ri
         self.hi = hi
         self.zi = zi
@@ -155,15 +124,15 @@ class AnnuCylConeComp(AnnularComp):
         surf_o = CylSurf(ro, zb, zt, xo, yo)
         tsurf = PzSurf(zt)
         bsurf = PzSurf(zb)
-        AnnularComp.__init__(self,  temp, name, filling,
-                             surf_i, surf_o, tsurf, bsurf)
+        AnnularComp.__init__(self, temp, name, mat_list,
+                             surf_i, surf_o, tsurf, bsurf, fill)
 
 
 class AnnuConeCylComp(AnnularComp):
     # a component outside of a cylinder and inside a cone
 
-    def __init__(self,  temp, name, filling, ro, ho, zo, ri, zb, zt,
-                 xi=0.0, yi=0.0, xo=0.0, yo=0.0):
+    def __init__(self,  temp, name, mat_list, ro, ho, zo, ri, zb, zt,
+                 xi=0.0, yi=0.0, xo=0.0, yo=0.0, fill=None):
         self.ro = ro
         self.ho = ho
         self.zo = zo
@@ -178,14 +147,14 @@ class AnnuConeCylComp(AnnularComp):
         surf_o = ConeSurf(ro, ho, zo, xo, yo)
         surf_t = PzSurf(zt)
         surf_b = PzSurf(zb)
-        AnnularComp.__init__(self,  temp, name, filling,
-                             surf_i, surf_o, surf_t, surf_b)
+        AnnularComp.__init__(self,  temp, name, mat_list,
+                             surf_i, surf_o, surf_t, surf_b, fill)
 
 
 class AnnuConeConeComp(AnnularComp):
 
-    def __init__(self,  temp, name, filling, ri, hi, zi, ro, ho, zo, zb, zt,
-                 xi=0.0, yi=0.0, xo=0.0, yo=0.0):
+    def __init__(self,  temp, name, mat_list, ri, hi, zi, ro, ho, zo, zb, zt,
+                 xi=0.0, yi=0.0, xo=0.0, yo=0.0, fill = None):
         self.ri = ri
         self.hi = hi
         self.zi = zi
@@ -201,19 +170,19 @@ class AnnuConeConeComp(AnnularComp):
         surf_o = ConeSurf(ro, ho, zo, xo, yo)
         surf_t = PzSurf(zt)
         surf_b = PzSurf(zb)
-        AnnularComp.__init__(self,  temp, name, filling,
-                             surf_i, surf_o, surf_t, surf_b)
+        AnnularComp.__init__(self,  temp, name, mat_list,
+                             surf_i, surf_o, surf_t, surf_b, fill)
 
 
 class CylComp(AnnularComp):
     # a cylindrical component
 
-    def __init__(self,  temp, name, filling, zb, zt, r, x=0, y=0):
+    def __init__(self, temp, name, mat_list, zb, zt, r, x=0, y=0, fill = None):
         surf = CylSurf(r, zb, zt, x, y)
         tsurf = PzSurf(zt)
         bsurf = PzSurf(zb)
-        AnnularComp.__init__(self,  temp, name, filling,
-                             None, surf, tsurf, bsurf)
+        AnnularComp.__init__(self, temp, name, mat_list,
+                             None, surf, tsurf, bsurf, fill)
 
 
 class ConeComp(AnnularComp):
@@ -223,13 +192,14 @@ class ConeComp(AnnularComp):
             self,
             temp,
             name,
-            filling,
+            mat_list,
             zb,
             zt,
             z_cone,
             h_cone,
             r,
             x=0,
-            y=0):
+            y=0,
+            fill = None):
         surf = ConeSurf(r, h_cone, z_cone, x, y)
-        AnnularComp.__init__(self,  temp, name, filling, None, surf)
+        AnnularComp.__init__(self,  temp, name, mat_list, None, surf, fill = fill)

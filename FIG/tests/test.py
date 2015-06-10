@@ -13,7 +13,7 @@ def mkdir(path):
             raise
 
 #for i in range(0, 5):
-i=0    
+i=0
 dir_name = 'test_res'
 mkdir(dir_name)
 core = Core(
@@ -41,7 +41,7 @@ print text
 for fil in core.Fuel.filling:
 	print fil.generate_output()
 	text = text + fil.generate_output()
-print list(core.Fuel.filling)[0] 
+print list(core.Fuel.filling)[0]
 f.write(text)
 f.close
 #    shutil.copy('fpb_pos.inp', '%s/fpb_pos%d.inp' % (dir_name, i))
@@ -52,7 +52,7 @@ f = open(dir_name+'/Fuel_lattice%d' % i, 'w+')
 for fil in list(core.Fuel.filling)[0].filling:
 	print fil.generate_output()
 	text = text + fil.generate_output()
-print list(core.Fuel.filling)[0].filling 
+print list(core.Fuel.filling)[0].filling
 
 print core.Fuel.filling
 f.write(text)

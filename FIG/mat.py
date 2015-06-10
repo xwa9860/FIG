@@ -1,13 +1,14 @@
+'''
+ Units used in this file
+ density in g/cm3 (in serpent g/cm3 if negative, in 10^24/cm3 if positive)
+ composition fraction in atomic fraction (in serpent atomic if positive, mass
+ if negative)
+ temperatures in K
+'''
 #!/usr/bin/python
 from mat_gen import MatGen
 from comparable_object import CmpObj
 import math
-from sets import Set
-# Units used in this file
-# density in g/cm3 (in serpent g/cm3 if negative, in 10^24/cm3 if positive)
-# composition fraction in atomic fraction (in serpent atomic if positive, mass
-# if negative)
-# temperatures in K
 
 class Mat(CmpObj):
 
@@ -47,13 +48,17 @@ class Isotope:
 class Fuel(Mat):
 
     def __init__(self, temp, name, input_file):
-        #''' the input_file only contains isotope name and fractions, this init funct will calculate lib_id according to the temperature and include it in the file'''
-
+        '''
+        the input_file only contains isotope name and fractions, this init
+        funct will calculate lib_id according to the temperature
+        and include it in the file
+        '''
         lib_id = self.calc_lib_id(temp)
         text_comp = []
-        with open(input_file, 'r') as f:
-            for line in f:
-                text_comp.append(line.split(' ')[0]+'.%s ' %lib_id +line.split(' ')[1])
+        with open(input_file, 'r') as inpf:
+            for line in inpf:
+                text_comp.append(line.split(' ')[0].split('.')[0]+'.%s ' %lib_id + \
+                                 line.split(' ')[1])
         Mat.__init__(self, name, 10, ''.join(text_comp), temp)
 
 

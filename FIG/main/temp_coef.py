@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from FIG import core_w_channel, triso, pbed, pb, mat
+import core_w_channel, triso, pbed, pb, mat
 import shutil
 import os
 
@@ -21,7 +21,7 @@ def create_fuel_pebbles(fuel_temp_list):
         fuel = mat.Fuel(fuel_temp_list[1], fuel_name, fuel_input)
         # range in python: list[2:7] means list[2,3,4,5,6]
         tr = triso.Triso(fuel_temp_list[2:7], fuel)
-        fpb_list.append(pb.FuelPebble(tr, fuel_temp_list[0], fuel_temp_list[7]))
+        fpb_list.append(pb.FPb(tr, fuel_temp_list[0], fuel_temp_list[7]))
     return fpb_list
 
 

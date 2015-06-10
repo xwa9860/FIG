@@ -19,7 +19,7 @@ class TrisoGen(Gen):
                     str_list.append(mat.name + '\n')
                     continue
                 str_list.append('%s %.4f' %
-                                (mat.name, a_triso.r_config[mat.name]))
+                                (mat.name, a_triso.r_config[mat.__class__.__name__]))
             # if TrisoGen.first_time:
             #    for mat in a_triso.mat_list:
             #         str_list.append(mat.generate_output())
