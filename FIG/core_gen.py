@@ -48,6 +48,14 @@ class CoreGen(Gen):
             str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')
             str_list.append('plot 2 700 700 0 %% xz cross plane at y=0\n')
             str_list.append('plot 3 700 700 10 %% xy cross plane at z=10\n')
+
+            # Material
+            filename = 'coreMaterial'
+            str_list.append('include "%s"' %filename)
+            mat_str = []
+            for mat in a_core.mat_list:
+                mat_str.append(mat.generate_output())
+            open(filename, 'w+').write(''.join(mat_str))
             # define detectors
             # For cross sections
             # fission cross section
