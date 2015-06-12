@@ -50,7 +50,7 @@ class CoreGen(Gen):
             str_list.append('plot 3 700 700 10 %% xy cross plane at z=10\n')
 
             # Material
-            filename = 'coreMaterial'
+            filename = 'coreMaterials'
             str_list.append('include "%s"' %filename)
             mat_str = []
             for mat in a_core.mat_list:
