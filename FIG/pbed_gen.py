@@ -95,8 +95,10 @@ class GFCCGen(PBedGen):
                 (self.univ.id, a_g_pbed.coolant.gen.univ.id,
                  input_file))
             str_list.append(
-                '%%---Graphite pebbles in a unit pebble bed\
-                (assuming all graphite pbs are the same)\n')
+                '%%---coolant in the graphite pb unit cell\n')
+            str_list.append(a_g_pbed.coolant.generate_output())
+            str_list.append(
+                '%%---Graphite pebbles in a unit pebble bed(assuming all graphite pbs are the same)\n')
             str_list.append(a_g_pbed.pb_list[0].generate_output())
             return ''.join(str_list)
 

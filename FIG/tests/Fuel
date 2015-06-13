@@ -1,0 +1,294 @@
+
+%---Fuel
+%%---FCC unit cell lattice
+surf 130 cube 0. 0. 0. 4.550820
+cell 42  101 fill 3 -130
+lat 47 6 0. 0. 4.55082000 101
+
+%%---Pebble bed(here means unit cell) from input file
+pbed 3 46 "pb_pos_40"
+%%---Coolant in the unit cell
+%%---Coolant
+surf 131 inf
+cell 43 46 Flibe924 -131
+%%---Pebbles in the unit cell(pbed)
+%%---surf for fuel pebbles
+surf 132 sph 0.000000 0.000000 0.000000 1.250000
+surf 133 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 44 6 CentralGraphite -132
+cell 45 6 fill 5 132 -133
+%---Triso particle 
+particle 4
+fuel0 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 5 6 0. 0. 0.08860629 4
+cell 46 6 Shell 133
+%%---surf for fuel pebbles
+surf 134 sph 0.000000 0.000000 0.000000 1.250000
+surf 135 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 47 9 CentralGraphite -134
+cell 48 9 fill 8 134 -135
+%---Triso particle 
+particle 7
+fuel1 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 8 6 0. 0. 0.08860629 7
+cell 49 9 Shell 135
+%%---surf for fuel pebbles
+surf 136 sph 0.000000 0.000000 0.000000 1.250000
+surf 137 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 50 12 CentralGraphite -136
+cell 51 12 fill 11 136 -137
+%---Triso particle 
+particle 10
+fuel2 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 11 6 0. 0. 0.08860629 10
+cell 52 12 Shell 137
+%%---surf for fuel pebbles
+surf 138 sph 0.000000 0.000000 0.000000 1.250000
+surf 139 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 53 15 CentralGraphite -138
+cell 54 15 fill 14 138 -139
+%---Triso particle 
+particle 13
+fuel3 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 14 6 0. 0. 0.08860629 13
+cell 55 15 Shell 139
+%%---surf for fuel pebbles
+surf 140 sph 0.000000 0.000000 0.000000 1.250000
+surf 141 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 56 18 CentralGraphite -140
+cell 57 18 fill 17 140 -141
+%---Triso particle 
+particle 16
+fuel4 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 17 6 0. 0. 0.08860629 16
+cell 58 18 Shell 141
+%%---surf for fuel pebbles
+surf 142 sph 0.000000 0.000000 0.000000 1.250000
+surf 143 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 59 21 CentralGraphite -142
+cell 60 21 fill 20 142 -143
+%---Triso particle 
+particle 19
+fuel5 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 20 6 0. 0. 0.08860629 19
+cell 61 21 Shell 143
+%%---surf for fuel pebbles
+surf 144 sph 0.000000 0.000000 0.000000 1.250000
+surf 145 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 62 24 CentralGraphite -144
+cell 63 24 fill 23 144 -145
+%---Triso particle 
+particle 22
+fuel6 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 23 6 0. 0. 0.08860629 22
+cell 64 24 Shell 145
+%%---surf for fuel pebbles
+surf 146 sph 0.000000 0.000000 0.000000 1.250000
+surf 147 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 65 27 CentralGraphite -146
+cell 66 27 fill 26 146 -147
+%---Triso particle 
+particle 25
+fuel7 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 26 6 0. 0. 0.08860629 25
+cell 67 27 Shell 147
+%%---surf for fuel pebbles
+surf 148 sph 0.000000 0.000000 0.000000 1.250000
+surf 149 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 68 30 CentralGraphite -148
+cell 69 30 fill 29 148 -149
+%---Triso particle 
+particle 28
+fuel8 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 29 6 0. 0. 0.08860629 28
+cell 70 30 Shell 149
+%%---surf for fuel pebbles
+surf 150 sph 0.000000 0.000000 0.000000 1.250000
+surf 151 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 71 33 CentralGraphite -150
+cell 72 33 fill 32 150 -151
+%---Triso particle 
+particle 31
+fuel9 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 32 6 0. 0. 0.08860629 31
+cell 73 33 Shell 151
+%%---surf for fuel pebbles
+surf 152 sph 0.000000 0.000000 0.000000 1.250000
+surf 153 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 74 36 CentralGraphite -152
+cell 75 36 fill 35 152 -153
+%---Triso particle 
+particle 34
+fuel10 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 35 6 0. 0. 0.08860629 34
+cell 76 36 Shell 153
+%%---surf for fuel pebbles
+surf 154 sph 0.000000 0.000000 0.000000 1.250000
+surf 155 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 77 39 CentralGraphite -154
+cell 78 39 fill 38 154 -155
+%---Triso particle 
+particle 37
+fuel11 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 38 6 0. 0. 0.08860629 37
+cell 79 39 Shell 155
+%%---surf for fuel pebbles
+surf 156 sph 0.000000 0.000000 0.000000 1.250000
+surf 157 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 80 42 CentralGraphite -156
+cell 81 42 fill 41 156 -157
+%---Triso particle 
+particle 40
+fuel12 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 41 6 0. 0. 0.08860629 40
+cell 82 42 Shell 157
+%%---surf for fuel pebbles
+surf 158 sph 0.000000 0.000000 0.000000 1.250000
+surf 159 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 83 45 CentralGraphite -158
+cell 84 45 fill 44 158 -159
+%---Triso particle 
+particle 43
+fuel13 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 44 6 0. 0. 0.08860629 43
+cell 85 45 Shell 159
+%---defuel
+surf 100 cylz 0.000000 0.000000 71.000000 492.850000 572.850000
+surf 101 cylz 0.000000 0.000000 80.000000 492.850000 572.850000
+surf 103 pz 492.850000
+surf 102 pz 572.850000
+cell 31 99 fill 47  100 -101 103 -102 
+%---conv
+surf 96 cone 0.000000 0.000000 492.850000 71.000000 -122.975607
+surf 97 cone 0.000000 0.000000 430.500000 105.000000 261.870000
+surf 99 pz 430.500000
+surf 98 pz 492.850000
+cell 30 99 fill 47  96 -97 99 -98 
+%---ent
+surf 76 cylz 0.000000 0.000000 45.000000 0.000000 112.500000
+surf 77 cylz 0.000000 0.000000 65.000000 0.000000 112.500000
+surf 79 pz 0.000000
+surf 78 pz 112.500000
+cell 25 99 fill 47  76 -77 79 -78 
+%---act
+surf 92 cylz 0.000000 0.000000 35.000000 180.500000 430.500000
+surf 93 cylz 0.000000 0.000000 105.000000 180.500000 430.500000
+surf 95 pz 180.500000
+surf 94 pz 430.500000
+cell 29 99 fill 47  92 -93 95 -94 
+%---div3
+surf 88 cylz 0.000000 0.000000 35.000000 144.820000 180.500000
+surf 89 cone 0.000000 0.000000 180.500000 105.000000 -178.500000
+surf 91 pz 144.820000
+surf 90 pz 180.500000
+cell 28 99 fill 47  88 -89 91 -90 
+%---div2
+surf 84 cone 0.000000 0.000000 127.500000 45.000000 77.942286
+surf 85 cone 0.000000 0.000000 180.500000 105.000000 -178.500000
+surf 87 pz 127.500000
+surf 86 pz 144.820000
+cell 27 99 fill 47  84 -85 87 -86 
+%---div1
+surf 80 cylz 0.000000 0.000000 45.000000 112.500000 127.500000
+surf 81 cone 0.000000 0.000000 180.500000 105.000000 -178.500000
+surf 83 pz 112.500000
+surf 82 pz 127.500000
+cell 26 99 fill 47  80 -81 83 -82 

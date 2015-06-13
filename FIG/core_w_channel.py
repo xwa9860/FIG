@@ -105,7 +105,7 @@ class Core(Comp):
                                   0,
                                   572.85,
                                   165,
-                                  fill=self.Fuel)
+                                  fill=self.Fuel.act)
         # contains not only self.Fuel but other three component, but they are in
         # the same universe, only need it to get the univ id
         name = 'FullCore'
@@ -565,7 +565,7 @@ class Core(Comp):
                                           self.Fuel.zb_conv,
                                           self.Fuel.zb_conv,
                                           self.Fuel.zt_conv,
-                                          fill=self.Fuel.fill)
+					  fill=self.Fuel.fill)
         self.Fuel.comp_dict['conv'] = self.Fuel.conv
 
         # defueling zone
@@ -580,7 +580,7 @@ class Core(Comp):
                                        self.Fuel.ro_defuel,
                                        self.Fuel.zb_defuel,
                                        self.Fuel.zt_defuel,
-                                       fill=self.Fuel.fill)
+				       fill=self.Fuel.fill)
         self.Fuel.comp_dict['defuel'] = self.Fuel.defuel
 
     def define_Blanket(self, temp, name):

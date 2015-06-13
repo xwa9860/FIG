@@ -7,13 +7,13 @@ class TrisoGen(Gen):
     first_time = True
 
     def __init__(self):
-        self.univ = Universe()
+	self.particle = Universe()
 
     def parse(self, a_triso, type):
         if type == 's':
             str_list = []
-            str_list.append('''%%---Triso particle \nparticle %d''' %
-                            self.univ.id)
+	    str_list.append('''%%---Triso particle \nparticle %d''' %
+                            self.particle.id)
             for mat in a_triso.mat_list:
                 if mat.name == 'Matrix':
                     str_list.append(mat.name + '\n')
@@ -42,5 +42,5 @@ class TrisoLatticeGen(Gen):
                 'lat %d 6 0. 0. %.8f %d\n' %
                 (self.univ.id,
                  a_triso_lattice.pitch,
-                 a_triso_lattice.triso_particle.gen.univ.id))
+                 a_triso_lattice.triso_particle.gen.particle.id))
             return '\n'.join(str_list)

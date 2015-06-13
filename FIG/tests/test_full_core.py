@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import FIG.core_w_channel, triso, pbed, pb, mat
+import core_w_channel, triso, pbed, pb, mat
 import shutil
 import os
 
