@@ -17,7 +17,7 @@ def create_fuel_pebbles(fuel_temp_list):
     fpb_list = []
     for i in xrange(0, 14):
         fuel_name = 'fuel%d' % i
-        fuel_input = '../fuel_mat/vol_ave_mcnp/fuel_mat%d' % pb_burnup_list[i]
+        fuel_input = '../fuel_mat/fresh'
         fuel = mat.Fuel(fuel_temp_list[1], fuel_name, fuel_input)
         # range in python: list[2:7] means list[2,3,4,5,6]
         tr = triso.Triso(fuel_temp_list[2:7], fuel)
