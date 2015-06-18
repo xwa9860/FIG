@@ -8,7 +8,7 @@ class CoreGen(Gen):
     def parse(self, a_core, type):
         if type == 's':
             str_list = []
-
+	    dir = 'serp_input/'
             # define title and library path
             str_list.append('''%%---Cross section data library path\n''')
             str_list.append('set title "FHR core"\n' +
@@ -16,7 +16,6 @@ class CoreGen(Gen):
                             'set acelib "/global/home/groups/ac_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"\n')
             # define geometry, cells, universe in the core
             univ = Universe()
-            print 'define univ %d' %univ.id
 	    for key1 in a_core.comp_dict:
                 filename = '%s' %key1
                 comp_str = []
@@ -29,7 +28,7 @@ class CoreGen(Gen):
                     comp_str.append(
                         a_core.comp_dict[key1].comp_dict[key2].generate_output()
                     )
-            	open(filename, 'w+').write(''.join(comp_str))
+            	open(dir+filename, 'w+').write(''.join(comp_str))
 		str_list.append('include "%s"\n' %filename)
             # define the whole core as universe 0, and cell 'outside'
             a_core.whole_core.gen.set_univId(0)
@@ -56,7 +55,7 @@ class CoreGen(Gen):
             mat_str = []
             for mat in a_core.mat_list:
                 mat_str.append(mat.generate_output())
-            open(filename, 'w+').write(''.join(mat_str))
+            open(dir+filename, 'w+').write(''.join(mat_str))
             # define detectors
             # For cross sections
             # fission cross section

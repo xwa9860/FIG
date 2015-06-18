@@ -95,8 +95,8 @@ class mat_parser:
 
     def beau2serp(self):
         '''
-        convert fuel material composition files from BEAU to serpent syntax
-        takes the output files from depletion calculation from BEAU
+        convert fuel material composition files from 
+	BEAU depletion calculation results to serpent syntax
         '''
         with open(self.outp, 'w+') as f:
             with open(self.inp, 'r+') as input:
