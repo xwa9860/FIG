@@ -28,22 +28,22 @@ def create_fuel_pebbles(fuel_temp_list):
 # list of temperatures:central graphie kernel;
 # fuel, buffer, iPyC, SiC,
 # oPyC, matrix; shell
-fuel_temp_list= [800+273.15,  # temp_fuel_list
-        800+273.15, 800+273.15, 800+273.15, 800+273.15,
-        800+273.15, 800+273.15,
-        800+273.15]
+fuel_temp_list= [1200,  # temp_fuel_list
+        1200, 1200, 1200, 1200,
+        1200, 1200,
+        1200]
 fpb_list = create_fuel_pebbles(fuel_temp_list)
 core = core_w_channel.Core(
     fpb_list,
-    650+273.15,  # temp_CR
-    650+273.15,  # temp_g_CRCC
-    650+273.15,  # temp_cool_CRCC
-    650+273.15,  # temp_OR
-    650+273.15,  # temp_g_ORCC
-    650+273.15,  # temp_cool_ORCC
-    650+273.15,  # temp_cool_F
-    650+273.15,  # temp_blanket
-    650+273.15)  # temp_cool_B
+    1200,  # temp_CR
+    1200,  # temp_g_CRCC
+    1200,  # temp_cool_CRCC
+    1200,  # temp_OR
+    1200,  # temp_g_ORCC
+    1200,  # temp_cool_ORCC
+    1200,  # temp_cool_F
+    1200,  # temp_blanket
+    1200)  # temp_cool_B
 f = open('test_full_core_res', 'w+')
 text = core.generate_output()
 f.write(text)

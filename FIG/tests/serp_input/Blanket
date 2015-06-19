@@ -11,14 +11,14 @@ pbed 63 48 "pb_pos40"
 %%---coolant in the graphite pb unit cell
 %%---Coolant
 surf 128 inf
-cell 40 48 Flibe924 -128
+cell 40 48 Flibe1200 -128
 %%---Graphite pebbles in a unit pebble bed(assuming all graphite pbs are the same)
 %%---surf for graphite pebble
 surf 129 sph 0.000000 0.000000 0.000000 1.500000
 %%---Graphite pebble
-cell 41 49 Graphite924 -129
+cell 41 49 Graphite1200 -129
 %---div
-surf 108 cone 0.000000 0.000000 180.500000 105.000000 -178.500000
+surf 108 cone 0.000000 0.000000 180.500000 105.000000 -241.297736
 surf 109 cone 0.000000 0.000000 180.500000 125.000000 -216.506351
 surf 111 pz 112.500000
 surf 110 pz 180.500000
@@ -30,9 +30,9 @@ surf 123 pz 492.850000
 surf 122 pz 572.850000
 cell 36 99 fill 64  120 -121 123 -122 
 %---ent
-surf 104 cylz 0.000000 0.000000 65.000000 0.000000 112.500000
-surf 105 cylz 0.000000 0.000000 85.740000 0.000000 112.500000
-surf 107 pz 0.000000
+surf 104 cylz 0.000000 0.000000 75.410000 41.600000 112.500000
+surf 105 cylz 0.000000 0.000000 85.740000 41.600000 112.500000
+surf 107 pz 41.600000
 surf 106 pz 112.500000
 cell 32 99 fill 64  104 -105 107 -106 
 %---conv

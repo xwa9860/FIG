@@ -122,7 +122,7 @@ class SiC(Mat):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
-        mat_comp.append('6000.%s 4.7724E-02\n14000.%s 4.77240E-02\n' %
+        mat_comp.append('6000.%s 4.7724E-02\n14028.%s 4.77240E-02\n' %
                         (lib_id, lib_id))
         mat_comp = ''.join(mat_comp)
         Mat.__init__(self, 'SiC', 3.18, mat_comp, temp)
