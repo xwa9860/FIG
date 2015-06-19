@@ -117,7 +117,7 @@ class Core(Comp):
         # ---------------------------------------------------------
         # center reflector
         # entrance zone
-        self.CR.zb_ent = 0  # in the design, CR starts at 15.7cm
+        self.CR.zb_ent = 41.6  # in the design, CR starts at 15.7cm
         self.CR.zt_ent = 127.5
         self.CR.r_ent = 35
         self.CR.ent = CylComp(temp, name, self.CR.mat_list, self.CR.zb_ent,
@@ -177,7 +177,7 @@ class Core(Comp):
         # ---------------------------------------------------------
         # center reflector
         # entrance zone
-        self.CRCC.zb_ent = 0  # in the design, CR starts at 15.7cm
+        self.CRCC.zb_ent = 41.6  # in the design, CR starts at 15.7cm
         self.CRCC.zt_ent = 127.5
         self.CRCC.ri_ent = self.CR.r_ent
         self.CRCC.ro_ent = 45
@@ -277,7 +277,7 @@ class Core(Comp):
         self.OR.comp_dict = {}
 
         # entrance zone
-        self.OR.zb_ent = 0
+        self.OR.zb_ent = 41.6
         self.OR.zt_ent = 112.5
         self.OR.r_ent = 95.74
         self.OR.ent = AnnuCylComp(temp, name,
@@ -457,10 +457,10 @@ class Core(Comp):
         # --------------------------------------------------------
         self.Fuel.comp_dict = {}
         # entrance zone
-        self.Fuel.zb_ent = 0.0  # in design report fuel pb starts at 41.6cm
+        self.Fuel.zb_ent = 41.6  # in design report fuel pb starts at 41.6cm
         self.Fuel.zt_ent = self.OR.zt_ent
         self.Fuel.ri_ent = self.CRCC.ro_ent
-        self.Fuel.ro_ent = self.Fuel.ri_ent + 20
+        self.Fuel.ro_ent = 75.41
         self.Fuel.ent = AnnuCylComp(temp, name,
                                     self.Fuel.mat_list,
                                     self.Fuel.ri_ent,
@@ -589,7 +589,7 @@ class Core(Comp):
         # ------------------------------------------------------------
         self.Blanket.comp_dict = {}
         # entrance zone
-        self.Blanket.zb_ent = 0  # in design report 41.6
+        self.Blanket.zb_ent = 41.6  # in design report 41.6
         self.Blanket.zt_ent = self.OR.zt_ent
         self.Blanket.ri_ent = self.Fuel.ro_ent
         self.Blanket.ro_ent = self.ORCC.ri_ent
