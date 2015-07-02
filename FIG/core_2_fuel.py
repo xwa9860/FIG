@@ -42,12 +42,16 @@ class OuterRef_CoolantChannel(Comp):
 
 class Fuel(Comp):
 
-    def __init__(self, fpb_list, cool_temp):
+    def __init__(self, fpb_list1, fpb_list2, cool_temp):
         name = 'FuelZone'
-        self.unit_cell = FuelUnitCell(fpb_list, cool_temp)
-        self.unit_cell_lat = PBedLat(self.unit_cell, self.unit_cell.pitch)
-        Comp.__init__(self, fpb_list[0].temp, name, self.unit_cell_lat.mat_list,
-                      fill=self.unit_cell_lat)
+        self.unit_cell1 = FuelUnitCell(fpb_list1, cool_temp)
+        self.unit_cell2 = FuelUnitCell(fpb_list2, cool_temp)
+        self.unit_cell_lat1 = PBedLat(self.unit_cell1, self.unit_cell1.pitch)
+        self.unit_cell_lat2 = PBedLat(self.unit_cell2, self.unit_cell1.pitch)
+        mat_list = self.unit_cell_lat1.mat_list
+        mat_list.extend(self.unit_cell_lat2.mat_list)
+        Comp.__init__(self, fpb_list1[0].temp, name, mat_list,
+                      fill=self.unit_cell_lat1)
 
 
 class Blanket(Comp):
@@ -66,7 +70,8 @@ class Core(Comp):
 
     def __init__(
             self,
-            fpb_list,
+            fpb_list1,
+            fpb_list2,
             temp_CR,
             temp_g_CRCC,
             temp_cool_CRCC,
@@ -76,14 +81,14 @@ class Core(Comp):
             temp_cool_F,
             temp_Blanket,
             temp_cool_B):
-        assert(len(fpb_list) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
-            fpb_list)
+        assert(len(fpb_list1) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
+            fpb_list1)
         self.comp_dict = {
             'CR': CenterRef(temp_CR),
             'CRCC': CenterRef_CoolantChannel(temp_g_CRCC, temp_cool_CRCC),
             'OR': OuterRef(temp_OR),
             'ORCC': OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC),
-            'Fuel': Fuel(fpb_list, temp_cool_F),
+            'Fuel': Fuel(fpb_list1, fpb_list2, temp_cool_F),
             'Blanket': Blanket(temp_Blanket, temp_cool_B)
         }
         self.CR = self.comp_dict['CR']
@@ -99,7 +104,7 @@ class Core(Comp):
         self.define_Fuel(self.Fuel.temp, self.Fuel.name)
         self.define_Blanket(self.Blanket.temp, self.Blanket.name)
 
-        self.whole_core = CylComp(fpb_list[0].temp,
+        self.whole_core = CylComp(fpb_list1[0].temp,
                                   'whole_core',
                                   self.Fuel.act.mat_list,
                                   41.6,
@@ -110,7 +115,7 @@ class Core(Comp):
         # the same universe, only need it to get the univ id
         name = 'FullCore'
         mat_list = self.collect_mat()
-        Comp.__init__(self, fpb_list[0].temp, name, mat_list, CoreGen())
+        Comp.__init__(self, fpb_list1[0].temp, name, mat_list, CoreGen())
 
     def define_CR(self, temp, name):
         self.CR.comp_dict = {}
@@ -565,7 +570,7 @@ class Core(Comp):
                                           self.Fuel.zb_conv,
                                           self.Fuel.zb_conv,
                                           self.Fuel.zt_conv,
-					  fill=self.Fuel.fill)
+                                          fill=self.Fuel.fill)
         self.Fuel.comp_dict['conv'] = self.Fuel.conv
 
         # defueling zone

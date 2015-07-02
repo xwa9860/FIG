@@ -8,28 +8,32 @@ class CoreGen(Gen):
     def parse(self, a_core, type):
         if type == 's':
             str_list = []
-	    dir = 'serp_input/'
+            dir = 'serp_input/'
+
             # define title and library path
             str_list.append('''%%---Cross section data library path\n''')
             str_list.append('set title "FHR core"\n' +
                             #'set acelib "/usr/local/SERPENT/xsdata/endfb7/sss_endfb7u.xsdata"\n'
                             'set acelib "/global/home/groups/ac_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"\n')
-            # define geometry, cells, universe in the core
+
+            # define geometry, cells, universe in the core in different files
             univ = Universe()
-	    for key1 in a_core.comp_dict:
-                filename = '%s' %key1
-                comp_str = []
-                comp_str.append('\n%%---%s\n' % key1)
-                comp_str.append(a_core.comp_dict[key1].generate_output())
-                for key2 in a_core.comp_dict[key1].comp_dict:
-                    comp_str.append('%%---%s\n' % key2)
-                    a_core.comp_dict[key1].comp_dict[
-                        key2].gen.set_univId(univ.id)
-                    comp_str.append(
-                        a_core.comp_dict[key1].comp_dict[key2].generate_output()
-                    )
-            	open(dir+filename, 'w+').write(''.join(comp_str))
-		str_list.append('include "%s"\n' %filename)
+            for key1 in a_core.comp_dict:
+                    filename = '%s' %key1
+                    comp_str = []
+                    comp_str.append('\n%%---%s\n' % key1)
+                    for key2 in a_core.comp_dict[key1].comp_dict:
+                        comp_str.append('%%---%s\n' % key2)
+                        a_core.comp_dict[key1].comp_dict[
+                            key2].gen.set_univId(univ.id)
+                        comp_str.append(
+                            a_core.comp_dict[key1].comp_dict[key2].generate_output()
+                        )
+                    comp_str.append(a_core.comp_dict[key1].generate_output())
+                    open(dir+filename, 'w+').write(''.join(comp_str))
+                    str_list.append('include "%s"\n' %filename)
+            #open(dir+'Fuel', 'a').write(a_core.Fuel.unit_cell_lat2.generate_output())
+
             # define the whole core as universe 0, and cell 'outside'
             a_core.whole_core.gen.set_univId(0)
             str_list.append('\n%%---Core as a whole, universe 0\n' +
@@ -38,24 +42,26 @@ class CoreGen(Gen):
                 '\n%%---Outside\ncell %d 0 outside %d\n' %
                 (Cell().id, a_core.whole_core.surf_list[1].id))
 
+            # Material
+            filename = 'coreMaterials'
+            str_list.append('include "%s"' %filename)
+            mat_str = []
+            for mat in a_core.mat_list:
+                print mat
+                mat_str.append(mat.generate_output())
+            open(dir+filename, 'w+').write(''.join(mat_str))
+
             # define neutron source and BC
             str_list.append('\n%%---Neutron source and BC\n')
             str_list.append('set pop 200000 200 500\n')
             str_list.append('set bc 1\n')
-
+            str_list.append('set ures 1')
             # Plot
             str_list.append('\n%%---Plot the geometry\n')
             str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')
             str_list.append('plot 2 700 700 0 %% xz cross plane at y=0\n')
             str_list.append('plot 3 700 700 10 %% xy cross plane at z=10\n')
 
-            # Material
-            filename = 'coreMaterials'
-            str_list.append('include "%s"' %filename)
-            mat_str = []
-            for mat in a_core.mat_list:
-                mat_str.append(mat.generate_output())
-            open(dir+filename, 'w+').write(''.join(mat_str))
             # define detectors
             # For cross sections
             # fission cross section

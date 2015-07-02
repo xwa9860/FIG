@@ -51,8 +51,7 @@ class FuelUnitCell(FCC):
 
     def __init__(self, fpb_list, cool_temp, packing_fraction=0.40):
         self.cool = Coolant(cool_temp, 'FuelFCCCoolant')
-        FCC.__init__(self,
-                     self.cool, fpb_list)
+        FCC.__init__(self, self.cool, fpb_list)
         # TODO: calculate pitch from packing fraction and update FCC class to
         # receive pitch from constructor
 

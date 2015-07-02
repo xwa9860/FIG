@@ -18,16 +18,18 @@ class Mat(CmpObj):
             density,
             mat_comp,
             temp,
+            tmp_card=True,
             flag=''):
         self.density = density   # density is mass density in g/cm3
         self.mat_comp = mat_comp  # string containing mat_composition and fraction
         self.gen = MatGen()
         self.flag = flag
         self.temp = temp
+        self.tmp_card=tmp_card
         CmpObj.__init__(self, temp, name)
 
     def generate_output(self):
-        return self.gen.parse(self, 's')
+        return self.gen.parse(self, 's', self.tmp_card)
 
     def calc_lib_id(self, temp):
         if temp//300*3<10:
@@ -47,7 +49,7 @@ class Isotope:
 
 class Fuel(Mat):
 
-    def __init__(self, temp, name, input_file):
+    def __init__(self, temp, name, input_file, tmp_card=True):
         '''
         the input_file only contains isotope name and fractions, this init
         funct will calculate lib_id according to the temperature
@@ -59,12 +61,12 @@ class Fuel(Mat):
             for line in inpf:
                 text_comp.append(line.split(' ')[0].split('.')[0]+'.%s ' %lib_id + \
                                  line.split(' ')[1])
-        Mat.__init__(self, name, 10, ''.join(text_comp), temp)
+        Mat.__init__(self, name, 10, ''.join(text_comp), temp, tmp_card)
 
 
 class Flibe(Mat):
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         density = (2279.92 - 0.488*(temp-273.15))/1000
         self.temp = temp
         # FLiBe chemical formular is Li2BeF4
@@ -80,57 +82,57 @@ class Flibe(Mat):
                         (lib_id, self.r4009, lib_id, self.r9019))
         mat_comp = ''.join(mat_comp)
         name = 'Flibe%d' % math.ceil(temp)
-        Mat.__init__(self, name, density, mat_comp, temp)
+        Mat.__init__(self, name, density, mat_comp, temp, tmp_card)
 
 
 class Buffer(Mat):
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
         mat_comp.append('6000.%s 5.26449E-02\n' % lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'Buffer', 1.05, mat_comp, temp, 'moder')
+        Mat.__init__(self, 'Buffer', 1.05, mat_comp, temp, tmp_card, 'moder')
 
 
 class iPyC(Mat):
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
         mat_comp.append('6000.%s 9.52621E-02\n' % lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'iPyC', 1.90, mat_comp, temp, 'moder')
+        Mat.__init__(self, 'iPyC', 1.90, mat_comp, temp, tmp_card, 'moder')
 
 
 class oPyC(Mat):
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
         mat_comp.append('6000.%s 9.52621E-02\n' % lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'oPyC', 1.90, mat_comp, temp, 'moder')
+        Mat.__init__(self, 'oPyC', 1.90, mat_comp, temp, tmp_card, 'moder')
 
 
 class SiC(Mat):
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
         mat_comp.append('6000.%s 4.7724E-02\n14028.%s 4.77240E-02\n' %
                         (lib_id, lib_id))
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'SiC', 3.18, mat_comp, temp)
+        Mat.__init__(self, 'SiC', 3.18, mat_comp, temp, tmp_card)
 
 
 class Matrix(Mat):
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
@@ -138,12 +140,12 @@ class Matrix(Mat):
                         '5010.%s 9.64977E-09\n' % lib_id +
                         '5011.%s 3.90864E-08\n' % lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'Matrix', 1.75, mat_comp, temp, 'moder')
+        Mat.__init__(self, 'Matrix', 1.75, mat_comp, temp, tmp_card, 'moder')
 
 
 class Graphite(Mat):
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         self.temp = temp
         self. density = 2.26
         self.mat_comp = []
@@ -157,6 +159,7 @@ class Graphite(Mat):
             self.density,
             self.mat_comp,
             temp,
+            tmp_card,
             'moder')
 
 
@@ -165,7 +168,7 @@ class GraphiteCoolantMix(Mat):
     # to represent the inner part of the reflectors with coolant channel in it
     # volumetric fraction of coolant is 40%
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         self.v_ratio = 0.4   # volumic ratio of coolant
         self.g = Graphite(temp)
         self.c = Flibe(temp)
@@ -189,6 +192,7 @@ class GraphiteCoolantMix(Mat):
             self.density,
             self.mat_comp,
             temp,
+            tmp_card,
             'moder')
 
     def calculate_atomic_comp(self):
@@ -212,20 +216,20 @@ class GraphiteCoolantMix(Mat):
 class Shell(Mat):
     # graphite shell in the pebbles
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         self.density = 1.75
         self.mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
         self.mat_comp.append('6000.%s 1.0\n' % lib_id)
         self.mat_comp = ''.join(self.mat_comp)
-        Mat.__init__(self, 'Shell', self.density, self.mat_comp, temp, 'moder')
+        Mat.__init__(self, 'Shell', self.density, self.mat_comp, temp, tmp_card, 'moder')
 
 
 class CentralGraphite(Mat):
     # graphite core in the pebbles
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         self.density = 1.74
         self.mat_comp = []
         self.temp = temp
@@ -238,13 +242,14 @@ class CentralGraphite(Mat):
             self.density,
             self.mat_comp,
             temp,
+            tmp_card,
             'moder')
 
 
 class B4C(Mat):
     # natural boron carbide in control rods
 
-    def __init__(self, temp):
+    def __init__(self, temp, tmp_card=True):
         self.density = 2.52   #g/cm3
         self.mat_comp = []
         self.temp = temp
@@ -257,7 +262,8 @@ class B4C(Mat):
             'B4C',
             self.density,
             self.mat_comp,
-            temp)
+            temp,
+            tmp_card)
 
 class Outside(Mat):
     # outside the defined domain

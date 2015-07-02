@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import core_w_channel, triso, pbed, pb, mat
+import core_2_fuel, triso, pbed, pb, mat
 import shutil
 import os
 
@@ -16,7 +16,7 @@ def create_fuel_pebbles(fuel_temp_list):
     #pb_burnup_list = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1 ,1]
     fpb_list = []
     for i in xrange(0, 14):
-        fuel_name = 'fuel%d%d' % (i, 12)
+        fuel_name = 'fuel%d%.0f' % (i, fuel_temp_list[1])
         fuel_input = '../fuel_mat/vol_ave_mcnp/fuel_mat%d' %pb_burnup_list[i]
         fuel = mat.Fuel(fuel_temp_list[1], fuel_name, fuel_input, tmp_card=None)
         # range in python: list[2:7] means list[2,3,4,5,6]
@@ -25,17 +25,28 @@ def create_fuel_pebbles(fuel_temp_list):
     return fpb_list
 
 
-# list of temperatures:central graphie kernel;
+# list of temperatures:
+#central graphie kernel;
 # fuel, buffer, iPyC, SiC,
 # oPyC, matrix; shell
-fuel_temp_list= [900,  # temp_fuel_list
+fuel_temp_list1= [1200,
         1200, 1200, 1200, 1200,
         1200, 1200,
         1200]
-fpb_list = create_fuel_pebbles(fuel_temp_list)
+fpb_list1 = create_fuel_pebbles(fuel_temp_list1)
 
-core = core_w_channel.Core(
-    fpb_list,
+# list of temperatures:
+#central graphie kernel;
+# fuel, buffer, iPyC, SiC,
+# oPyC, matrix; shell
+fuel_temp_list2= [1200,
+        900, 1200, 1200, 1200,
+        1200, 1200,
+        1200]
+fpb_list2 = create_fuel_pebbles(fuel_temp_list2)
+
+core = core_2_fuel.Core(
+    fpb_list1, fpb_list2,
     1200,  # temp_CR
     1200,  # temp_g_CRCC
     1200,  # temp_cool_CRCC
