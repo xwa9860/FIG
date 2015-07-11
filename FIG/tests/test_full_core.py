@@ -14,15 +14,18 @@ def mkdir(path):
 def create_fuel_pebbles(fuel_temp_list):
     pb_burnup_list = [1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8]
     #pb_burnup_list = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1 ,1]
-    fpb_list = []
-    for i in xrange(0, 14):
-        fuel_name = 'fuel%d%d' % (i, 12)
+    fpb_list = [] #list of different pebbles, 8 in this design
+    fpb_list_all=[] #list of 14 pebbles
+    for i in xrange(0, 8):
+        fuel_name = 'fuel%d' %i
         fuel_input = '../fuel_mat/vol_ave_mcnp/fuel_mat%d' %pb_burnup_list[i]
         fuel = mat.Fuel(fuel_temp_list[1], fuel_name, fuel_input, tmp_card=None)
         # range in python: list[2:7] means list[2,3,4,5,6]
         tr = triso.Triso(fuel_temp_list[2:7], fuel)
         fpb_list.append(pb.FPb(tr, fuel_temp_list[0], fuel_temp_list[7]))
-    return fpb_list
+    for i in xrange(0, 14):
+        fpb_list_all.append(fpb_list[pb_burnup_list[i]-1])
+    return fpb_list_all
 
 
 # list of temperatures:central graphie kernel;

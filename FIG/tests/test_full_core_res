@@ -9,10 +9,10 @@ include "CR"
 include "ORCC"
 
 %%---Core as a whole, universe 0
-surf 124 cylz 0.000000 0.000000 165.000000 0.000000 572.850000
-surf 126 pz 0.000000
+surf 124 cylz 0.000000 0.000000 165.000000 41.600000 572.850000
+surf 126 pz 41.600000
 surf 125 pz 572.850000
-cell 37 0 fill 143  -124 126 -125 
+cell 37 0 fill 81  -124 126 -125 
 
 %---Outside
 cell 86 0 outside 124
