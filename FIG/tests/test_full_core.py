@@ -48,7 +48,7 @@ core = core_w_channel.Core(
     1200,  # temp_cool_F
     1200,  # temp_blanket
     1200)  # temp_cool_B
-f = open('test_full_core_res', 'w+')
+f = open('serp_input/test_full_core_res', 'w+')
 text = core.generate_output()
 f.write(text)
 f.close

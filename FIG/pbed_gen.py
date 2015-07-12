@@ -42,7 +42,7 @@ class FCCGen(PBedGen):
             ' 0.  -%f 0. 1.5 %d\n' % (a_fcc.pitch, 0) +
             ' 0.  0. %f  1.5 %d\n' % (a_fcc.pitch, 0) +
             ' 0.  0. -%f 1.5 %d\n' % (a_fcc.pitch, 0))
-        file_name = 'pb_pos_%d' % (a_fcc.packing_fraction * 100)
+        file_name = 'fpb_pos_%d' % (a_fcc.packing_fraction * 100)
         f = open(file_name, 'w+')
         i = 0
         for line in pb_pos_input.splitlines(True):
@@ -76,7 +76,7 @@ class GFCCGen(PBedGen):
             ' 0.  -%f 0. 1.5 %d\n' % (a_g_fcc.pitch, 0) +
             ' 0.  0. %f  1.5 %d\n' % (a_g_fcc.pitch, 0) +
             ' 0.  0. -%f 1.5 %d\n' % (a_g_fcc.pitch, 0))
-        file_name = 'pb_pos%d' %(a_g_fcc.packing_fraction*100)
+        file_name = 'gpb_pos_%d' %(a_g_fcc.packing_fraction*100)
         f = open(file_name, 'w+')
         for line in pb_pos_input.splitlines(True):
             line = line.replace(

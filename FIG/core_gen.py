@@ -19,19 +19,19 @@ class CoreGen(Gen):
             # define geometry, cells, universe in the core in different files
             univ = Universe()
             for key1 in a_core.comp_dict:
-                    filename = '%s' %key1
-                    comp_str = []
-                    comp_str.append('\n%%---%s\n' % key1)
-                    for key2 in a_core.comp_dict[key1].comp_dict:
-                        comp_str.append('%%---%s\n' % key2)
-                        a_core.comp_dict[key1].comp_dict[
-                            key2].gen.set_univId(univ.id)
-                        comp_str.append(
-                            a_core.comp_dict[key1].comp_dict[key2].generate_output()
-                        )
-                    comp_str.append(a_core.comp_dict[key1].generate_output())
-                    open(dir+filename, 'w+').write(''.join(comp_str))
-                    str_list.append('include "%s"\n' %filename)
+                filename = '%s' %key1
+                comp_str = []
+                comp_str.append('\n%%---%s\n' % key1)
+                for key2 in a_core.comp_dict[key1].comp_dict:
+                    comp_str.append('%%---%s\n' % key2)
+                    a_core.comp_dict[key1].comp_dict[
+                        key2].gen.set_univId(univ.id)
+                    comp_str.append(
+                        a_core.comp_dict[key1].comp_dict[key2].generate_output()
+                    )
+                comp_str.append(a_core.comp_dict[key1].generate_output())
+                open(dir+filename, 'w+').write(''.join(comp_str))
+                str_list.append('include "%s"\n' %filename)
             #open(dir+'Fuel', 'a').write(a_core.Fuel.unit_cell_lat2.generate_output())
 
             # define the whole core as universe 0, and cell 'outside'
