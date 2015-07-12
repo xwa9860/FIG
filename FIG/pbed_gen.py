@@ -25,7 +25,7 @@ class PBedGen(Gen):
 
 class FCCGen(PBedGen):
 
-    def generate_pos_file(self, a_fcc):
+    def generate_pos_file(self, a_fcc, dir_loc):
         ''' generate pebble position file for Serpent from packing fraction'''
         pb_pos_input = (
             '%f  %f  %f 1.5 %d\n' % (a_fcc.pitch,  a_fcc.pitch,  a_fcc.pitch, 0) +
@@ -42,7 +42,7 @@ class FCCGen(PBedGen):
             ' 0.  -%f 0. 1.5 %d\n' % (a_fcc.pitch, 0) +
             ' 0.  0. %f  1.5 %d\n' % (a_fcc.pitch, 0) +
             ' 0.  0. -%f 1.5 %d\n' % (a_fcc.pitch, 0))
-        file_name = 'fpb_pos_%d' % (a_fcc.packing_fraction * 100)
+        file_name = 'dir_loc/fpb_pos_%d' % (a_fcc.packing_fraction * 100)
         f = open(file_name, 'w+')
         i = 0
         for line in pb_pos_input.splitlines(True):
@@ -54,13 +54,15 @@ class FCCGen(PBedGen):
         return file_name
 
     def parse(self, a_fcc, type):
-        file_name = self.generate_pos_file(a_fcc)
+      # dir_loc is the folder path for the generated position file
+        dir_loc='serp_input'
+        file_name = self.generate_pos_file(a_fcc, dir_loc)
         return PBedGen.parse(self, a_fcc, file_name, 's')
 
 
 class GFCCGen(PBedGen):
 
-    def generate_pos_file(self, a_g_fcc):
+    def generate_pos_file(self, a_g_fcc, dir_loc):
         pb_pos_input = (  # template, pb univ id to be replaced
             '%f  %f  %f 1.5 %d\n' % (a_g_fcc.pitch,  a_g_fcc.pitch,  a_g_fcc.pitch, 0) +
             '-%f  %f  %f 1.5 %d\n' % (a_g_fcc.pitch, a_g_fcc.pitch, a_g_fcc.pitch, 0) +
@@ -76,7 +78,7 @@ class GFCCGen(PBedGen):
             ' 0.  -%f 0. 1.5 %d\n' % (a_g_fcc.pitch, 0) +
             ' 0.  0. %f  1.5 %d\n' % (a_g_fcc.pitch, 0) +
             ' 0.  0. -%f 1.5 %d\n' % (a_g_fcc.pitch, 0))
-        file_name = 'gpb_pos_%d' %(a_g_fcc.packing_fraction*100)
+        file_name = 'dir_loc/gpb_pos_%d' %(a_g_fcc.packing_fraction*100)
         f = open(file_name, 'w+')
         for line in pb_pos_input.splitlines(True):
             line = line.replace(
@@ -86,8 +88,10 @@ class GFCCGen(PBedGen):
         return file_name
 
     def parse(self, a_g_pbed, type):
+      # dir_loc is the folder path for the generated position file
         if type == 's':
-            input_file = self.generate_pos_file(a_g_pbed)
+            dir_loc='serp_input'
+            input_file = self.generate_pos_file(a_g_pbed, dir_loc)
             str_list = []
             str_list.append(
                 '\n%%---Graphite pebble bed(or unit cell) from input file\n' +

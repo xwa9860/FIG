@@ -48,7 +48,7 @@ cell 42  83 fill 3 -130
 lat 29 6 0. 0. 4.55082000 83
 
 %%---Pebble bed(here means unit cell) from input file
-pbed 3 28 "fpb_pos_40"
+pbed 3 28 "pb_pos_40"
 %%---Coolant in the unit cell
 %%---Coolant
 surf 131 inf
