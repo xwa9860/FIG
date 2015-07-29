@@ -15,7 +15,7 @@ surf 125 pz 572.850000
 cell 37 0 fill 81  -124 126 -125 
 
 %---Outside
-cell 86 0 outside 124
+cell 68 0 outside 124
 include "coreMaterials"
 %%---Neutron source and BC
 set pop 200000 200 500

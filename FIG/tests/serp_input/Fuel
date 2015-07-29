@@ -48,7 +48,7 @@ cell 42  83 fill 3 -130
 lat 29 6 0. 0. 4.55082000 83
 
 %%---Pebble bed(here means unit cell) from input file
-pbed 3 28 "pb_pos_40"
+pbed 3 28 "fpb_pos_40"
 %%---Coolant in the unit cell
 %%---Coolant
 surf 131 inf
@@ -72,50 +72,8 @@ Matrix
 lat 5 6 0. 0. 0.08860629 4
 cell 46 6 Shell 133
 %%---Fuel pebble
-cell 47 6 CentralGraphite -132
-cell 48 6 fill 5 132 -133
-%---Triso particle 
-particle 4
-fuel0 0.0200
-Buffer 0.0300
-iPyC 0.0335
-SiC 0.0370
-oPyC 0.0405
-Matrix
-%%---Triso  lattice
-lat 5 6 0. 0. 0.08860629 4
-cell 49 6 Shell 133
-%%---Fuel pebble
-cell 50 6 CentralGraphite -132
-cell 51 6 fill 5 132 -133
-%---Triso particle 
-particle 4
-fuel0 0.0200
-Buffer 0.0300
-iPyC 0.0335
-SiC 0.0370
-oPyC 0.0405
-Matrix
-%%---Triso  lattice
-lat 5 6 0. 0. 0.08860629 4
-cell 52 6 Shell 133
-%%---Fuel pebble
-cell 53 6 CentralGraphite -132
-cell 54 6 fill 5 132 -133
-%---Triso particle 
-particle 4
-fuel0 0.0200
-Buffer 0.0300
-iPyC 0.0335
-SiC 0.0370
-oPyC 0.0405
-Matrix
-%%---Triso  lattice
-lat 5 6 0. 0. 0.08860629 4
-cell 55 6 Shell 133
-%%---Fuel pebble
-cell 56 9 CentralGraphite -132
-cell 57 9 fill 8 132 -133
+cell 47 9 CentralGraphite -132
+cell 48 9 fill 8 132 -133
 %---Triso particle 
 particle 7
 fuel1 0.0200
@@ -126,52 +84,10 @@ oPyC 0.0405
 Matrix
 %%---Triso  lattice
 lat 8 6 0. 0. 0.08860629 7
-cell 58 9 Shell 133
+cell 49 9 Shell 133
 %%---Fuel pebble
-cell 59 9 CentralGraphite -132
-cell 60 9 fill 8 132 -133
-%---Triso particle 
-particle 7
-fuel1 0.0200
-Buffer 0.0300
-iPyC 0.0335
-SiC 0.0370
-oPyC 0.0405
-Matrix
-%%---Triso  lattice
-lat 8 6 0. 0. 0.08860629 7
-cell 61 9 Shell 133
-%%---Fuel pebble
-cell 62 9 CentralGraphite -132
-cell 63 9 fill 8 132 -133
-%---Triso particle 
-particle 7
-fuel1 0.0200
-Buffer 0.0300
-iPyC 0.0335
-SiC 0.0370
-oPyC 0.0405
-Matrix
-%%---Triso  lattice
-lat 8 6 0. 0. 0.08860629 7
-cell 64 9 Shell 133
-%%---Fuel pebble
-cell 65 9 CentralGraphite -132
-cell 66 9 fill 8 132 -133
-%---Triso particle 
-particle 7
-fuel1 0.0200
-Buffer 0.0300
-iPyC 0.0335
-SiC 0.0370
-oPyC 0.0405
-Matrix
-%%---Triso  lattice
-lat 8 6 0. 0. 0.08860629 7
-cell 67 9 Shell 133
-%%---Fuel pebble
-cell 68 12 CentralGraphite -132
-cell 69 12 fill 11 132 -133
+cell 50 12 CentralGraphite -132
+cell 51 12 fill 11 132 -133
 %---Triso particle 
 particle 10
 fuel2 0.0200
@@ -182,10 +98,10 @@ oPyC 0.0405
 Matrix
 %%---Triso  lattice
 lat 11 6 0. 0. 0.08860629 10
-cell 70 12 Shell 133
+cell 52 12 Shell 133
 %%---Fuel pebble
-cell 71 15 CentralGraphite -132
-cell 72 15 fill 14 132 -133
+cell 53 15 CentralGraphite -132
+cell 54 15 fill 14 132 -133
 %---Triso particle 
 particle 13
 fuel3 0.0200
@@ -196,10 +112,10 @@ oPyC 0.0405
 Matrix
 %%---Triso  lattice
 lat 14 6 0. 0. 0.08860629 13
-cell 73 15 Shell 133
+cell 55 15 Shell 133
 %%---Fuel pebble
-cell 74 18 CentralGraphite -132
-cell 75 18 fill 17 132 -133
+cell 56 18 CentralGraphite -132
+cell 57 18 fill 17 132 -133
 %---Triso particle 
 particle 16
 fuel4 0.0200
@@ -210,10 +126,10 @@ oPyC 0.0405
 Matrix
 %%---Triso  lattice
 lat 17 6 0. 0. 0.08860629 16
-cell 76 18 Shell 133
+cell 58 18 Shell 133
 %%---Fuel pebble
-cell 77 21 CentralGraphite -132
-cell 78 21 fill 20 132 -133
+cell 59 21 CentralGraphite -132
+cell 60 21 fill 20 132 -133
 %---Triso particle 
 particle 19
 fuel5 0.0200
@@ -224,10 +140,10 @@ oPyC 0.0405
 Matrix
 %%---Triso  lattice
 lat 20 6 0. 0. 0.08860629 19
-cell 79 21 Shell 133
+cell 61 21 Shell 133
 %%---Fuel pebble
-cell 80 24 CentralGraphite -132
-cell 81 24 fill 23 132 -133
+cell 62 24 CentralGraphite -132
+cell 63 24 fill 23 132 -133
 %---Triso particle 
 particle 22
 fuel6 0.0200
@@ -238,10 +154,10 @@ oPyC 0.0405
 Matrix
 %%---Triso  lattice
 lat 23 6 0. 0. 0.08860629 22
-cell 82 24 Shell 133
+cell 64 24 Shell 133
 %%---Fuel pebble
-cell 83 27 CentralGraphite -132
-cell 84 27 fill 26 132 -133
+cell 65 27 CentralGraphite -132
+cell 66 27 fill 26 132 -133
 %---Triso particle 
 particle 25
 fuel7 0.0200
@@ -252,4 +168,4 @@ oPyC 0.0405
 Matrix
 %%---Triso  lattice
 lat 26 6 0. 0. 0.08860629 25
-cell 85 27 Shell 133
+cell 67 27 Shell 133

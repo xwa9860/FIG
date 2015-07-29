@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from gen import Gen
 from serp_concept import Universe, Cell, Surface
-
+from  more_itertools import unique_everseen
 
 class PBedGen(Gen):
 
@@ -9,7 +9,7 @@ class PBedGen(Gen):
         if type == 's':
             str_list = []
             str_list.append(
-                '%%---Pebble bed(here means unit cell) from input file\n' +
+                '%%---Pebble unit cell with position from input file\n' +
                 'pbed %d %d "%s"\n' %
                 (self.univ.id, a_pbed.coolant.gen.univ.id,
                  input_file))
@@ -18,7 +18,7 @@ class PBedGen(Gen):
                 a_pbed.coolant.generate_output())
             str_list.append(
                 '%%---Pebbles in the unit cell(pbed)\n')
-            for pb in a_pbed.pb_list:
+            for pb in list(unique_everseen(a_pbed.pb_list)):
                 str_list.append(pb.generate_output())
             return ''.join(str_list)
 
@@ -42,8 +42,8 @@ class FCCGen(PBedGen):
             ' 0.  -%f 0. 1.5 %d\n' % (a_fcc.pitch, 0) +
             ' 0.  0. %f  1.5 %d\n' % (a_fcc.pitch, 0) +
             ' 0.  0. -%f 1.5 %d\n' % (a_fcc.pitch, 0))
-        file_name = 'dir_loc/fpb_pos_%d' % (a_fcc.packing_fraction * 100)
-        f = open(file_name, 'w+')
+        file_name = 'fpb_pos_%d' % (a_fcc.packing_fraction * 100)
+        f = open(dir_loc+file_name, 'w+')
         i = 0
         for line in pb_pos_input.splitlines(True):
             line = line.replace(
@@ -55,7 +55,7 @@ class FCCGen(PBedGen):
 
     def parse(self, a_fcc, type):
       # dir_loc is the folder path for the generated position file
-        dir_loc='serp_input'
+        dir_loc='serp_input/'
         file_name = self.generate_pos_file(a_fcc, dir_loc)
         return PBedGen.parse(self, a_fcc, file_name, 's')
 
@@ -78,8 +78,8 @@ class GFCCGen(PBedGen):
             ' 0.  -%f 0. 1.5 %d\n' % (a_g_fcc.pitch, 0) +
             ' 0.  0. %f  1.5 %d\n' % (a_g_fcc.pitch, 0) +
             ' 0.  0. -%f 1.5 %d\n' % (a_g_fcc.pitch, 0))
-        file_name = 'dir_loc/gpb_pos_%d' %(a_g_fcc.packing_fraction*100)
-        f = open(file_name, 'w+')
+        file_name = 'gpb_pos_%d' %(a_g_fcc.packing_fraction*100)
+        f = open(dir_loc+file_name, 'w+')
         for line in pb_pos_input.splitlines(True):
             line = line.replace(
                 '1.5 0', '1.5 %d' % a_g_fcc.pb_list[0].gen.univ.id)
@@ -90,7 +90,7 @@ class GFCCGen(PBedGen):
     def parse(self, a_g_pbed, type):
       # dir_loc is the folder path for the generated position file
         if type == 's':
-            dir_loc='serp_input'
+            dir_loc='serp_input/'
             input_file = self.generate_pos_file(a_g_pbed, dir_loc)
             str_list = []
             str_list.append(

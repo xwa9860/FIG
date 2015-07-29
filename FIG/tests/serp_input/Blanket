@@ -37,7 +37,7 @@ lat 46 6 0. 0. 4.55082000 82
 
 
 %%---Graphite pebble bed(or unit cell) from input file
-pbed 45 30 "pb_pos40"
+pbed 45 30 "gpb_pos_40"
 %%---coolant in the graphite pb unit cell
 %%---Coolant
 surf 128 inf
@@ -46,4 +46,4 @@ cell 40 30 Flibe1200 -128
 %%---surf for graphite pebble
 surf 129 sph 0.000000 0.000000 0.000000 1.500000
 %%---Graphite pebble
-cell 41 31 Graphite1200 -129
+cell 41 31 Be2C -129
