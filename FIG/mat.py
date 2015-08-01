@@ -165,7 +165,7 @@ class Graphite(Mat):
             'moder')
 
 
-class GraphiteCoolantMix(Mat):
+class GraphiteCoolMix(Mat):
     # this is a 'virtual' material defined as a mix of graphite and FliBe
     # to represent the inner part of the reflectors with coolant channel in it
     # volumetric fraction of coolant is 40%
@@ -180,7 +180,7 @@ class GraphiteCoolantMix(Mat):
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
         self.mat_comp.append(
-            '%graphite and flibe mix(fictitious material for coolant channel regions in reflectors'+
+            '%graphite and flibe mix(fictitious material for coolant channel regions in reflectors\n'+
             '6000.%s %f\n' %
             (lib_id, self.r6000) +
             '3006.%s %f\n3007.%s %f\n' %
@@ -188,7 +188,7 @@ class GraphiteCoolantMix(Mat):
             '4009.%s %f\n 9019.%s %f\n' %
             (lib_id, self.r4009, lib_id, self.r9019))
         self.mat_comp = ''.join(self.mat_comp)
-        self.name = 'GraphiteCoolantMix%d' % (math.ceil(temp))
+        self.name = 'GrCoolMix%d' % (math.ceil(temp))
         Mat.__init__(
             self,
             self.name,
@@ -328,8 +328,8 @@ class Be2C(Mat):
         self.mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append('6000.%s 1.0\n5010.%s 0.4\n5011.%s 1.6' %\
-                             (lib_id, lib_id, lib_id))
+        self.mat_comp.append('6000.%s 1.0\n4009.%s 2.0\n' %\
+                             (lib_id, lib_id))
         self.mat_comp = ''.join(self.mat_comp)
         Mat.__init__(
             self,

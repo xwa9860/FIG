@@ -46,4 +46,4 @@ cell 40 30 Flibe1200 -128
 %%---surf for graphite pebble
 surf 129 sph 0.000000 0.000000 0.000000 1.500000
 %%---Graphite pebble
-cell 41 31 Be2C -129
+cell 41 31 Graphite1200 -129

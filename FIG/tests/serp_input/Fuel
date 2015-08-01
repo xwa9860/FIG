@@ -47,7 +47,7 @@ surf 130 cube 0. 0. 0. 4.550820
 cell 42  83 fill 3 -130
 lat 29 6 0. 0. 4.55082000 83
 
-%%---Pebble bed(here means unit cell) from input file
+%%---Pebble unit cell with position from input file
 pbed 3 28 "fpb_pos_40"
 %%---Coolant in the unit cell
 %%---Coolant
