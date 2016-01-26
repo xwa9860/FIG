@@ -12,6 +12,11 @@ mat Graphite1200 -2.260000E+00 moder grph_Graphite1200 6000 tmp 1200.000000
 6000.12c 1.0
 therm grph_Graphite1200 gre7.22t
 
+mat YH2 -3.958000E+00 tmp 1200.000000
+ 39000.12c 1.0
+1000.12c 2.0
+
+
 mat GrCoolMix1200 -2.087047E+00 moder grph_GrCoolMix1200 6000 tmp 1200.000000
  %graphite and flibe mix(fictitious material for coolant channel regions in reflectors
 6000.12c 0.956271
@@ -1089,4 +1094,14 @@ mat fuel7 -1.000000E+01
 62154.12c 5.246390e-04
 94240.12c 9.217847e-03
 94238.12c 1.537052e-03
+
+
+mat YH2CoolantMix1200 -3.105847E+00 tmp 1200.000000
+ %reflector and flibe mix(fictitious material for coolant channel regions in reflectors
+39000.12c 0.834721
+1000.12c 1.669442
+3006.12c 0.000033
+3007.12c 0.330525
+4009.12c 0.165279
+9019.12c 0.661116
 
