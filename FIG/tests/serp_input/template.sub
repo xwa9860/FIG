@@ -1,0 +1,20 @@
+#!/bin/sh
+#SBATCH --job-name=volaveFuel
+#SBATCH --output=volaveFuel.log
+#SBATCH --error=volaveFuel.serr
+#SBATCH --partition=savio
+#SBATCH --time=4:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=20
+# QoS:
+#SBATCH --qos=nuclear_normal
+# Account:
+#SBATCH -A co_nuclear
+
+# Mail type:
+#SBATCH --mail-type=all
+#
+# Mail user:
+#SBATCH --mail-user=imwangxin@gmail.com
+
+sss2_1_17 -omp 20 serp_full_core
