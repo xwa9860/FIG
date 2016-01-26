@@ -4,6 +4,10 @@
  composition fraction in atomic fraction (in serpent atomic if positive, mass
  if negative)
  temperatures in K
+
+
+TODO: add coolant and solid reflector mix class and make graphite_coolant, B2C
+mix and  Yh2 mix subclasses
 '''
 #!/usr/bin/python
 from mat_gen import MatGen
@@ -266,6 +270,63 @@ class Be2CCoolMix(Mat):
         self.density = self.c.density * self.v_ratio + self.g.density *\
             (1 - self.v_ratio)
 
+
+class YH2CoolMix(Mat):
+    # this is a 'virtual' material defined as a mix of YH2 and FliBe
+    # to represent the inner part of the reflectors with coolant channel in it
+    # volumetric fraction of coolant is 40%
+
+    def __init__(self, temp, tmp_card=True):
+        self.v_ratio = 0.4   # volumic ratio of coolant
+        self.solid = YH2(temp)
+        self.coolant = Flibe(temp)
+        self.calculate_density()
+        self.calculate_atomic_comp()
+        self.mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        self.mat_comp.append(
+            '%reflector and flibe mix(fictitious material for coolant channel regions in reflectors\n'+
+            '39000.%s %f\n' %
+            (lib_id, self.r39000) +
+            '1000.%s %f\n' %
+            (lib_id, self.r1000) +
+            '3006.%s %f\n3007.%s %f\n' %
+            (lib_id, self.r3006, lib_id, self.r3007) +
+            '4009.%s %f\n9019.%s %f\n' %
+            (lib_id, self.r4009, lib_id, self.r9019))
+        self.mat_comp = ''.join(self.mat_comp)
+        self.name = 'YH2CoolantMix%d' % (math.ceil(temp))
+        Mat.__init__(
+            self,
+            self.name,
+            self.density,
+            self.mat_comp,
+            temp,
+            tmp_card)
+
+    def calculate_atomic_comp(self):
+        self.coolant_mass_ratio = (self.v_ratio*self.coolant.density) /\
+            (self.v_ratio * self.coolant.density +
+             (1-self.v_ratio) * self.solid.density)
+        self.coolant_atomic_ratio = (self.coolant_mass_ratio/2.349321E-23) /\
+            (self.coolant_mass_ratio/2.349321E-23 +
+             (1-self.coolant_mass_ratio)/(91/6.022/10E23))
+        self.r39000 = (1-self.coolant_atomic_ratio)
+        self.r1000 = self.r39000 * 2
+        self.r3006 = self.coolant.r3006 * self.coolant_atomic_ratio
+        self.r3007 = self.coolant.r3007 * self.coolant_atomic_ratio
+        self.r4009 = self.coolant.r4009 * self.coolant_atomic_ratio
+        self.r9019 = self.coolant.r9019 * self.coolant_atomic_ratio
+        #sum = self.r89000 + self.r3006 + self.r3007 + self.r4009 + self.r9019
+        #assert sum == 1, 'atomic fraction does not sum to 1, but %f' %sum
+
+    def calculate_density(self):
+        # calculate the equavalent density for the mixed material of graphite and coolant
+        self.density = self.coolant.density * self.v_ratio + self.solid.density *\
+            (1 - self.v_ratio)
+
+
 class Shell(Mat):
     # graphite shell in the pebbles
 
@@ -321,8 +382,7 @@ class B4C(Mat):
             tmp_card)
 
 class Be2C(Mat):
-    # boron carbide in reflectors 
-
+    # boron carbide in reflectors
     def __init__(self, temp, tmp_card=True):
         self.density = 1.85   #g/cm3
         self.mat_comp = []
@@ -334,6 +394,25 @@ class Be2C(Mat):
         Mat.__init__(
             self,
             'Be2C',
+            self.density,
+            self.mat_comp,
+            temp,
+            tmp_card)
+
+class YH2(Mat):
+    # Yttrium hydride in the outer reflector
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 3.958   #g/cm3
+        self.mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        self.mat_comp.append('39000.%s 1.0\n1000.%s 2.0\n' %\
+                             (lib_id, lib_id))
+        self.mat_comp = ''.join(self.mat_comp)
+        Mat.__init__(
+            self,
+            'YH2',
             self.density,
             self.mat_comp,
             temp,
