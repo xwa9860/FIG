@@ -4,12 +4,12 @@
  composition fraction in atomic fraction (in serpent atomic if positive, mass
  if negative)
  temperatures in K
-
-
-TODO: add coolant and solid reflector mix class and make graphite_coolant, B2C
-mix and  Yh2 mix subclasses
-'''
-#!/usr/bin/python
+#
+#
+#TODO: add coolant and solid reflector mix class and make graphite_coolant, B2C
+#mix and  Yh2 mix subclasses
+#'''
+##!/usr/bin/python
 from mat_gen import MatGen
 from comparable_object import CmpObj
 import math
@@ -20,27 +20,54 @@ class Mat(CmpObj):
             self,
             name,
             density,
-            mat_comp,
             temp,
+            mat_comp=[],
+            isotopes=[],
+            ratio_list=[],
             tmp_card=True,
             flag=''):
+        '''
+        ratio_list: list of atomic ratios of the isotopes, in the same order as
+        in isotopes list
+        '''
+        self.name = name
         self.density = density   # density is mass density in g/cm3
-        self.mat_comp = mat_comp  # string containing mat_composition and fraction
+        # string containing mat_composition and fraction
+        self.mat_comp = mat_comp
         self.gen = MatGen()
         self.flag = flag
         self.temp = temp
-        self.tmp_card=tmp_card
+        self.tmp_card = tmp_card
+        self.isotopes = isotopes
+        self.ratio_list = ratio_list
+        if self.isotopes:
+            self.mat_comp = []
+            lib_id = self.calc_lib_id(temp)
+            #TODO self.mat_comp.append(comments)
+            print('defined isotopes%s' %self.name)
+            self.calc_atomic_ratio(self.ratio_list)
+            for isotope in self.isotopes:
+                self.mat_comp.append(
+                    '%s.%s %f\n' %
+                    (isotope, lib_id, self.atomic_ratio[isotope]))
+            self.mat_comp = ''.join(self.mat_comp)
         CmpObj.__init__(self, temp, name)
 
     def generate_output(self):
         return self.gen.parse(self, 's', self.tmp_card)
 
     def calc_lib_id(self, temp):
-        if temp//300*3<10:
+        if temp//300*3 < 10:
             lib_id = '0'+str(int(temp//300*3))+'c'
         else:
             lib_id = str(int(temp//300*3))+'c'
         return lib_id
+
+    def calc_atomic_ratio(self, ratio_list):
+        self.atomic_ratio = {}
+        for i, isotope in enumerate(self.isotopes):
+            self.atomic_ratio[isotope] = ratio_list[i]
+
 
 class Isotope:
 
@@ -63,9 +90,13 @@ class Fuel(Mat):
         text_comp = []
         with open(input_file, 'r') as inpf:
             for line in inpf:
-                text_comp.append(line.split(' ')[0].split('.')[0]+'.%s ' %lib_id + \
-                                 line.split(' ')[1])
-        Mat.__init__(self, name, 10, ''.join(text_comp), temp, tmp_card)
+                text_comp.append(
+                    line.split(' ')[0].split('.')[0] +
+                    '.%s ' %
+                    lib_id +
+                    line.split(' ')[1])
+        Mat.__init__(self, name, 10, temp, mat_comp=''.join(text_comp),
+                     tmp_card=tmp_card)
 
 
 class Flibe(Mat):
@@ -74,20 +105,11 @@ class Flibe(Mat):
         density = (2279.92 - 0.488*(temp-273.15))/1000
         self.temp = temp
         # FLiBe chemical formular is Li2BeF4
-        self.r3006 = 2*0.0001#2.42E-5 # 2 * 0.0001
-        self.r3007 = 2*0.9999 #2 # 2*0.9999
-        self.r4009 = 1.0
-        self.r9019 = 4.0
-        mat_comp = []
-        lib_id = self.calc_lib_id(temp)
-        mat_comp.append('%coolant\n'+
-                        '3006.%s %.8f\n3007.%s %f\n' %
-                        (lib_id, self.r3006, lib_id, self.r3007) +
-                        '4009.%s %f\n9019.%s %f\n' %
-                        (lib_id, self.r4009, lib_id, self.r9019))
-        mat_comp = ''.join(mat_comp)
+        isotopes = ['3006', '3007', '4009', '9019']
+        ratio_list = [2*0.0001, 2*0.9999, 1.0, 4.0]
         name = 'Flibe%d' % math.ceil(temp)
-        Mat.__init__(self, name, density, mat_comp, temp, tmp_card)
+        Mat.__init__(self, name, density, temp, tmp_card=tmp_card,
+                     isotopes=isotopes, ratio_list=ratio_list)
 
 
 class Buffer(Mat):
@@ -96,9 +118,13 @@ class Buffer(Mat):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
-        mat_comp.append('%Buffer layer in triso particle\n'+'6000.%s 5.26449E-02\n' % lib_id)
+        mat_comp.append(
+            '%Buffer layer in triso particle\n' +
+            '6000.%s 5.26449E-02\n' %
+            lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'Buffer', 1.05, mat_comp, temp, tmp_card, 'moder')
+        Mat.__init__(self, 'Buffer', 1.05, temp, mat_comp=mat_comp,
+                     tmp_card=tmp_card, flag='moder')
 
 
 class iPyC(Mat):
@@ -107,9 +133,13 @@ class iPyC(Mat):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
-        mat_comp.append('%inner pyrocarbon layer in triso particle\n'+'6000.%s 9.52621E-02\n' % lib_id)
+        mat_comp.append(
+            '%inner pyrocarbon layer in triso particle\n' +
+            '6000.%s 9.52621E-02\n' %
+            lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'iPyC', 1.90, mat_comp, temp, tmp_card, 'moder')
+        Mat.__init__(self, 'iPyC', 1.90, temp, mat_comp=mat_comp,
+                     tmp_card=tmp_card, flag='moder')
 
 
 class oPyC(Mat):
@@ -118,9 +148,13 @@ class oPyC(Mat):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
-        mat_comp.append('%outer pyrocarbon layer in triso particle\n'+'6000.%s 9.52621E-02\n' % lib_id)
+        mat_comp.append(
+            '%outer pyrocarbon layer in triso particle\n' +
+            '6000.%s 9.52621E-02\n' %
+            lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'oPyC', 1.90, mat_comp, temp, tmp_card, 'moder')
+        Mat.__init__(self, 'oPyC', 1.90, temp, mat_comp=mat_comp,
+                    tmp_card=tmp_card, flag='moder')
 
 
 class SiC(Mat):
@@ -129,10 +163,14 @@ class SiC(Mat):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
-        mat_comp.append('%silicon carbon layer in triso particle\n'+'6000.%s 4.7724E-02\n14028.%s 4.77240E-02\n' %
-                        (lib_id, lib_id))
+        mat_comp.append(
+            '%silicon carbon layer in triso particle\n' +
+            '6000.%s 4.7724E-02\n14028.%s 4.77240E-02\n' %
+            (lib_id,
+             lib_id))
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'SiC', 3.18, mat_comp, temp, tmp_card)
+        Mat.__init__(self, 'SiC', 3.18, temp, mat_comp=mat_comp,
+                     tmp_card=tmp_card)
 
 
 class Matrix(Mat):
@@ -141,86 +179,247 @@ class Matrix(Mat):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
-        mat_comp.append('%matrix in triso particle\n'+
+        mat_comp.append('%matrix in triso particle\n' +
                         '6000.%s 8.77414E-02\n' % lib_id +
                         '5010.%s 9.64977E-09\n' % lib_id +
                         '5011.%s 3.90864E-08\n' % lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'Matrix', 1.75, mat_comp, temp, tmp_card, 'moder')
+        Mat.__init__(self, 'Matrix', 1.75, temp, mat_comp=mat_comp,
+                     tmp_card=tmp_card, flag='moder')
 
 
 class Graphite(Mat):
 
     def __init__(self, temp, tmp_card=True):
         self.temp = temp
-        self. density = 2.26
-        self.mat_comp = []
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append('%graphite in reflectors\n'+'6000.%s 1.0\n' % lib_id)
-        self.mat_comp = ''.join(self.mat_comp)
+        self.density = 2.26
+        isotopes = ['6000']
+        ratio_list = [1]
+        #self.mat_comp = []
+        #lib_id = self.calc_lib_id(temp)
+        #self.mat_comp.append(
+        #    '%graphite in reflectors\n' +
+        #    '6000.%s 1.0\n' %
+        #    lib_id)
+        #self.mat_comp = ''.join(self.mat_comp)
         self.name = 'Graphite%d' % (math.ceil(temp))
         Mat.__init__(
             self,
             self.name,
             self.density,
-            self.mat_comp,
             temp,
-            tmp_card,
-            'moder')
+            tmp_card=tmp_card,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            flag='moder')
 
 
-class GraphiteCoolMix(Mat):
+class Shell(Mat):
+    # graphite shell in the pebbles
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 1.75
+        isotopes = ['6000']
+        ratio_list = [1]
+        #self.mat_comp = []
+        #self.temp = temp
+        #lib_id = self.calc_lib_id(temp)
+        #self.mat_comp.append(
+        #    '%Graphite shell(outermost layer of fuel pebble)\n' +
+        #    '6000.%s 1.0\n' %
+        #    lib_id)
+        #self.mat_comp = ''.join(self.mat_comp)
+        Mat.__init__(
+            self,
+            'Shell',
+            self.density,
+            temp,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            tmp_card=tmp_card,
+            flag='moder')
+
+
+class CentralGraphite(Mat):
+    # graphite core in the pebbles
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 1.74
+        isotopes = ['6000']
+        ratio_list = [1]
+        #self.mat_comp = []
+        #self.temp = temp
+        #lib_id = self.calc_lib_id(temp)
+        #self.mat_comp.append(
+        #    '%graphite core in fuel pebble(also called moderator\n' +
+        #    '6000.%s 1.0\n' %
+        #    lib_id)
+        #self.mat_comp = ''.join(self.mat_comp)
+        Mat.__init__(
+            self,
+            'CentralGraphite',
+            self.density,
+            temp,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            tmp_card=tmp_card,
+            flag='moder')
+
+
+class B4C(Mat):
+    # natural boron carbide in control rods
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 2.52  # g/cm3
+        self.mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        self.mat_comp.append('6000.%s 1.0\n5010.%s 0.8\n5011.%s 3.2' %
+                             (lib_id, lib_id, lib_id))
+        self.mat_comp = ''.join(self.mat_comp)
+        Mat.__init__(
+            self,
+            'B4C',
+            self.density,
+            temp,
+            mat_comp=self.mat_comp,
+            tmp_card=tmp_card)
+
+
+class Be2C(Mat):
+    # boron carbide in reflectors
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 1.85  # g/cm3
+        self.mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        self.mat_comp.append('6000.%s 1.0\n4009.%s 2.0\n' %
+                             (lib_id, lib_id))
+        self.mat_comp = ''.join(self.mat_comp)
+        Mat.__init__(
+            self,
+            'Be2C',
+            self.density,
+            temp,
+            mat_comp=self.mat_comp,
+            tmp_card=tmp_card)
+
+
+class YH2(Mat):
+    # Yttrium hydride in the outer reflector
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 3.958  # g/cm3
+        isotopes = ['39089', '1001']
+        ratio_list = [1, 2]
+        #self.mat_comp = []
+        #lib_id = self.calc_lib_id(temp)
+        #self.mat_comp.append('39089.%s 1.0\n1001.%s 2.0\n' %
+        #                     (lib_id, lib_id))
+        #self.mat_comp = ''.join(self.mat_comp)
+        Mat.__init__(
+            self,
+            'YH2',
+            self.density,
+            temp,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            tmp_card=tmp_card)
+
+
+class Outside(Mat):
+    # outside the defined domain
+
+    def __init__(self, temp):
+        mat_comp = ''
+        Mat.__init__(self, 'Outside', self.density, temp, mat_comp=mat_comp)
+
+
+class mixMat(Mat):
+    # this is a 'virtual' material defined as a mix of solid and FliBe coolant
+    # to represent the inner part of the reflectors with coolant channel in it
+    # volumetric fraction of coolant is 40%
+
+    def __init__(self, temp, solid_mat, solid_atomic_mass,
+                 coolant_v_ratio=0.4, tmp_card=True, flag=''):
+        '''
+        solid_mat and coolant_mat: material objects
+        solid_atomic_mass: average atomic(sum of all elements if compound)
+                        mass of the solid material
+        '''
+        self.v_ratio = coolant_v_ratio
+        self.solid = solid_mat
+        self.temp = temp
+        self.coolant = Flibe(temp)
+        isotopes = self.coolant.isotopes + self.solid.isotopes
+        ratio_list = self.coolant.ratio_list + self.solid.ratio_list
+        self.calculate_density()
+        self.name = '%sCoolantMix%d' % (self.solid.name, math.ceil(temp))
+        Mat.__init__(
+            self,
+            self.name,
+            self.density,
+            temp,
+            tmp_card=tmp_card,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            flag=flag)
+        self.calculate_atomic_comp(solid_atomic_mass)
+        #self.mat_comp = []
+        #lib_id = self.calc_lib_id(temp)
+        #self.mat_comp.append(
+        #    '%reflector and flibe mix(fictitious material' +
+        #    ' for coolant channel regions in reflectors\n')
+        #for isotope in self.isotopes:
+        #    self.mat_comp.append(
+        #        '%s.%s %f\n' %
+        #        (isotope, lib_id, self.atomic_ratio[isotope]))
+        #self.mat_comp = ''.join(self.mat_comp)
+
+    def calculate_atomic_comp(self, solid_atomic_mass):
+        self.coolant_mass_ratio = (self.v_ratio*self.coolant.density) /\
+            (self.v_ratio * self.coolant.density +
+             (1-self.v_ratio) * self.solid.density)
+        self.coolant_atomic_ratio = (self.coolant_mass_ratio/2.349321E-23) /\
+            (self.coolant_mass_ratio/2.349321E-23 +
+             (1-self.coolant_mass_ratio)/(solid_atomic_mass/6.022/10E23))
+        self.solid_atomic_ratio = (1-self.coolant_atomic_ratio)
+        for isotope in self.solid.isotopes:
+            self.atomic_ratio[isotope] = self.solid.atomic_ratio[isotope] \
+                * self.solid_atomic_ratio
+        for isotope in self.coolant.isotopes:
+            self.atomic_ratio[isotope] = self.coolant.atomic_ratio[isotope] \
+                * self.coolant_atomic_ratio
+        #sum = self.r89000 + self.r3006 + self.r3007 + self.r4009 + self.r9019
+        #assert sum == 1, 'atomic fraction does not sum to 1, but %f' %sum
+
+    def calculate_density(self):
+        # calculate the equavalent density for the mixed material of graphite
+        # and coolant
+
+        self.coolant = Flibe(self.temp)
+        self.density = self.coolant.density * self.v_ratio + self.solid.density *\
+            (1 - self.v_ratio)
+
+
+class GraphiteCoolMix(mixMat):
     # this is a 'virtual' material defined as a mix of graphite and FliBe
     # to represent the inner part of the reflectors with coolant channel in it
     # volumetric fraction of coolant is 40%
 
     def __init__(self, temp, tmp_card=True):
-        self.v_ratio = 0.4   # volumic ratio of coolant
-        self.g = Graphite(temp)
-        self.c = Flibe(temp)
-        self.calculate_density()
-        self.calculate_atomic_comp()
-        self.mat_comp = []
         self.temp = temp
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append(
-            '%graphite and flibe mix(fictitious material for coolant channel regions in reflectors\n'+
-            '6000.%s %f\n' %
-            (lib_id, self.r6000) +
-            '3006.%s %f\n3007.%s %f\n' %
-            (lib_id, self.r3006, lib_id, self.r3007) +
-            '4009.%s %f\n 9019.%s %f\n' %
-            (lib_id, self.r4009, lib_id, self.r9019))
-        self.mat_comp = ''.join(self.mat_comp)
-        self.name = 'GrCoolMix%d' % (math.ceil(temp))
-        Mat.__init__(
+        flag='moder'
+        mixMat.__init__(
             self,
-            self.name,
-            self.density,
-            self.mat_comp,
             temp,
-            tmp_card,
-            'moder')
+            Graphite(temp),
+            12.0,
+            tmp_card=tmp_card,
+            flag=flag)
 
-    def calculate_atomic_comp(self):
-        self.m_ratio = (self.v_ratio*self.c.density) /\
-            (self.v_ratio * self.c.density + (1-self.v_ratio) * self.g.density)
-        self.a_ratio = (self.m_ratio/2.349321E-23) /\
-            (self.m_ratio/2.349321E-23 + (1-self.m_ratio)/(12/6.022/10E23))
-        self.r3006 = self.c.r3006 * self.a_ratio
-        self.r3007 = self.c.r3007 * self.a_ratio
-        self.r4009 = self.c.r4009 * self.a_ratio
-        self.r9019 = self.c.r9019 * self.a_ratio
-        self.r6000 = (1-self.a_ratio)
-        # print self.r3006 + self.r3007 + self.r4009 + self.r9019 + self.r6000
-
-    def calculate_density(self):
-        # calculate the equavalent density for the mixed material of graphite and coolant
-        self.density = self.c.density * self.v_ratio + self.g.density *\
-            (1 - self.v_ratio)
-
-
-class Be2CCoolMix(Mat):
+class Be2CCoolMix(mixMat):
     # this is a 'virtual' material defined as a mix of Be2C and FliBe
     # to represent the inner part of the reflectors with coolant channel in it
     # volumetric fraction of coolant is 40%
@@ -235,7 +434,7 @@ class Be2CCoolMix(Mat):
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
         self.mat_comp.append(
-            '%reflector and flibe mix(fictitious material for coolant channel regions in reflectors\n'+
+            '%reflector and flibe mix(fictitious material for coolant channel regions in reflectors\n' +
             '6000.%s %f\n' %
             (lib_id, self.r6000) +
             '3006.%s %f\n3007.%s %f\n' %
@@ -252,26 +451,8 @@ class Be2CCoolMix(Mat):
             temp,
             tmp_card)
 
-    def calculate_atomic_comp(self):
-        self.m_ratio = (self.v_ratio*self.c.density) /\
-            (self.v_ratio * self.c.density + (1-self.v_ratio) * self.g.density)
-        self.a_ratio = (self.m_ratio/2.349321E-23) /\
-            (self.m_ratio/2.349321E-23 + (1-self.m_ratio)/(30.04/6.022/10E23))
-        self.r6000 = (1-self.a_ratio)
-        self.r3006 = self.c.r3006 * self.a_ratio
-        self.r3007 = self.c.r3007 * self.a_ratio
-        self.r4009 = self.c.r4009 * self.a_ratio + self.r6000*2 # second term is fraction of be in be2c
-        self.r9019 = self.c.r9019 * self.a_ratio
-        #sum = self.r3006 + self.r3007 + self.r4009 + self.r9019 + self.r6000
-        #assert sum == 1, 'atomic fraction does not sum to 1, but %f' %sum
 
-    def calculate_density(self):
-        # calculate the equavalent density for the mixed material of graphite and coolant
-        self.density = self.c.density * self.v_ratio + self.g.density *\
-            (1 - self.v_ratio)
-
-
-class YH2CoolMix(Mat):
+class YH2CoolMix(mixMat):
     # this is a 'virtual' material defined as a mix of YH2 and FliBe
     # to represent the inner part of the reflectors with coolant channel in it
     # volumetric fraction of coolant is 40%
@@ -280,148 +461,9 @@ class YH2CoolMix(Mat):
         self.v_ratio = 0.4   # volumic ratio of coolant
         self.solid = YH2(temp)
         self.coolant = Flibe(temp)
-        self.calculate_density()
-        self.calculate_atomic_comp()
-        self.mat_comp = []
-        self.temp = temp
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append(
-            '%reflector and flibe mix(fictitious material for coolant channel regions in reflectors\n'+
-            '39000.%s %f\n' %
-            (lib_id, self.r39000) +
-            '1000.%s %f\n' %
-            (lib_id, self.r1000) +
-            '3006.%s %f\n3007.%s %f\n' %
-            (lib_id, self.r3006, lib_id, self.r3007) +
-            '4009.%s %f\n9019.%s %f\n' %
-            (lib_id, self.r4009, lib_id, self.r9019))
-        self.mat_comp = ''.join(self.mat_comp)
-        self.name = 'YH2CoolantMix%d' % (math.ceil(temp))
-        Mat.__init__(
+        mixMat.__init__(
             self,
-            self.name,
-            self.density,
-            self.mat_comp,
             temp,
-            tmp_card)
-
-    def calculate_atomic_comp(self):
-        self.coolant_mass_ratio = (self.v_ratio*self.coolant.density) /\
-            (self.v_ratio * self.coolant.density +
-             (1-self.v_ratio) * self.solid.density)
-        self.coolant_atomic_ratio = (self.coolant_mass_ratio/2.349321E-23) /\
-            (self.coolant_mass_ratio/2.349321E-23 +
-             (1-self.coolant_mass_ratio)/(91/6.022/10E23))
-        self.r39000 = (1-self.coolant_atomic_ratio)
-        self.r1000 = self.r39000 * 2
-        self.r3006 = self.coolant.r3006 * self.coolant_atomic_ratio
-        self.r3007 = self.coolant.r3007 * self.coolant_atomic_ratio
-        self.r4009 = self.coolant.r4009 * self.coolant_atomic_ratio
-        self.r9019 = self.coolant.r9019 * self.coolant_atomic_ratio
-        #sum = self.r89000 + self.r3006 + self.r3007 + self.r4009 + self.r9019
-        #assert sum == 1, 'atomic fraction does not sum to 1, but %f' %sum
-
-    def calculate_density(self):
-        # calculate the equavalent density for the mixed material of graphite and coolant
-        self.density = self.coolant.density * self.v_ratio + self.solid.density *\
-            (1 - self.v_ratio)
-
-
-class Shell(Mat):
-    # graphite shell in the pebbles
-
-    def __init__(self, temp, tmp_card=True):
-        self.density = 1.75
-        self.mat_comp = []
-        self.temp = temp
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append('%Graphite shell(outermost layer of fuel pebble)\n'+
-            '6000.%s 1.0\n' % lib_id)
-        self.mat_comp = ''.join(self.mat_comp)
-        Mat.__init__(self, 'Shell', self.density, self.mat_comp, temp, tmp_card, 'moder')
-
-
-class CentralGraphite(Mat):
-    # graphite core in the pebbles
-
-    def __init__(self, temp, tmp_card=True):
-        self.density = 1.74
-        self.mat_comp = []
-        self.temp = temp
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append('%graphite core in fuel pebble(also called moderator\n'+
-        '6000.%s 1.0\n' % lib_id)
-        self.mat_comp = ''.join(self.mat_comp)
-        Mat.__init__(
-            self,
-            'CentralGraphite',
-            self.density,
-            self.mat_comp,
-            temp,
-            tmp_card,
-            'moder')
-
-
-class B4C(Mat):
-    # natural boron carbide in control rods
-
-    def __init__(self, temp, tmp_card=True):
-        self.density = 2.52   #g/cm3
-        self.mat_comp = []
-        self.temp = temp
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append('6000.%s 1.0\n5010.%s 0.8\n5011.%s 3.2' %\
-                             (lib_id, lib_id, lib_id))
-        self.mat_comp = ''.join(self.mat_comp)
-        Mat.__init__(
-            self,
-            'B4C',
-            self.density,
-            self.mat_comp,
-            temp,
-            tmp_card)
-
-class Be2C(Mat):
-    # boron carbide in reflectors
-    def __init__(self, temp, tmp_card=True):
-        self.density = 1.85   #g/cm3
-        self.mat_comp = []
-        self.temp = temp
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append('6000.%s 1.0\n4009.%s 2.0\n' %\
-                             (lib_id, lib_id))
-        self.mat_comp = ''.join(self.mat_comp)
-        Mat.__init__(
-            self,
-            'Be2C',
-            self.density,
-            self.mat_comp,
-            temp,
-            tmp_card)
-
-class YH2(Mat):
-    # Yttrium hydride in the outer reflector
-
-    def __init__(self, temp, tmp_card=True):
-        self.density = 3.958   #g/cm3
-        self.mat_comp = []
-        self.temp = temp
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append('39000.%s 1.0\n1000.%s 2.0\n' %\
-                             (lib_id, lib_id))
-        self.mat_comp = ''.join(self.mat_comp)
-        Mat.__init__(
-            self,
-            'YH2',
-            self.density,
-            self.mat_comp,
-            temp,
-            tmp_card)
-
-class Outside(Mat):
-    # outside the defined domain
-
-    def __init__(self, temp):
-        self.mat_comp = ''
-        self.temp = temp
-        Mat.__init__(self, 'Outside', self.density, self.mat_comp, temp)
+            YH2(temp),
+            91.0,
+            tmp_card=tmp_card)
