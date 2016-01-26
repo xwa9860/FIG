@@ -426,29 +426,12 @@ class Be2CCoolMix(mixMat):
 
     def __init__(self, temp, tmp_card=True):
         self.v_ratio = 0.4   # volumic ratio of coolant
-        self.g = Be2C(temp)
-        self.c = Flibe(temp)
-        self.calculate_density()
-        self.calculate_atomic_comp()
-        self.mat_comp = []
-        self.temp = temp
-        lib_id = self.calc_lib_id(temp)
-        self.mat_comp.append(
-            '%reflector and flibe mix(fictitious material for coolant channel regions in reflectors\n' +
-            '6000.%s %f\n' %
-            (lib_id, self.r6000) +
-            '3006.%s %f\n3007.%s %f\n' %
-            (lib_id, self.r3006, lib_id, self.r3007) +
-            '4009.%s %f\n9019.%s %f\n' %
-            (lib_id, self.r4009, lib_id, self.r9019))
-        self.mat_comp = ''.join(self.mat_comp)
-        self.name = 'Be2CCoolMix%d' % (math.ceil(temp))
-        Mat.__init__(
+        self.solid = Be2C(temp)
+        mixMat.__init__(
             self,
-            self.name,
-            self.density,
-            self.mat_comp,
             temp,
+            Be2C(temp),
+            30,
             tmp_card)
 
 
@@ -460,7 +443,6 @@ class YH2CoolMix(mixMat):
     def __init__(self, temp, tmp_card=True):
         self.v_ratio = 0.4   # volumic ratio of coolant
         self.solid = YH2(temp)
-        self.coolant = Flibe(temp)
         mixMat.__init__(
             self,
             temp,
