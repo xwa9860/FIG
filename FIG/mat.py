@@ -313,11 +313,6 @@ class YH2(Mat):
         self.density = 3.958  # g/cm3
         isotopes = ['39089', '1001']
         ratio_list = [1, 2]
-        #self.mat_comp = []
-        #lib_id = self.calc_lib_id(temp)
-        #self.mat_comp.append('39089.%s 1.0\n1001.%s 2.0\n' %
-        #                     (lib_id, lib_id))
-        #self.mat_comp = ''.join(self.mat_comp)
         Mat.__init__(
             self,
             'YH2',
@@ -328,6 +323,21 @@ class YH2(Mat):
             tmp_card=tmp_card)
 
 
+class ZrH2(Mat):
+    # Yttrium hydride in the outer reflector
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 5.56  # g/cm3
+        isotopes = ['40089', '40090', '40091', '40094', '40096', '1001']
+        ratio_list = [0.5145, 0.1122, 0.1715, 0.1738, 0.0280, 2]
+        Mat.__init__(
+            self,
+            'ZrH2',
+            self.density,
+            temp,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            tmp_card=tmp_card)
 class Outside(Mat):
     # outside the defined domain
 
@@ -419,6 +429,7 @@ class GraphiteCoolMix(mixMat):
             tmp_card=tmp_card,
             flag=flag)
 
+
 class Be2CCoolMix(mixMat):
     # this is a 'virtual' material defined as a mix of Be2C and FliBe
     # to represent the inner part of the reflectors with coolant channel in it
@@ -426,7 +437,6 @@ class Be2CCoolMix(mixMat):
 
     def __init__(self, temp, tmp_card=True):
         self.v_ratio = 0.4   # volumic ratio of coolant
-        self.solid = Be2C(temp)
         mixMat.__init__(
             self,
             temp,
@@ -442,10 +452,24 @@ class YH2CoolMix(mixMat):
 
     def __init__(self, temp, tmp_card=True):
         self.v_ratio = 0.4   # volumic ratio of coolant
-        self.solid = YH2(temp)
         mixMat.__init__(
             self,
             temp,
             YH2(temp),
             91.0,
             tmp_card=tmp_card)
+
+class ZrH2CoolMix(mixMat):
+    # this is a 'virtual' material defined as a mix of Be2C and FliBe
+    # to represent the inner part of the reflectors with coolant channel in it
+    # volumetric fraction of coolant is 40%
+
+    def __init__(self, temp, tmp_card=True):
+        self.v_ratio = 0.4   # volumic ratio of coolant
+        mixMat.__init__(
+            self,
+            temp,
+            ZrH2(temp),
+            93.224,
+            tmp_card)
+
