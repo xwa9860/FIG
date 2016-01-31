@@ -328,7 +328,7 @@ class ZrH2(Mat):
 
     def __init__(self, temp, tmp_card=True):
         self.density = 5.56  # g/cm3
-        isotopes = ['40089', '40090', '40091', '40094', '40096', '1001']
+        isotopes = ['40090', '40091', '40092', '40094', '40096', '1001']
         ratio_list = [0.5145, 0.1122, 0.1715, 0.1738, 0.0280, 2]
         Mat.__init__(
             self,
