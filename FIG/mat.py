@@ -287,7 +287,7 @@ class B4C(Mat):
 
 
 class Be2C(Mat):
-    # boron carbide in reflectors
+    # berrylium carbide in reflectors
 
     def __init__(self, temp, tmp_card=True):
         self.density = 1.85  # g/cm3
@@ -305,6 +305,24 @@ class Be2C(Mat):
             mat_comp=self.mat_comp,
             tmp_card=tmp_card)
 
+class Be(Mat):
+    # berrylium metal in reflectors
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 1.85  # g/cm3
+        self.mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        self.mat_comp.append('4009.%s 1.0\n' %
+                             (lib_id))
+        self.mat_comp = ''.join(self.mat_comp)
+        Mat.__init__(
+            self,
+            'Be',
+            self.density,
+            temp,
+            mat_comp=self.mat_comp,
+            tmp_card=tmp_card)
 
 class YH2(Mat):
     # Yttrium hydride in the outer reflector
@@ -444,6 +462,20 @@ class Be2CCoolMix(mixMat):
             30,
             tmp_card)
 
+
+class BeCoolMix(mixMat):
+    # this is a 'virtual' material defined as a mix of Be and FliBe
+    # to represent the inner part of the reflectors with coolant channel in it
+    # volumetric fraction of coolant is 40%
+
+    def __init__(self, temp, tmp_card=True):
+        self.v_ratio = 0.4   # volumic ratio of coolant
+        mixMat.__init__(
+            self,
+            temp,
+            Be(temp),
+            30,
+            tmp_card)
 
 class YH2CoolMix(mixMat):
     # this is a 'virtual' material defined as a mix of YH2 and FliBe
