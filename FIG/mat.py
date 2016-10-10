@@ -213,6 +213,40 @@ class Graphite(Mat):
             ratio_list=ratio_list,
             flag='moder')
 
+class GraphiteSSMix(Mat):
+    '''Graphite and SS316 mix to represent inner reflector with a ss316
+    control rod channel liner
+    stainless steel composition and density from:
+        http://www.espimetals.com/index.php/192-technical-data/stainless-steel-316-alloy-composition/202-stainless-steel-316-alloy-composition
+    '''
+
+    def __init__(self, temp, tmp_card=True):
+        self.temp = temp
+        # the density is an average between 2.26 for graphite
+        # and 8.03 for SS316: 2.26*0.9+8.03*0.1
+        self.density = 2.837
+        # carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
+        # carbon fraction includes both carbon in graphite and carbon in ss316
+        isotopes = ['6000', '28000', '24000', '42000', '26000', '14000', '25000', '15000', '16000']
+        # the SS316 atomic ratio to carbon in graphtie in 1:10
+        ratio_list = [1+0.008, 1.2, 1.7, 0.25, 6.5345, 0.1, 0.2, 0.0045, 0.003]
+        #self.mat_comp = []
+        #lib_id = self.calc_lib_id(temp)
+        #self.mat_comp.append(
+        #    '%graphite in reflectors\n' +
+        #    '6000.%s 1.0\n' %
+        #    lib_id)
+        #self.mat_comp = ''.join(self.mat_comp)
+        self.name = 'GraphiteAndSS316%d' % (math.ceil(temp))
+        Mat.__init__(
+            self,
+            self.name,
+            self.density,
+            temp,
+            tmp_card=tmp_card,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            flag='moder')
 
 class Shell(Mat):
     # graphite shell in the pebbles
@@ -447,6 +481,26 @@ class GraphiteCoolMix(mixMat):
             tmp_card=tmp_card,
             flag=flag)
 
+class GraphiteSSCoolMix(mixMat):
+    # this is a 'virtual' material defined as a mix of graphite and FliBe and
+    # a little SS316 as control rod channel liner
+    # to represent the inner part of the reflectors with coolant channel in it
+    # volumetric fraction of coolant is 40%
+
+    def __init__(self, temp, tmp_card=True):
+        # average graphtie and SS316 atomic mass(not very precise about the
+        # atomic numbers of each isotope)
+        solid_atomic_mass = (12*100.008+56*1.2+48*1.7+84*0.5+52*6.5345*2
+                             +28*0.2+50*0.4+30*0.009+32*0.006)/110.0
+        self.temp = temp
+        flag='moder'
+        mixMat.__init__(
+            self,
+            temp,
+            GraphiteSSMix(temp),
+            solid_atomic_mass,
+            tmp_card=tmp_card,
+            flag=flag)
 
 class Be2CCoolMix(mixMat):
     # this is a 'virtual' material defined as a mix of Be2C and FliBe

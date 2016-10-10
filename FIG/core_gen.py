@@ -53,7 +53,8 @@ class CoreGen(Gen):
 
             # define neutron source and BC
             str_list.append('\n%%---Neutron source and BC\n')
-            str_list.append('set pop 200000 200 500\n')
+            str_list.append('\n%%---set pop neutron-per-cycle cycles skip-cycles\n')
+            str_list.append('set pop 200000 500 200\n')
             str_list.append('set bc 1\n')
             str_list.append('set ures 1')
             # Plot

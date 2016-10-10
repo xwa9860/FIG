@@ -30,7 +30,7 @@ class CenterRef_CoolantChannel(Comp):
 
     def __init__(self, temp, cool_temp):
         name = 'CRCC'
-        Comp.__init__(self, temp, name, [GraphiteCoolMix(cool_temp)])
+        Comp.__init__(self, temp, name, [GraphiteSSCoolMix(cool_temp)])
 
 
 class OuterRef_CoolantChannel(Comp):
