@@ -227,7 +227,7 @@ class GraphiteSSMix(Mat):
         self.density = 2.837
         # carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
         # carbon fraction includes both carbon in graphite and carbon in ss316
-        isotopes = ['6000', '28000', '24000', '42000', '26000', '14000', '25000', '15000', '16000']
+        isotopes = ['6000', '28000', '24000', '42000', '26000', '14000', '25055', '15031', '16000']
         # the SS316 atomic ratio to carbon in graphtie in 1:10
         ratio_list = [1+0.008, 1.2, 1.7, 0.25, 6.5345, 0.1, 0.2, 0.0045, 0.003]
         #self.mat_comp = []
@@ -491,7 +491,7 @@ class GraphiteSSCoolMix(mixMat):
         # average graphtie and SS316 atomic mass(not very precise about the
         # atomic numbers of each isotope)
         solid_atomic_mass = (12*100.008+56*1.2+48*1.7+84*0.5+52*6.5345*2
-                             +28*0.2+50*0.4+30*0.009+32*0.006)/110.0
+                             +28*0.2+55*0.4+31*0.009+32*0.006)/110.0
         self.temp = temp
         flag='moder'
         mixMat.__init__(
