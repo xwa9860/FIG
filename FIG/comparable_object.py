@@ -17,7 +17,7 @@ class CmpObj(object):
 
     def __hash__(self):
         if not isinstance(self.name, str):
-            print self.name
-            print 'is not string but %s'  %type(self.name)
+            print(self.name)
+            print('is not string but %s'  %type(self.name))
         else:
             return hash(self.__class__.__name__+self.name + str(self.temp))

@@ -7,12 +7,12 @@ class TrisoGen(Gen):
     first_time = True
 
     def __init__(self):
-	self.particle = Universe()
+        self.particle = Universe()
 
     def parse(self, a_triso, type):
         if type == 's':
             str_list = []
-	    str_list.append('''%%---Triso particle \nparticle %d''' %
+            str_list.append('''%%---Triso particle \nparticle %d''' %
                             self.particle.id)
             for mat in a_triso.mat_list:
                 if mat.name == 'Matrix':

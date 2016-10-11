@@ -6,7 +6,8 @@ channels inside the center and outer reflectors
 '''
 #!/usr/bin/python
 from core_gen import CoreGen
-from mat import Be, YH2, ZrH2, Graphite, BeCoolMix, YH2CoolMix, GraphiteCoolMix, ZrH2CoolMix
+from mat import Be, YH2, ZrH2, Graphite
+from mat import BeCoolMix, YH2CoolMix, GraphiteCoolMix, ZrH2CoolMix, GraphiteSSCoolMix
 from comp import *
 from pbed import FuelUnitCell, GraphiteUnitCell, PBedLat
 import math
@@ -565,7 +566,7 @@ class Core(Comp):
                                           self.Fuel.zb_conv,
                                           self.Fuel.zb_conv,
                                           self.Fuel.zt_conv,
-					  fill=self.Fuel.fill)
+                                          fill=self.Fuel.fill)
         self.Fuel.comp_dict['conv'] = self.Fuel.conv
 
         # defueling zone
@@ -580,7 +581,7 @@ class Core(Comp):
                                        self.Fuel.ro_defuel,
                                        self.Fuel.zb_defuel,
                                        self.Fuel.zt_defuel,
-				       fill=self.Fuel.fill)
+                                       fill=self.Fuel.fill)
         self.Fuel.comp_dict['defuel'] = self.Fuel.defuel
 
     def define_Blanket(self, temp, name):

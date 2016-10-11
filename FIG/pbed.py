@@ -64,7 +64,7 @@ class GraphiteUnitCell(FCC):
         '''
         cool = Coolant(cool_temp, 'GFCCCoolant')
         gpb_list = []
-        for i in xrange(0, 14):
+        for i in range(0, 14):
             gpb_list.append(GPb(pb_temp))
         FCC.__init__(
             self,

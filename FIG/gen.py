@@ -14,9 +14,9 @@ class Gen:
         self.univ.setId(id)
 
     def parse(self, a_comp, type):
-	if a_comp.fill is not None:
+        if a_comp.fill is not None:
             return a_comp.fill.generate_output()
-	else:
+        else:
             return ''
     def parse_capture_det(self, a_comp, type):
         if type == 's':
@@ -36,8 +36,8 @@ class AnnularCompGen(Gen):
         if type == 's':
             # generate cell cid uid fill uid/ mat nb
             if not a_anComp.fill == None:
-                print '%s has one or more filling universe(id=%d)' %(
-                a_anComp.name, a_anComp.fill.gen.univ.id)
+                print('%s has one or more filling universe(id=%d)' %(
+                a_anComp.name, a_anComp.fill.gen.univ.id))
                 fill_card = 'fill %d ' % a_anComp.fill.gen.univ.id
             else:
                 assert len(a_anComp.mat_list) == 1, \

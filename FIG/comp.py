@@ -4,6 +4,7 @@ from serp_concept import CylSurf, ConeSurf, PzSurf
 from comparable_object import CmpObj
 from types import *
 from mat import Mat
+from numbers import Number
 
 
 class Comp(CmpObj):
@@ -14,11 +15,12 @@ class Comp(CmpObj):
     all inherant from this class
     '''
 
-    def __init__(self, temp, name, mat_list, gen=Gen(), fill = None):
-        assert isinstance(temp, FloatType) or isinstance(temp, int), "temp is not a number:%r" % temp
-        assert isinstance(name, StringType), "name is not a string:%r" % name
+    def __init__(self, temp, name, mat_list, gen=Gen(), fill=None):
+        assert isinstance(temp, Number), '''
+        temp is not a number:%r''' % temp
+        assert isinstance(name, str), "name is not a string:%r" % name
         assert isinstance(
-            mat_list, ListType), "%r mat_list is not a list:%r" % (
+            mat_list, list), "%r mat_list is not a list:%r" % (
             name, mat_list)
         assert all(isinstance(x, Mat) for x in mat_list), '''mat_list contains
         non mat object: %r''' % mat_list

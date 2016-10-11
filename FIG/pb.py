@@ -47,7 +47,7 @@ class FPb(Comp):
     def calculate_r(self):
         self.r_config = {}
         self.r_config['CentralGraphite'] = self.dr_config['CentralGraphite']
-        for i in xrange(1, len(self.layer)):
+        for i in range(1, len(self.layer)):
             prev_name = self.layer[i-1]
             curr_name = self.layer[i]
             self.r_config[curr_name] = (self.r_config[prev_name] +

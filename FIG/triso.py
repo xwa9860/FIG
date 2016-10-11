@@ -37,7 +37,7 @@ class Triso(Comp):
         self.r_config = {}
         self.r_config[self.mat_list[0].__class__.__name__] =\
         self.dr_config[self.mat_list[0].__class__.__name__]
-        for i in xrange(1, len(self.mat_list)-1):
+        for i in range(1, len(self.mat_list)-1):
             prev_name = self.mat_list[i-1].__class__.__name__
             curr_name = self.mat_list[i].__class__.__name__
             self.r_config[curr_name] = self.r_config[
