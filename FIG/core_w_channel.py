@@ -81,20 +81,20 @@ class Core(Comp):
             fpb_list)
         self.comp_dict = {
             'CR': CenterRef(temp_CR),
-            'CRCC': CenterRef_CoolantChannel(temp_g_CRCC, temp_cool_CRCC),
+            #'CRCC': CenterRef_CoolantChannel(temp_g_CRCC, temp_cool_CRCC),
             'OR': OuterRef(temp_OR),
             'ORCC': OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC),
             'Fuel': Fuel(fpb_list, temp_cool_F),
             'Blanket': Blanket(temp_Blanket, temp_cool_B)
         }
         self.CR = self.comp_dict['CR']
-        self.CRCC = self.comp_dict['CRCC']
+        #self.CRCC = self.comp_dict['CRCC']
         self.OR = self.comp_dict['OR']
         self.ORCC = self.comp_dict['ORCC']
         self.Fuel = self.comp_dict['Fuel']
         self.Blanket = self.comp_dict['Blanket']
         self.define_CR(self.CR.temp, self.CR.name)
-        self.define_CRCC(self.CRCC.temp, self.CRCC.name)
+        #self.define_CRCC(self.CRCC.temp, self.CRCC.name)
         self.define_OR(self.OR.temp, self.OR.name)
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
         self.define_Fuel(self.Fuel.temp, self.Fuel.name)
@@ -120,7 +120,7 @@ class Core(Comp):
         # entrance zone
         self.CR.zb_ent = 41.6  # in the design, CR starts at 15.7cm
         self.CR.zt_ent = 127.5
-        self.CR.r_ent = 35
+        self.CR.r_ent = 35+10
         self.CR.ent = CylComp(temp, name, self.CR.mat_list, self.CR.zb_ent,
                               self.CR.zt_ent, self.CR.r_ent)
         self.CR.comp_dict['ent'] = self.CR.ent
@@ -143,14 +143,14 @@ class Core(Comp):
         # active zone
         self.CR.zb_act = self.CR.zt_div
         self.CR.zt_act = 430.50
-        self.CR.r_act = 35 - 10
+        self.CR.r_act = 35
         self.CR.act = CylComp(temp, name, self.CR.mat_list, self.CR.zb_act,
                               self.CR.zt_act, self.CR.r_act)
         self.CR.comp_dict['act'] = self.CR.act
         # Converging
         self.CR.zb_conv = self.CR.zt_act
         self.CR.zt_conv = 492.85
-        self.CR.r_conv = 61
+        self.CR.r_conv = 61+10
         self.CR.a_conv = 60.0/180*math.pi
         self.CR.h_cone_conv = -self.CR.r_conv * math.tan(self.CR.a_conv)
         # negative h means direction to -z
@@ -173,104 +173,122 @@ class Core(Comp):
                                  self.CR.r_defuel)
         self.CR.comp_dict['defuel'] = self.CR.defuel
 
-    def define_CRCC(self, temp, name):
-        self.CRCC.comp_dict = {}
-        # ---------------------------------------------------------
-        # center reflector
-        # entrance zone
-        self.CRCC.zb_ent = 41.6  # in the design, CR starts at 15.7cm
-        self.CRCC.zt_ent = 127.5
-        self.CRCC.ri_ent = self.CR.r_ent
-        self.CRCC.ro_ent = 45
-
-        self.CRCC.ent = AnnuCylComp(temp, name,
-                                    self.CRCC.mat_list,
-                                    self.CRCC.ri_ent,
-                                    self.CRCC.ro_ent,
-                                    self.CRCC.zb_ent,
-                                    self.CRCC.zt_ent)
-
-        self.CRCC.comp_dict['ent'] = self.CRCC.ent
-
-        # diverging
-        self.CRCC.zb_div = self.CRCC.zt_ent
-        self.CRCC.zt_div = self.CR.zt_div
-        self.CRCC.ri_cone_div = self.CRCC.ri_ent
-        self.CRCC.ro_cone_div = self.CRCC.ro_ent
-        self.CRCC.ai_div = 60.0/180*math.pi
-        self.CRCC.ao_div = 60.0/180*math.pi
-        self.CRCC.hi_cone_div = self.CRCC.ri_cone_div * \
-            math.tan(self.CRCC.ai_div)
-        self.CRCC.ho_cone_div = self.CRCC.ro_cone_div * \
-            math.tan(self.CRCC.ao_div)
-
-        self.CRCC.div = AnnuConeConeComp(temp, name,
-                                         self.CRCC.mat_list,
-                                         self.CRCC.ri_cone_div,
-                                         self.CRCC.hi_cone_div,
-                                         self.CRCC.zb_div,
-                                         self.CRCC.ro_cone_div,
-                                         self.CRCC.ho_cone_div,
-                                         self.CRCC.zb_div,
-                                         self.CRCC.zb_div,
-                                         self.CRCC.zt_div)
-
-        self.CRCC.comp_dict['div'] = self.CRCC.div
-
-        # active zone
-        self.CRCC.zb_act = self.CRCC.zt_div
-        self.CRCC.zt_act = self.CR.zt_act
-        self.CRCC.ri_act = self.CR.r_act
-        self.CRCC.ro_act = self.CR.r_act + 10
-
-        self.CRCC.act = AnnuCylComp(temp, name,
-                                    self.CRCC.mat_list,
-                                    self.CRCC.ri_act,
-                                    self.CRCC.ro_act,
-                                    self.CRCC.zb_act,
-                                    self.CRCC.zt_act)
-
-        self.CRCC.comp_dict['act'] = self.CRCC.act
-
-        # Converging
-        self.CRCC.zb_conv = self.CRCC.zt_act
-        self.CRCC.zt_conv = self.CR.zt_conv
-        self.CRCC.ri_conv = self.CR.r_conv
-        self.CRCC.ro_conv = self.CR.r_conv + 10
-        self.CRCC.ai_conv = 60.0/180*math.pi
-        self.CRCC.ao_conv = 60.0/180*math.pi
-        self.CRCC.hi_cone_conv = -self.CRCC.ri_conv * \
-            math.tan(self.CRCC.ai_conv)
-        self.CRCC.ho_cone_conv = -self.CRCC.ro_conv * \
-            math.tan(self.CRCC.ao_conv)
-        # negative h means direction to -z
-
-        self.CRCC.conv = AnnuConeConeComp(temp, name,
-                                          self.CRCC.mat_list,
-                                          self.CRCC.ri_conv,
-                                          self.CRCC.hi_cone_conv,
-                                          self.CRCC.zt_conv,
-                                          self.CRCC.ro_conv,
-                                          self.CRCC.ho_cone_conv,
-                                          self.CRCC.zt_conv,
-                                          self.CRCC.zb_conv,
-                                          self.CRCC.zt_conv)
-
-        self.CRCC.comp_dict['conv'] = self.CRCC.conv
-
-        # defueling
-        self.CRCC.ri_defuel = self.CRCC.ri_conv
-        self.CRCC.ro_defuel = self.CRCC.ro_conv
-        self.CRCC.zb_defuel = self.CRCC.zt_conv
-        self.CRCC.zt_defuel = self.CRCC.zb_defuel + 80
-        self.CRCC.defuel = AnnuCylComp(temp, name,
-                                       self.CRCC.mat_list,
-                                       self.CRCC.ri_defuel,
-                                       self.CRCC.ro_defuel,
-                                       self.CRCC.zb_defuel,
-                                       self.CRCC.zt_defuel)
-        self.CRCC.comp_dict['defuel'] = self.CRCC.defuel
-
+#    def define_CRCC(self, temp, name):
+#        '''
+#        CRCC is a 10 cm bande at the outer layer of the center reflector
+#        that is a mix of graphite and flibe, to represent the coolant channel
+#        in the reflector
+#        '''
+#        self.CRCC.comp_dict = {}
+#        self.CRCC.zb_act = 41.6
+#        self.CRCC.zt_act = self.CR.zt_conv+80
+#        self.CRCC.ri_act = self.CR.r_act
+#        self.CRCC.ro_act = self.CR.r_act + 10
+#
+#        self.CRCC.act = AnnuCylComp(temp, name,
+#                                    self.CRCC.mat_list,
+#                                    self.CRCC.ri_act,
+#                                    self.CRCC.ro_act,
+#                                    self.CRCC.zb_act,
+#                                    self.CRCC.zt_act)
+#
+#        self.CRCC.comp_dict['act'] = self.CRCC.act
+#        # ---------------------------------------------------------
+#        # center reflector
+#        # entrance zone
+#        self.CRCC.zb_ent = 41.6  # in the design, CR starts at 15.7cm
+#        self.CRCC.zt_ent = 127.5
+#        self.CRCC.ri_ent = self.CR.r_ent
+#        self.CRCC.ro_ent = 45
+#
+#        self.CRCC.ent = AnnuCylComp(temp, name,
+#                                    self.CRCC.mat_list,
+#                                    self.CRCC.ri_ent,
+#                                    self.CRCC.ro_ent,
+#                                    self.CRCC.zb_ent,
+#                                    self.CRCC.zt_ent)
+#
+#        self.CRCC.comp_dict['ent'] = self.CRCC.ent
+#
+#        # diverging
+#        self.CRCC.zb_div = self.CRCC.zt_ent
+#        self.CRCC.zt_div = self.CR.zt_div
+#        self.CRCC.ri_cone_div = self.CRCC.ri_ent
+#        self.CRCC.ro_cone_div = self.CRCC.ro_ent
+#        self.CRCC.ai_div = 60.0/180*math.pi
+#        self.CRCC.ao_div = 60.0/180*math.pi
+#        self.CRCC.hi_cone_div = self.CRCC.ri_cone_div * \
+#            math.tan(self.CRCC.ai_div)
+#        self.CRCC.ho_cone_div = self.CRCC.ro_cone_div * \
+#            math.tan(self.CRCC.ao_div)
+#
+#        self.CRCC.div = AnnuConeConeComp(temp, name,
+#                                         self.CRCC.mat_list,
+#                                         self.CRCC.ri_cone_div,
+#                                         self.CRCC.hi_cone_div,
+#                                         self.CRCC.zb_div,
+#                                         self.CRCC.ro_cone_div,
+#                                         self.CRCC.ho_cone_div,
+#                                         self.CRCC.zb_div,
+#                                         self.CRCC.zb_div,
+#                                         self.CRCC.zt_div)
+#
+#        self.CRCC.comp_dict['div'] = self.CRCC.div
+#
+#        # active zone
+#        self.CRCC.zb_act = self.CRCC.zt_div
+#        self.CRCC.zt_act = self.CR.zt_act
+#        self.CRCC.ri_act = self.CR.r_act
+#        self.CRCC.ro_act = self.CR.r_act + 10
+#
+#        self.CRCC.act = AnnuCylComp(temp, name,
+#                                    self.CRCC.mat_list,
+#                                    self.CRCC.ri_act,
+#                                    self.CRCC.ro_act,
+#                                    self.CRCC.zb_act,
+#                                    self.CRCC.zt_act)
+#
+#        self.CRCC.comp_dict['act'] = self.CRCC.act
+#
+#        # Converging
+#        self.CRCC.zb_conv = self.CRCC.zt_act
+#        self.CRCC.zt_conv = self.CR.zt_conv
+#        self.CRCC.ri_conv = self.CR.r_conv
+#        self.CRCC.ro_conv = self.CR.r_conv + 10
+#        self.CRCC.ai_conv = 60.0/180*math.pi
+#        self.CRCC.ao_conv = 60.0/180*math.pi
+#        self.CRCC.hi_cone_conv = -self.CRCC.ri_conv * \
+#            math.tan(self.CRCC.ai_conv)
+#        self.CRCC.ho_cone_conv = -self.CRCC.ro_conv * \
+#            math.tan(self.CRCC.ao_conv)
+#        # negative h means direction to -z
+#
+#        self.CRCC.conv = AnnuConeConeComp(temp, name,
+#                                          self.CRCC.mat_list,
+#                                          self.CRCC.ri_conv,
+#                                          self.CRCC.hi_cone_conv,
+#                                          self.CRCC.zt_conv,
+#                                          self.CRCC.ro_conv,
+#                                          self.CRCC.ho_cone_conv,
+#                                          self.CRCC.zt_conv,
+#                                          self.CRCC.zb_conv,
+#                                          self.CRCC.zt_conv)
+#
+#        self.CRCC.comp_dict['conv'] = self.CRCC.conv
+#
+#        # defueling
+#        self.CRCC.ri_defuel = self.CRCC.ri_conv
+#        self.CRCC.ro_defuel = self.CRCC.ro_conv
+#        self.CRCC.zb_defuel = self.CRCC.zt_conv
+#        self.CRCC.zt_defuel = self.CRCC.zb_defuel + 80
+#        self.CRCC.defuel = AnnuCylComp(temp, name,
+#                                       self.CRCC.mat_list,
+#                                       self.CRCC.ri_defuel,
+#                                       self.CRCC.ro_defuel,
+#                                       self.CRCC.zb_defuel,
+#                                       self.CRCC.zt_defuel)
+#        self.CRCC.comp_dict['defuel'] = self.CRCC.defuel
+#
     def define_OR(self, temp, name):
         # --------------------------------------------------------
         # Outer reflector
@@ -460,7 +478,7 @@ class Core(Comp):
         # entrance zone
         self.Fuel.zb_ent = 41.6  # in design report fuel pb starts at 41.6cm
         self.Fuel.zt_ent = self.OR.zt_ent
-        self.Fuel.ri_ent = self.CRCC.ro_ent
+        self.Fuel.ri_ent = self.CR.r_ent
         self.Fuel.ro_ent = 75.41
         self.Fuel.ent = AnnuCylComp(temp, name,
                                     self.Fuel.mat_list,
@@ -521,7 +539,7 @@ class Core(Comp):
         self.Fuel.a_div3 = self.Fuel.a_div1
         self.Fuel.zb_div3 = self.Fuel.zt_div2
         self.Fuel.zt_div3 = self.OR.zt_div
-        self.Fuel.r_i_div3 = self.CRCC.ro_act
+        self.Fuel.r_i_div3 = self.CR.r_act
         self.Fuel.r_cone_div3 = self.Fuel.ro_cone_div2
         self.Fuel.h_cone_div3 = self.Fuel.ho_cone_div2
         self.Fuel.div3 = AnnuConeCylComp(temp, name,
@@ -540,7 +558,7 @@ class Core(Comp):
         self.Fuel.zt_act = self.CR.zt_act
         self.Fuel.act = AnnuCylComp(temp, name,
                                     self.Fuel.mat_list,
-                                    self.CRCC.ro_act,
+                                    self.CR.r_act,
                                     self.Fuel.ro_act,
                                     self.Fuel.zb_act,
                                     self.Fuel.zt_act,
@@ -549,7 +567,7 @@ class Core(Comp):
         # convergeing zone
         self.Fuel.zb_conv = self.Fuel.zt_act
         self.Fuel.zt_conv = self.CR.zt_conv
-        self.Fuel.ri_conv = self.CRCC.ro_conv
+        self.Fuel.ri_conv = self.CR.r_conv
         self.Fuel.ai_conv = 60.0 * math.pi/180
         self.Fuel.hi_conv = -1.0*self.Fuel.ri_conv*math.tan(self.Fuel.ai_conv)
         self.Fuel.ro_conv = self.Fuel.ro_act
@@ -572,7 +590,7 @@ class Core(Comp):
         # defueling zone
         self.Fuel.zb_defuel = self.Fuel.zt_conv
         self.Fuel.zt_defuel = self.OR.zt_defuel
-        self.Fuel.ri_defuel = self.CRCC.ro_defuel
+        self.Fuel.ri_defuel = self.CR.r_defuel
         self.Fuel.ro_defuel = self.Fuel.ro_act -\
             (self.Fuel.zt_conv - self.Fuel.zb_conv)/math.tan(self.Fuel.ao_conv)
         self.Fuel.defuel = AnnuCylComp(temp, name,
