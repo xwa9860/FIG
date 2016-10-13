@@ -1,0 +1,171 @@
+
+%---Fuel
+%---div1
+surf 60 cylz 0.000000 0.000000 45.000000 112.500000 127.500000
+surf 61 cone 0.000000 0.000000 180.500000 105.000000 -241.297736
+surf 63 pz 112.500000
+surf 62 pz 127.500000
+cell 21 76 fill 29  60 -61 63 -62 
+%---defuel
+surf 80 cylz 0.000000 0.000000 71.000000 492.850000 572.850000
+surf 81 cylz 0.000000 0.000000 80.000000 492.850000 572.850000
+surf 83 pz 492.850000
+surf 82 pz 572.850000
+cell 26 76 fill 29  80 -81 83 -82 
+%---ent
+surf 56 cylz 0.000000 0.000000 45.000000 41.600000 112.500000
+surf 57 cylz 0.000000 0.000000 75.410000 41.600000 112.500000
+surf 59 pz 41.600000
+surf 58 pz 112.500000
+cell 20 76 fill 29  56 -57 59 -58 
+%---div2
+surf 64 cone 0.000000 0.000000 127.500000 45.000000 77.942286
+surf 65 cone 0.000000 0.000000 180.500000 105.000000 -241.297736
+surf 67 pz 127.500000
+surf 66 pz 144.820000
+cell 22 76 fill 29  64 -65 67 -66 
+%---act
+surf 72 cylz 0.000000 0.000000 35.000000 180.500000 430.500000
+surf 73 cylz 0.000000 0.000000 105.000000 180.500000 430.500000
+surf 75 pz 180.500000
+surf 74 pz 430.500000
+cell 24 76 fill 29  72 -73 75 -74 
+%---conv
+surf 76 cone 0.000000 0.000000 492.850000 71.000000 -122.975607
+surf 77 cone 0.000000 0.000000 430.500000 105.000000 261.870000
+surf 79 pz 430.500000
+surf 78 pz 492.850000
+cell 25 76 fill 29  76 -77 79 -78 
+%---div3
+surf 68 cylz 0.000000 0.000000 35.000000 144.820000 180.500000
+surf 69 cone 0.000000 0.000000 180.500000 105.000000 -241.297736
+surf 71 pz 144.820000
+surf 70 pz 180.500000
+cell 23 76 fill 29  68 -69 71 -70 
+%%---FCC unit cell lattice
+surf 107 cube 0. 0. 0. 4.550820
+cell 34  77 fill 3 -107
+lat 29 6 0. 0. 4.55082000 77
+
+%%---Pebble unit cell with position from input file
+pbed 3 28 "fpb_pos_40"
+%%---Coolant in the unit cell
+%%---Coolant
+surf 108 inf
+cell 35 28 Flibe1200 -108
+%%---Pebbles in the unit cell(pbed)
+%%---surf for fuel pebbles
+surf 109 sph 0.000000 0.000000 0.000000 1.250000
+surf 110 sph 0.000000 0.000000 0.000000 1.400000
+%%---Fuel pebble
+cell 36 6 CentralGraphite -109
+cell 37 6 fill 5 109 -110
+%---Triso particle 
+particle 4
+fuel0 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 5 6 0. 0. 0.08860629 4
+cell 38 6 Shell 110
+%%---Fuel pebble
+cell 39 9 CentralGraphite -109
+cell 40 9 fill 8 109 -110
+%---Triso particle 
+particle 7
+fuel1 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 8 6 0. 0. 0.08860629 7
+cell 41 9 Shell 110
+%%---Fuel pebble
+cell 42 12 CentralGraphite -109
+cell 43 12 fill 11 109 -110
+%---Triso particle 
+particle 10
+fuel2 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 11 6 0. 0. 0.08860629 10
+cell 44 12 Shell 110
+%%---Fuel pebble
+cell 45 15 CentralGraphite -109
+cell 46 15 fill 14 109 -110
+%---Triso particle 
+particle 13
+fuel3 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 14 6 0. 0. 0.08860629 13
+cell 47 15 Shell 110
+%%---Fuel pebble
+cell 48 18 CentralGraphite -109
+cell 49 18 fill 17 109 -110
+%---Triso particle 
+particle 16
+fuel4 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 17 6 0. 0. 0.08860629 16
+cell 50 18 Shell 110
+%%---Fuel pebble
+cell 51 21 CentralGraphite -109
+cell 52 21 fill 20 109 -110
+%---Triso particle 
+particle 19
+fuel5 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 20 6 0. 0. 0.08860629 19
+cell 53 21 Shell 110
+%%---Fuel pebble
+cell 54 24 CentralGraphite -109
+cell 55 24 fill 23 109 -110
+%---Triso particle 
+particle 22
+fuel6 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 23 6 0. 0. 0.08860629 22
+cell 56 24 Shell 110
+%%---Fuel pebble
+cell 57 27 CentralGraphite -109
+cell 58 27 fill 26 109 -110
+%---Triso particle 
+particle 25
+fuel7 0.0200
+Buffer 0.0300
+iPyC 0.0335
+SiC 0.0370
+oPyC 0.0405
+Matrix
+%%---Triso  lattice
+lat 26 6 0. 0. 0.08860629 25
+cell 59 27 Shell 110
