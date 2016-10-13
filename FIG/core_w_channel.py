@@ -172,6 +172,18 @@ class Core(Comp):
                                  self.CR.zt_defuel,
                                  self.CR.r_defuel)
         self.CR.comp_dict['defuel'] = self.CR.defuel
+        # 8 coolant channels
+        xandys = self.calculate_coolant_channel_locations()
+        for i in range(len(xandys['x'])):
+            self.CR.channel = CylComp(temp, name,
+                                      self.CRCC.mat_list,
+                                      self.CR.zb_ent,
+                                      self.CR.zt_defuel,
+                                      10,
+                                      xandys['x'][i],
+                                      xandys['y'][i])
+
+
 
 #    def define_CRCC(self, temp, name):
 #        '''
@@ -702,3 +714,17 @@ class Core(Comp):
                 if mat not in mat_list:
                     mat_list.append(mat)
         return mat_list
+
+    def calculate_coolant_channel_locations():
+        '''compute x's and y's for the 8 coolant channels in the center reflector
+        and output them in a dictionary
+        TODO: check the value for R
+        '''
+        xandy = {}
+        R = 27.5  # the channels are situated at 27.5cm from the center
+                  # and at 8 evenly distributed angles
+        for i in range(8):
+            angle = i*math.pi/8.0
+            xandy['x'][i] = R*math.cos(angle)
+            xandy['y'][i] = R*math.sin(angle)
+        return xandy
