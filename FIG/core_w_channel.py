@@ -138,8 +138,8 @@ class Core(Comp):
             self.CRCC.comp_dict[i] = CylComp(temp, name,
                                              self.CRCC.mat_list,
                                              41.6,
-                                             510.5,
-                                             10,
+                                             572.85,
+                                             5,
                                              xandys['x'][i],
                                              xandys['y'][i])
 

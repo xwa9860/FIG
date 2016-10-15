@@ -1,12 +1,12 @@
 %%---Cross section data library path
 set title "FHR core"
 set acelib "/global/home/groups/ac_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"
-include "CRCC"
-include "Blanket"
-include "ORCC"
-include "CR"
 include "OR"
+include "ORCC"
+include "Blanket"
 include "Fuel"
+include "CRCC"
+include "CR"
 
 %%---Core as a whole, universe 0
 surf 128 cylz 0.000000 0.000000 165.000000 41.600000 572.850000
