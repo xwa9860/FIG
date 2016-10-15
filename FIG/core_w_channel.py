@@ -20,6 +20,13 @@ class CenterRef(Comp):
         Comp.__init__(self, temp, name, [Graphite(temp)])
 
 
+class CenterRefWithoutCC(EmbeddedComp):
+
+    def __init__(self, mother_comp, children_comp):
+        name = 'CRWCC'
+        EmbeddedComp.__init__(self, mother_comp, children_comp)
+
+
 class OuterRef(Comp):
 
     def __init__(self, temp):
@@ -77,28 +84,33 @@ class Core(Comp):
             temp_cool_F,
             temp_Blanket,
             temp_cool_B):
+
         assert(len(fpb_list) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
             fpb_list)
-        self.comp_dict = {
-            'CR': CenterRef(temp_CR),
-            #'CRCC': CenterRef_CoolantChannel(temp_g_CRCC, temp_cool_CRCC),
-            'OR': OuterRef(temp_OR),
-            'ORCC': OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC),
-            'Fuel': Fuel(fpb_list, temp_cool_F),
-            'Blanket': Blanket(temp_Blanket, temp_cool_B)
-        }
-        self.CR = self.comp_dict['CR']
-        #self.CRCC = self.comp_dict['CRCC']
-        self.OR = self.comp_dict['OR']
-        self.ORCC = self.comp_dict['ORCC']
-        self.Fuel = self.comp_dict['Fuel']
-        self.Blanket = self.comp_dict['Blanket']
+
+        self.comp_dict = {}
+
+        self.CRCC = CenterRef_CoolantChannel(temp_g_CRCC, temp_cool_CRCC)
+        self.CR = CenterRef(temp_CR)
+        self.OR = OuterRef(temp_OR)
+        self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
+        self.Fuel = Fuel(fpb_list, temp_cool_F)
+        self.Blanket = Blanket(temp_Blanket, temp_cool_B)
+
+        self.define_CRCC(self.CRCC.temp, self.CRCC.name)
         self.define_CR(self.CR.temp, self.CR.name)
-        #self.define_CRCC(self.CRCC.temp, self.CRCC.name)
         self.define_OR(self.OR.temp, self.OR.name)
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
         self.define_Fuel(self.Fuel.temp, self.Fuel.name)
         self.define_Blanket(self.Blanket.temp, self.Blanket.name)
+
+        self.comp_dict = {
+            'CR': self.CR,
+            'CRCC': self.CRCC,
+            'OR': self.OR,
+            'ORCC': self.ORCC,
+            'Fuel': self.Fuel,
+            'Blanket': self.Blanket}
 
         self.whole_core = CylComp(fpb_list[0].temp,
                                   'whole_core',
@@ -113,6 +125,24 @@ class Core(Comp):
         mat_list = self.collect_mat()
         Comp.__init__(self, fpb_list[0].temp, name, mat_list, CoreGen())
 
+    def define_CRCC(self, temp, name):
+        '''
+        CRCC is a 10 cm bande at the outer layer of the center reflector
+        that is a mix of graphite and flibe, to represent the coolant channel
+        in the reflector
+        '''
+        self.CRCC.comp_dict = {}
+        # 8 coolant channels
+        xandys = self.calculate_coolant_channel_locations()
+        for i in range(len(xandys['x'])):
+            self.CRCC.comp_dict[i] = CylComp(temp, name,
+                                             self.CRCC.mat_list,
+                                             41.6,
+                                             510.5,
+                                             10,
+                                             xandys['x'][i],
+                                             xandys['y'][i])
+
     def define_CR(self, temp, name):
         self.CR.comp_dict = {}
         # ---------------------------------------------------------
@@ -123,7 +153,8 @@ class Core(Comp):
         self.CR.r_ent = 35+10
         self.CR.ent = CylComp(temp, name, self.CR.mat_list, self.CR.zb_ent,
                               self.CR.zt_ent, self.CR.r_ent)
-        self.CR.comp_dict['ent'] = self.CR.ent
+        self.CR.comp_dict['ent'] = EmbeddedComp(self.CR.ent,
+                                                self.CRCC.comp_dict)
 
         # diverging
         self.CR.zb_div = self.CR.zt_ent
@@ -139,14 +170,17 @@ class Core(Comp):
             self.CR.zb_div,
             self.CR.h_cone_div,
             self.CR.r_div)
-        self.CR.comp_dict['div'] = self.CR.div
+        self.CR.comp_dict['div'] = EmbeddedComp(self.CR.div,
+                                                self.CRCC.comp_dict)
         # active zone
         self.CR.zb_act = self.CR.zt_div
         self.CR.zt_act = 430.50
         self.CR.r_act = 35
         self.CR.act = CylComp(temp, name, self.CR.mat_list, self.CR.zb_act,
                               self.CR.zt_act, self.CR.r_act)
-        self.CR.comp_dict['act'] = self.CR.act
+        self.CR.comp_dict['act'] = EmbeddedComp(self.CR.act,
+                                                self.CRCC.comp_dict)
+
         # Converging
         self.CR.zb_conv = self.CR.zt_act
         self.CR.zt_conv = 492.85
@@ -161,7 +195,9 @@ class Core(Comp):
                                      self.CR.zt_conv,
                                      self.CR.h_cone_conv,
                                      self.CR.r_conv)
-        self.CR.comp_dict['conv'] = self.CR.conv
+        self.CR.comp_dict['conv'] = EmbeddedComp(self.CR.conv,
+                                                 self.CRCC.comp_dict)
+
         # defueling
         self.CR.r_defuel = self.CR.r_conv
         self.CR.zb_defuel = self.CR.zt_conv
@@ -171,27 +207,12 @@ class Core(Comp):
                                  self.CR.zb_defuel,
                                  self.CR.zt_defuel,
                                  self.CR.r_defuel)
-        self.CR.comp_dict['defuel'] = self.CR.defuel
-        # 8 coolant channels
-        xandys = self.calculate_coolant_channel_locations()
-        for i in range(len(xandys['x'])):
-            self.CR.channel = CylComp(temp, name,
-                                      self.CRCC.mat_list,
-                                      self.CR.zb_ent,
-                                      self.CR.zt_defuel,
-                                      10,
-                                      xandys['x'][i],
-                                      xandys['y'][i])
+        self.CR.comp_dict['defuel'] = EmbeddedComp(self.CR.defuel,
+                                                   self.CRCC.comp_dict)
 
+        # substract CRCC's from CR
+        #self.comp_dict['CR'] = CenterRefWithoutCC(self.CR, self.CRCC)
 
-
-#    def define_CRCC(self, temp, name):
-#        '''
-#        CRCC is a 10 cm bande at the outer layer of the center reflector
-#        that is a mix of graphite and flibe, to represent the coolant channel
-#        in the reflector
-#        '''
-#        self.CRCC.comp_dict = {}
 #        self.CRCC.zb_act = 41.6
 #        self.CRCC.zt_act = self.CR.zt_conv+80
 #        self.CRCC.ri_act = self.CR.r_act
@@ -205,10 +226,10 @@ class Core(Comp):
 #                                    self.CRCC.zt_act)
 #
 #        self.CRCC.comp_dict['act'] = self.CRCC.act
-#        # ---------------------------------------------------------
-#        # center reflector
-#        # entrance zone
-#        self.CRCC.zb_ent = 41.6  # in the design, CR starts at 15.7cm
+# ---------------------------------------------------------
+# center reflector
+# entrance zone
+# self.CRCC.zb_ent = 41.6  # in the design, CR starts at 15.7cm
 #        self.CRCC.zt_ent = 127.5
 #        self.CRCC.ri_ent = self.CR.r_ent
 #        self.CRCC.ro_ent = 45
@@ -222,7 +243,7 @@ class Core(Comp):
 #
 #        self.CRCC.comp_dict['ent'] = self.CRCC.ent
 #
-#        # diverging
+# diverging
 #        self.CRCC.zb_div = self.CRCC.zt_ent
 #        self.CRCC.zt_div = self.CR.zt_div
 #        self.CRCC.ri_cone_div = self.CRCC.ri_ent
@@ -247,7 +268,7 @@ class Core(Comp):
 #
 #        self.CRCC.comp_dict['div'] = self.CRCC.div
 #
-#        # active zone
+# active zone
 #        self.CRCC.zb_act = self.CRCC.zt_div
 #        self.CRCC.zt_act = self.CR.zt_act
 #        self.CRCC.ri_act = self.CR.r_act
@@ -262,7 +283,7 @@ class Core(Comp):
 #
 #        self.CRCC.comp_dict['act'] = self.CRCC.act
 #
-#        # Converging
+# Converging
 #        self.CRCC.zb_conv = self.CRCC.zt_act
 #        self.CRCC.zt_conv = self.CR.zt_conv
 #        self.CRCC.ri_conv = self.CR.r_conv
@@ -273,7 +294,7 @@ class Core(Comp):
 #            math.tan(self.CRCC.ai_conv)
 #        self.CRCC.ho_cone_conv = -self.CRCC.ro_conv * \
 #            math.tan(self.CRCC.ao_conv)
-#        # negative h means direction to -z
+# negative h means direction to -z
 #
 #        self.CRCC.conv = AnnuConeConeComp(temp, name,
 #                                          self.CRCC.mat_list,
@@ -288,7 +309,7 @@ class Core(Comp):
 #
 #        self.CRCC.comp_dict['conv'] = self.CRCC.conv
 #
-#        # defueling
+# defueling
 #        self.CRCC.ri_defuel = self.CRCC.ri_conv
 #        self.CRCC.ro_defuel = self.CRCC.ro_conv
 #        self.CRCC.zb_defuel = self.CRCC.zt_conv
@@ -715,16 +736,16 @@ class Core(Comp):
                     mat_list.append(mat)
         return mat_list
 
-    def calculate_coolant_channel_locations():
+    def calculate_coolant_channel_locations(self):
         '''compute x's and y's for the 8 coolant channels in the center reflector
         and output them in a dictionary
         TODO: check the value for R
         '''
-        xandy = {}
+        xandy = {'x': [], 'y': []}
         R = 27.5  # the channels are situated at 27.5cm from the center
                   # and at 8 evenly distributed angles
         for i in range(8):
             angle = i*math.pi/8.0
-            xandy['x'][i] = R*math.cos(angle)
-            xandy['y'][i] = R*math.sin(angle)
+            xandy['x'].append(R*math.cos(angle))
+            xandy['y'].append(R*math.sin(angle))
         return xandy
