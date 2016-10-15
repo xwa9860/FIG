@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from gen import Gen, AnnularCompGen
+from gen import Gen, AnnularCompGen, EmbeddedCompGen
 from serp_concept import CylSurf, ConeSurf, PzSurf
 from comparable_object import CmpObj
 from types import *
@@ -54,14 +54,29 @@ class AnnularComp(Comp):
             surf_o,
             surf_t=None,
             surf_b=None,
-            fill = None):
-        Comp.__init__(self, temp, name, mat_list, AnnularCompGen(), fill = fill)
+            fill=None):
+        Comp.__init__(self, temp, name, mat_list, AnnularCompGen(), fill=fill)
         self.surf_list = []
         self.surf_list.append(surf_i)
         self.surf_list.append(surf_o)
         self.surf_list.append(surf_b)
         self.surf_list.append(surf_t)
 
+
+class EmbeddedComp(Comp):
+    '''
+    one comp inside another, eg:center reflector with coolant channels
+    as implemented currently, it only works for cylindrical children comps
+    '''
+    def __init__(self, mother_comp, children_comps):
+        '''
+        mother_comp: the main component
+        children_comps: a dictionary of the smaller component
+        inside the mother_component
+        '''
+        self.mother_comp = mother_comp
+        self.children_comps = children_comps
+        self.gen = EmbeddedCompGen()
 
 
 class TruncConeComp(AnnularComp):
