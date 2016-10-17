@@ -738,7 +738,7 @@ class Core(Comp):
         R = 27.5  # the channels are situated at 27.5cm from the center
                   # and at 8 evenly distributed angles
         for i in range(8):
-            angle = i*math.pi/8.0
+            angle = i*2*math.pi/8.0
             xandy['x'].append(R*math.cos(angle))
             xandy['y'].append(R*math.sin(angle))
         return xandy
