@@ -6,7 +6,7 @@ channels inside the center and outer reflectors
 '''
 #!/usr/bin/python
 from core_gen import CoreGen
-from mat import Be, YH2, ZrH2, Graphite
+from mat import Be, YH2, ZrH2, Graphite, Flibe
 from mat import BeCoolMix, YH2CoolMix, GraphiteCoolMix, ZrH2CoolMix, GraphiteSSCoolMix
 from comp import *
 from pbed import FuelUnitCell, GraphiteUnitCell, PBedLat
@@ -31,7 +31,7 @@ class CenterRef_CoolantChannel(Comp):
 
     def __init__(self, temp, cool_temp):
         name = 'CRCC'
-        Comp.__init__(self, temp, name, [GraphiteCoolMix(cool_temp)])
+        Comp.__init__(self, temp, name, [Flibe(cool_temp)])
 
 
 class OuterRef_CoolantChannel(Comp):

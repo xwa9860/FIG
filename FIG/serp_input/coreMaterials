@@ -6,6 +6,10 @@ mat Flibe1200 -1.827617E+00 tmp 1200.000000
 9019.12c 4.000000
 
 
+mat Graphite1200 -2.260000E+00 moder grph_Graphite1200 6000 tmp 1200.000000
+ 6000.12c 1.000000
+therm grph_Graphite1200 gre7.22t
+
 mat CentralGraphite -1.740000E+00 moder grph_CentralGraphite 6000 tmp 900.000000
  6000.09c 1.000000
 therm grph_CentralGraphite gre7.20t
@@ -2492,10 +2496,6 @@ mat fuel7 -1.000000E+01
 54131.12c 1.2991E-01
 54131.12c 3.6712E-04
 
-
-mat Graphite1200 -2.260000E+00 moder grph_Graphite1200 6000 tmp 1200.000000
- 6000.12c 1.000000
-therm grph_Graphite1200 gre7.22t
 
 mat Graphite1200CoolantMix1200 -2.087047E+00 moder grph_Graphite1200CoolantMix1200 6000 tmp 1200.000000
  3006.12c 0.000200
