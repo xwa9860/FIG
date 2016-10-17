@@ -76,6 +76,11 @@ class EmbeddedComp(Comp):
         '''
         self.mother_comp = mother_comp
         self.children_comps = children_comps
+        self.mat_list = mother_comp.mat_list
+        for child in children_comps:
+            for mat in children_comps[child].mat_list:
+                if mat not in self.mat_list:
+                    self.mat_list.append(mat)
         self.gen = EmbeddedCompGen()
 
 

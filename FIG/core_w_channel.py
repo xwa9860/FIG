@@ -121,8 +121,8 @@ class Core(Comp):
                                   572.85,
                                   165,
                                   fill=self.Fuel.act)
-        # contains not only self.Fuel but other three component, but they are in
-        # the same universe, only need it to get the univ id
+        # contains not only self.Fuel but other three component, but they are
+        # in the same universe, only need it to get the univ id
         name = 'FullCore'
         mat_list = self.collect_mat()
         Comp.__init__(self, fpb_list[0].temp, name, mat_list, CoreGen())
@@ -148,14 +148,14 @@ class Core(Comp):
             if ssliner:
                 ssliner = AnnuCylComp(temp, name,
                                       self.CRCC_liner.mat_list,
-                                    5-0.3,
-                                    5,
-                                    41.6,
-                                    572.85,
-                                    xandys['x'][i],
-                                    xandys['y'][i],
-                                    xandys['x'][i],
-                                    xandys['y'][i])
+                                      5-0.3,
+                                      5,
+                                      41.6,
+                                      572.85,
+                                      xandys['x'][i],
+                                      xandys['y'][i],
+                                      xandys['x'][i],
+                                      xandys['y'][i])
                 self.CRCC.comp_dict[str(i)+'ss'] = ssliner
 
     def define_CR(self, temp, name, ssliner):
@@ -169,7 +169,8 @@ class Core(Comp):
         self.CR.zb_ent = 41.6  # in the design, CR starts at 15.7cm
         self.CR.zt_ent = 127.5
         self.CR.r_ent = 35+10
-        self.CR.ent = CylComp(temp, name, self.CR.mat_list, self.CR.zb_ent,
+        self.CR.ent = CylComp(temp, name,
+                              self.CR.mat_list, self.CR.zb_ent,
                               self.CR.zt_ent, self.CR.r_ent)
         self.CR.comp_dict['ent'] = EmbeddedComp(self.CR.ent,
                                                 self.CRCC.comp_dict)

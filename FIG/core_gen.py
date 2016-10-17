@@ -46,7 +46,7 @@ class CoreGen(Gen):
             str_list.append('include "%s"' %filename)
             mat_str = []
             for mat in a_core.mat_list:
-                print(mat)
+                print('create material %r' % mat)
                 mat_str.append(mat.generate_output())
             open(dir+filename, 'w+').write(''.join(mat_str))
 
