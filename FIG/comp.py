@@ -119,8 +119,8 @@ class AnnuCylComp(AnnularComp):
         self.yi = yi
         self.xo = xo
         self.yo = yo
-        surf_i = CylSurf(ri, zb, zt)
-        surf_o = CylSurf(ro, zb, zt)
+        surf_i = CylSurf(ri, zb, zt, xi, yi)
+        surf_o = CylSurf(ro, zb, zt, xo, yo)
         tsurf = PzSurf(zt)
         bsurf = PzSurf(zb)
         AnnularComp.__init__(self, temp, name, mat_list,
