@@ -13,13 +13,12 @@ class CoreGen(Gen):
             # define title and library path
             str_list.append('''%%---Cross section data library path\n''')
             str_list.append('set title "FHR core"\n' +
-                            #'set acelib "/usr/local/SERPENT/xsdata/endfb7/sss_endfb7u.xsdata"\n'
                             'set acelib "/global/home/groups/ac_nuclear/serpent/xsdata/endfb7/sss_endfb7u.xsdata"\n')
 
             # define geometry, cells, universe in the core in different files
             univ = Universe()
             for key1 in a_core.comp_dict:
-                filename = '%s' %key1
+                filename = '%s' % key1
                 comp_str = []
                 comp_str.append('\n%%---%s\n' % key1)
                 for key2 in a_core.comp_dict[key1].comp_dict:

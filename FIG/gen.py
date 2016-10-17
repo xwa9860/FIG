@@ -64,6 +64,7 @@ class AnnularCompGen(Gen):
             #    text += a_anComp.fill.generate_output()
             return text
 
+
 class EmbeddedCompGen(Gen):
     '''
     designed specifically for the center reflector - coolant channels
@@ -76,7 +77,7 @@ class EmbeddedCompGen(Gen):
             cell_text = (
                 'cell %d %d %s ' % (
                     a_EmComp.mother_comp.gen.cell.id,
-                    a_EmComp.mother_comp.gen.univ.id,
+                    a_EmComp.gen.univ.id,
                     fill_card))
             # generate surfaces
             text = ''
