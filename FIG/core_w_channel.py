@@ -1,13 +1,14 @@
+#!/usr/bin/python
 '''
 This is a core_w_channel class, contains a FHR core with coolant
 channels inside the center and outer reflectors
 # all dimensions in cm
 # all temperatures in K
 '''
-#!/usr/bin/python
+
 from core_gen import CoreGen
-from mat import Be, YH2, ZrH2, Graphite, Flibe
-from mat import BeCoolMix, YH2CoolMix, GraphiteCoolMix, ZrH2CoolMix, GraphiteSSCoolMix
+from mat import Graphite, Flibe, SS316
+from mat import GraphiteCoolMix
 from comp import *
 from pbed import FuelUnitCell, GraphiteUnitCell, PBedLat
 import math
@@ -29,9 +30,16 @@ class OuterRef(Comp):
 
 class CenterRef_CoolantChannel(Comp):
 
-    def __init__(self, temp, cool_temp):
+    def __init__(self, cool_temp):
         name = 'CRCC'
-        Comp.__init__(self, temp, name, [Flibe(cool_temp)])
+        Comp.__init__(self, cool_temp, name, [Flibe(cool_temp)])
+
+
+class CRCC_SSliner(Comp):
+
+    def __init__(self, temp):
+        name = 'CRCC_SSliner'
+        Comp.__init__(self, temp, name, [SS316(temp)])
 
 
 class OuterRef_CoolantChannel(Comp):
@@ -83,15 +91,16 @@ class Core(Comp):
 
         self.comp_dict = {}
 
-        self.CRCC = CenterRef_CoolantChannel(temp_g_CRCC, temp_cool_CRCC)
+        self.CRCC = CenterRef_CoolantChannel(temp_cool_CRCC)
+        self.CRCC_liner = CRCC_SSliner(temp_cool_CRCC)
         self.CR = CenterRef(temp_CR)
         self.OR = OuterRef(temp_OR)
         self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
         self.Fuel = Fuel(fpb_list, temp_cool_F)
         self.Blanket = Blanket(temp_Blanket, temp_cool_B)
 
-        self.define_CRCC(self.CRCC.temp, self.CRCC.name)
-        self.define_CR(self.CR.temp, self.CR.name)
+        self.define_CRCC(self.CRCC.temp, self.CRCC.name, ssliner=True)
+        self.define_CR(self.CR.temp, self.CR.name, ssliner=True)
         self.define_OR(self.OR.temp, self.OR.name)
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
         self.define_Fuel(self.Fuel.temp, self.Fuel.name)
@@ -118,7 +127,7 @@ class Core(Comp):
         mat_list = self.collect_mat()
         Comp.__init__(self, fpb_list[0].temp, name, mat_list, CoreGen())
 
-    def define_CRCC(self, temp, name):
+    def define_CRCC(self, temp, name, ssliner=False):
         '''
         CRCC is a 10 cm bande at the outer layer of the center reflector
         that is a mix of graphite and flibe, to represent the coolant channel
@@ -128,15 +137,31 @@ class Core(Comp):
         # 8 coolant channels
         xandys = self.calculate_coolant_channel_locations()
         for i in range(len(xandys['x'])):
-            self.CRCC.comp_dict[i] = CylComp(temp, name,
-                                             self.CRCC.mat_list,
-                                             41.6,
-                                             572.85,
-                                             5,
-                                             xandys['x'][i],
-                                             xandys['y'][i])
+            coolant_channel = CylComp(temp, name,
+                                      self.CRCC.mat_list,
+                                      41.6,
+                                      572.85,
+                                      5-0.3,
+                                      xandys['x'][i],
+                                      xandys['y'][i])
+            self.CRCC.comp_dict[i] = coolant_channel
+            if ssliner:
+                ssliner = AnnuCylComp(temp, name,
+                                      self.CRCC_liner.mat_list,
+                                    5-0.3,
+                                    5,
+                                    41.6,
+                                    572.85,
+                                    xandys['x'][i],
+                                    xandys['y'][i],
+                                    xandys['x'][i],
+                                    xandys['y'][i])
+                self.CRCC.comp_dict[str(i)+'ss'] = ssliner
 
-    def define_CR(self, temp, name):
+    def define_CR(self, temp, name, ssliner):
+        '''
+        ssliner
+        '''
         self.CR.comp_dict = {}
         # ---------------------------------------------------------
         # center reflector
