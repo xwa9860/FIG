@@ -213,31 +213,21 @@ class Graphite(Mat):
             ratio_list=ratio_list,
             flag='moder')
 
-class GraphiteSSMix(Mat):
-    '''Graphite and SS316 mix to represent inner reflector with a ss316
-    control rod channel liner
+
+class SS316(Mat):
+    '''SS316 for control rod channel liner
     stainless steel composition and density from:
         http://www.espimetals.com/index.php/192-technical-data/stainless-steel-316-alloy-composition/202-stainless-steel-316-alloy-composition
     '''
 
     def __init__(self, temp, tmp_card=True):
         self.temp = temp
-        # the density is an average between 2.26 for graphite
-        # and 8.03 for SS316: 2.26*0.9+8.03*0.1
-        self.density = 2.837
-        # carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
-        # carbon fraction includes both carbon in graphite and carbon in ss316
-        isotopes = ['6000', '28000', '24000', '42000', '26000', '14000', '25055', '15031', '16000']
-        # the SS316 atomic ratio to carbon in graphtie in 1:10
-        ratio_list = [1+0.008, 1.2, 1.7, 0.25, 6.5345, 0.1, 0.2, 0.0045, 0.003]
-        #self.mat_comp = []
-        #lib_id = self.calc_lib_id(temp)
-        #self.mat_comp.append(
-        #    '%graphite in reflectors\n' +
-        #    '6000.%s 1.0\n' %
-        #    lib_id)
-        #self.mat_comp = ''.join(self.mat_comp)
-        self.name = 'GraphiteAndSS316%d' % (math.ceil(temp))
+        self.density = 8.03
+        # isotope list: carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
+        isotopes = ['6000', '28000', '24000', '42000', '26000',
+                    '14000', '25055', '15031', '16000']
+        ratio_list = [0.08, 12, 17, 2.5, 65.345, 1, 2, 0.045, 0.03]
+        self.name = 'SS316%d' % (math.ceil(temp))
         Mat.__init__(
             self,
             self.name,
@@ -245,8 +235,8 @@ class GraphiteSSMix(Mat):
             temp,
             tmp_card=tmp_card,
             isotopes=isotopes,
-            ratio_list=ratio_list,
-            flag='moder')
+            ratio_list=ratio_list)
+
 
 class Shell(Mat):
     # graphite shell in the pebbles
