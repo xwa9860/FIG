@@ -213,6 +213,25 @@ class Graphite(Mat):
             ratio_list=ratio_list,
             flag='moder')
 
+class Zr(Mat):
+
+    def __init__(self, temp, tmp_card=True):
+        self.temp = temp
+        self.density = 6.52
+        isotopes = ['40000']
+        ratio_list = [1]
+        self.name = 'Zr%d' % (math.ceil(temp))
+        Mat.__init__(
+            self,
+            self.name,
+            self.density,
+            temp,
+            tmp_card=tmp_card,
+            isotopes=isotopes,
+            ratio_list=ratio_list)
+
+
+
 
 class SS316(Mat):
     '''SS316 for control rod channel liner
