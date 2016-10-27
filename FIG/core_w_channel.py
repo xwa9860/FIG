@@ -7,7 +7,7 @@ channels inside the center and outer reflectors
 '''
 
 from core_gen import CoreGen
-from mat import Graphite, Flibe, SS316
+from mat import Graphite, Flibe, SS316, Zr
 from mat import GraphiteCoolMix
 from comp import *
 from pbed import FuelUnitCell, GraphiteUnitCell, PBedLat
@@ -39,7 +39,7 @@ class CRCC_SSliner(Comp):
 
     def __init__(self, temp):
         name = 'CRCC_SSliner'
-        Comp.__init__(self, temp, name, [SS316(temp)])
+        Comp.__init__(self, temp, name, [Zr(temp)])
 
 
 class OuterRef_CoolantChannel(Comp):
@@ -141,14 +141,14 @@ class Core(Comp):
                                       self.CRCC.mat_list,
                                       41.6,
                                       572.85,
-                                      5-0.3,
+                                      5-3,  ## 3cm liner
                                       xandys['x'][i],
                                       xandys['y'][i])
             self.CRCC.comp_dict[i] = coolant_channel
             if ssliner:
                 ssliner = AnnuCylComp(temp, name,
                                       self.CRCC_liner.mat_list,
-                                      5-0.3,
+                                      5-3,
                                       5,
                                       41.6,
                                       572.85,
