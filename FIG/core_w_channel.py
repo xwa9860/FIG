@@ -28,6 +28,13 @@ class OuterRef(Comp):
         Comp.__init__(self, temp, name, [Graphite(temp)])
 
 
+class Vessel(Comp):
+
+    def __init__(self, temp):
+        name = 'VESSEL'
+        Comp.__init__(self, temp, name, [SS316(temp)])
+
+
 class CenterRef_CoolantChannel(Comp):
 
     def __init__(self, cool_temp):
@@ -35,11 +42,11 @@ class CenterRef_CoolantChannel(Comp):
         Comp.__init__(self, cool_temp, name, [Flibe(cool_temp)])
 
 
-class CRCC_SSliner(Comp):
+class CRCC_liner(Comp):
 
     def __init__(self, temp):
-        name = 'CRCC_SSliner'
-        Comp.__init__(self, temp, name, [Zr(temp)])
+        name = 'CRCC_liner'
+        Comp.__init__(self, temp, name, [Flibe(temp)])
 
 
 class OuterRef_CoolantChannel(Comp):
@@ -51,23 +58,30 @@ class OuterRef_CoolantChannel(Comp):
 
 class Fuel(Comp):
 
-    def __init__(self, fpb_list, cool_temp):
+    def __init__(self, fpb_list, cool_temp, dir_name='serp_input/'):
         name = 'FuelZone'
-        self.unit_cell = FuelUnitCell(fpb_list, cool_temp)
-        self.unit_cell_lat = PBedLat(self.unit_cell, self.unit_cell.pitch)
-        Comp.__init__(self, fpb_list[0].temp, name, self.unit_cell_lat.mat_list,
+        self.unit_cell = FuelUnitCell(fpb_list, cool_temp, dir_name=dir_name)
+        self.unit_cell_lat = PBedLat(self.unit_cell,
+                                     self.unit_cell.pitch,
+                                     dir_name=dir_name)
+        Comp.__init__(self, fpb_list[0].temp, name,
+                      self.unit_cell_lat.mat_list,
+                      gen=Gen(dir_name),
                       fill=self.unit_cell_lat)
 
 
 class Blanket(Comp):
 
-    def __init__(self, pb_temp, cool_temp):
+    def __init__(self, pb_temp, cool_temp, dir_name='serp_input/'):
         self.pb_temp = pb_temp
         self.cool_temp = cool_temp
         name = 'Blanket'
-        self.unit_cell = GraphiteUnitCell(self.pb_temp, self.cool_temp)
-        self.unit_cell_lat = PBedLat(self.unit_cell, self.unit_cell.pitch)
+        self.unit_cell = GraphiteUnitCell(self.pb_temp, self.cool_temp,
+                                          dir_name=dir_name)
+        self.unit_cell_lat = PBedLat(self.unit_cell, self.unit_cell.pitch
+                                     )
         Comp.__init__(self, pb_temp, name, self.unit_cell_lat.mat_list,
+                      gen=Gen(dir_name),
                       fill=self.unit_cell_lat)
 
 
@@ -84,7 +98,8 @@ class Core(Comp):
             temp_cool_ORCC,
             temp_cool_F,
             temp_Blanket,
-            temp_cool_B):
+            temp_cool_B,
+            dir_name='serp_input/'):
 
         assert(len(fpb_list) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
             fpb_list)
@@ -92,15 +107,15 @@ class Core(Comp):
         self.comp_dict = {}
 
         self.CRCC = CenterRef_CoolantChannel(temp_cool_CRCC)
-        self.CRCC_liner = CRCC_SSliner(temp_cool_CRCC)
+        self.CRCC_liner = CRCC_liner(temp_cool_CRCC)
         self.CR = CenterRef(temp_CR)
         self.OR = OuterRef(temp_OR)
         self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
-        self.Fuel = Fuel(fpb_list, temp_cool_F)
+        self.Fuel = Fuel(fpb_list, temp_cool_F, dir_name)
         self.Blanket = Blanket(temp_Blanket, temp_cool_B)
 
-        self.define_CRCC(self.CRCC.temp, self.CRCC.name, ssliner=True)
-        self.define_CR(self.CR.temp, self.CR.name, ssliner=True)
+        self.define_CRCC(self.CRCC.temp, self.CRCC.name, liner=True)
+        self.define_CR(self.CR.temp, self.CR.name, liner=True)
         self.define_OR(self.OR.temp, self.OR.name)
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
         self.define_Fuel(self.Fuel.temp, self.Fuel.name)
@@ -125,9 +140,10 @@ class Core(Comp):
         # in the same universe, only need it to get the univ id
         name = 'FullCore'
         mat_list = self.collect_mat()
-        Comp.__init__(self, fpb_list[0].temp, name, mat_list, CoreGen())
+        Comp.__init__(self, fpb_list[0].temp,
+                      name, mat_list, CoreGen(dir_name))
 
-    def define_CRCC(self, temp, name, ssliner=False):
+    def define_CRCC(self, temp, name, liner=False):
         '''
         CRCC is a 10 cm bande at the outer layer of the center reflector
         that is a mix of graphite and flibe, to represent the coolant channel
@@ -141,26 +157,26 @@ class Core(Comp):
                                       self.CRCC.mat_list,
                                       41.6,
                                       572.85,
-                                      5-3,  ## 3cm liner
+                                      5-3,  # 3cm liner
                                       xandys['x'][i],
                                       xandys['y'][i])
             self.CRCC.comp_dict[i] = coolant_channel
-            if ssliner:
-                ssliner = AnnuCylComp(temp, name,
-                                      self.CRCC_liner.mat_list,
-                                      5-3,
-                                      5,
-                                      41.6,
-                                      572.85,
-                                      xandys['x'][i],
-                                      xandys['y'][i],
-                                      xandys['x'][i],
-                                      xandys['y'][i])
-                self.CRCC.comp_dict[str(i)+'ss'] = ssliner
+            if liner:
+                liner = AnnuCylComp(temp, name,
+                                    self.CRCC_liner.mat_list,
+                                    5-3,
+                                    5,
+                                    41.6,
+                                    572.85,
+                                    xandys['x'][i],
+                                    xandys['y'][i],
+                                    xandys['x'][i],
+                                    xandys['y'][i])
+                self.CRCC.comp_dict[str(i)+'ss'] = liner
 
-    def define_CR(self, temp, name, ssliner):
+    def define_CR(self, temp, name, liner):
         '''
-        ssliner
+        liner
         '''
         self.CR.comp_dict = {}
         # ---------------------------------------------------------

@@ -15,7 +15,8 @@ class Comp(CmpObj):
     all inherant from this class
     '''
 
-    def __init__(self, temp, name, mat_list, gen=Gen(), fill=None):
+    def __init__(self, temp, name, mat_list,
+                 gen=Gen(), fill=None):
         assert isinstance(temp, Number), '''
         temp is not a number:%r''' % temp
         assert isinstance(name, str), "name is not a string:%r" % name

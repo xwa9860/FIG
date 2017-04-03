@@ -1,18 +1,22 @@
 #!/usr/bin/python
 from gen import Gen
 from serp_concept import Universe, Cell, Surface
-from  more_itertools import unique_everseen
+from more_itertools import unique_everseen
 
 class PBedGen(Gen):
 
-    def parse(self, a_pbed, input_file, type):
+    def __init__(self, input_file='', dir_name='serp_input/'):
+        self.input_file = input_file
+        Gen.__init__(self, dir_name)
+
+    def parse(self, a_pbed, type):
         if type == 's':
             str_list = []
             str_list.append(
                 '%%---Pebble unit cell with position from input file\n' +
                 'pbed %d %d "%s"\n' %
                 (self.univ.id, a_pbed.coolant.gen.univ.id,
-                 input_file))
+                 self.input_file))
             str_list.append(
                 '%%---Coolant in the unit cell\n' +
                 a_pbed.coolant.generate_output())
@@ -54,8 +58,9 @@ class FCCGen(PBedGen):
         return file_name
 
     def parse(self, a_fcc, type):
-      # dir_loc is the folder path for the generated position file
-        dir_loc='serp_input/'
+        # dir_loc is the folder path for the generated position file
+        dir_loc = self.dir_name
+        print('fuel pb bed %s' %dir_loc)
         file_name = self.generate_pos_file(a_fcc, dir_loc)
         return PBedGen.parse(self, a_fcc, file_name, 's')
 
@@ -90,8 +95,9 @@ class GFCCGen(PBedGen):
     def parse(self, a_g_pbed, type):
       # dir_loc is the folder path for the generated position file
         if type == 's':
-            dir_loc='serp_input/'
+            dir_loc = self.dir_name
             input_file = self.generate_pos_file(a_g_pbed, dir_loc)
+            print('g pbed %s' %dir_loc)
             str_list = []
             str_list.append(
                 '\n%%---Graphite pebble bed(or unit cell) from input file\n' +
@@ -109,8 +115,9 @@ class GFCCGen(PBedGen):
 
 class PBedLatGen(Gen):
 
-    def __init__(self):
+    def __init__(self, dir_name='serp_input'):
         self.univ = Universe()   # univ of pbed lattice
+        self.dir_name = dir_name
 
     def parse(self, a_pbed_lat, type):
         if type == 's':

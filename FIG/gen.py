@@ -6,9 +6,10 @@ import math
 
 class Gen:
 
-    def __init__(self):
+    def __init__(self, dir_name='serp_input/'):
         self.cell = Cell()
         self.univ = Universe()
+        self.dir_name = dir_name
 
     def set_univId(self, id):
         self.univ.setId(id)

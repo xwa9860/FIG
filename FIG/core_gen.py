@@ -8,8 +8,6 @@ class CoreGen(Gen):
     def parse(self, a_core, type):
         if type == 's':
             str_list = []
-            dir = 'serp_input/'
-
             # define title and library path
             str_list.append('''%%---Cross section data library path\n''')
             str_list.append('set title "FHR core"\n' +
@@ -29,7 +27,7 @@ class CoreGen(Gen):
                         a_core.comp_dict[key1].comp_dict[key2].generate_output()
                     )
                 comp_str.append(a_core.comp_dict[key1].generate_output())
-                open(dir+filename, 'w+').write(''.join(comp_str))
+                open(self.dir_name+filename, 'w+').write(''.join(comp_str))
                 str_list.append('include "%s"\n' %filename)
             #open(dir+'Fuel', 'a').write(a_core.Fuel.unit_cell_lat2.generate_output())
 
@@ -48,7 +46,7 @@ class CoreGen(Gen):
             for mat in a_core.mat_list:
                 print('create material %r' % mat)
                 mat_str.append(mat.generate_output())
-            open(dir+filename, 'w+').write(''.join(mat_str))
+            open(self.dir_name+filename, 'w+').write(''.join(mat_str))
 
             # define neutron source and BC
             str_list.append('\n%%---Neutron source and BC\n')
@@ -56,6 +54,7 @@ class CoreGen(Gen):
             str_list.append('set pop 200000 500 200\n')
             str_list.append('set bc 1\n')
             str_list.append('set ures 1')
+            str_list.append('set gcu ')
             # Plot
             str_list.append('\n%%---Plot the geometry\n')
             str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')

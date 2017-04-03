@@ -6,8 +6,9 @@ from gen import Gen
 
 class GPbGen(Gen):
 
-    def __init__(self):
+    def __init__(self, dir_name):
         self.univ = Universe()
+        self.dir_name = dir_name
 
     def parse(self, a_g_pb, type):
         if type == 's':
@@ -27,8 +28,9 @@ class GPbGen(Gen):
 class FuelPbGen(Gen):
     wrote_surf = False
 
-    def __init__(self):
+    def __init__(self, dir_name):
         self.univ = Universe()
+        self.dir_name = dir_name
 
     def parse(self, a_f_pb, type):
         if type == 's':

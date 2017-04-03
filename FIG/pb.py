@@ -7,18 +7,18 @@ from mat import Graphite, Shell, CentralGraphite
 
 class GPb(Comp):
 
-    def __init__(self, temp):
+    def __init__(self, temp, dir_name='serp_input/'):
         self.r = 1.5   # cm
         self.temp = temp
         # self.filling = {'Graphite':Graphite(self.temp)}
         self.mat_list = [Graphite(temp)]
         self.name = 'Graphite'+str(self.temp)
-        Comp.__init__(self, self.temp, self.name, self.mat_list, GPbGen())
+        Comp.__init__(self, self.temp, self.name, self.mat_list, GPbGen(dir_name))
 
 
 class FPb(Comp):
 
-    def __init__(self, triso, cg_temp, shell_temp):
+    def __init__(self, triso, cg_temp, shell_temp, dir_name='serp_input/'):
         '''
         cg_temp: central graphite kernel temperature
         '''
@@ -42,7 +42,7 @@ class FPb(Comp):
             self.triso.temp,
             self.name,
             mat,
-            FuelPbGen())
+            FuelPbGen(dir_name))
 
     def calculate_r(self):
         self.r_config = {}

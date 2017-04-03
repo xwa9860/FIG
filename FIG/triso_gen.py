@@ -6,8 +6,9 @@ from gen import Gen
 class TrisoGen(Gen):
     first_time = True
 
-    def __init__(self):
+    def __init__(self, dir_name='serp_input'):
         self.particle = Universe()
+        self.dir_name = dir_name
 
     def parse(self, a_triso, type):
         if type == 's':
@@ -31,8 +32,9 @@ class TrisoGen(Gen):
 
 class TrisoLatticeGen(Gen):
 
-    def __init__(self):
+    def __init__(self, dir_name='serp_input'):
         self.univ = Universe()
+        self.dir_name = dir_name
 
     def parse(self, a_triso_lattice, type):
         if type == 's':

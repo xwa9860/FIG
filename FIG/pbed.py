@@ -7,17 +7,22 @@ from coolant import Coolant
 from comp import Comp
 from pb import GPb
 
+
 class PBed(Comp):
 
     '''general pebble bed class, including unit cell'''
 
-    def __init__(self, coolant, pb_list, gen=PBedGen()):
+    def __init__(self, coolant, pb_list, dir_name='serp_input/',
+                 input_file='',
+                 gen=PBedGen('serp_input/')):
         self.coolant = coolant
         self.pb_list = pb_list
+        self.input_file = input_file
         temp = coolant.temp
         mat_list = self.collect_mat()
         name = type(self).__name__
-        Comp.__init__(self, temp, name, mat_list, gen)
+        Comp.__init__(self, temp, name,
+                      mat_list, gen=PBedGen(dir_name))
 
     def collect_mat(self):
         ''' get all the materials contained in
@@ -39,45 +44,60 @@ class FCC(PBed):
     '''Fcc unit cell
     base class for fuel pebbles and graphite pebbles
     '''
-    def __init__(self, coolant, pb_list, gen=FCCGen()):
+    def __init__(self, coolant, pb_list, dir_name='serp_input/',
+                 input_file='fccinput',
+                 gen=FCCGen('serp_input/')):
         assert(len(pb_list) == 14), "pb_list length is not 14, but %d" % len(
             pb_list)
         self.packing_fraction = 0.40
         self.pitch = 2.27541  # fcc pitch for 3cm diam pb at packing frac = 40%
-        PBed.__init__(self, coolant, pb_list, gen)
+        PBed.__init__(self, coolant, pb_list,
+                      dir_name=dir_name,
+                      input_file=input_file,
+                      gen=FCCGen(dir_name))
 
 
 class FuelUnitCell(FCC):
 
-    def __init__(self, fpb_list, cool_temp, packing_fraction=0.40):
+    def __init__(self, fpb_list, cool_temp,
+                 packing_fraction=0.40, input_file='fpbed_pos',
+                 dir_name='serp_input/'):
         self.cool = Coolant(cool_temp, 'FuelFCCCoolant')
-        FCC.__init__(self, self.cool, fpb_list)
+        FCC.__init__(self, self.cool, fpb_list,
+                     input_file=input_file,
+                     dir_name=dir_name,
+                     gen=FCCGen(dir_name))
         # TODO: calculate pitch from packing fraction and update FCC class to
         # receive pitch from constructor
 
 
 class GraphiteUnitCell(FCC):
 
-    def __init__(self, pb_temp, cool_temp, packing_fraction=0.40):
+    def __init__(self, pb_temp, cool_temp,
+                 packing_fraction=0.40,
+                 input_file='gpbed_pos',
+                 dir_name='serp_input/'):
         '''
         assuming all the graphite pebbles in an FCC unit cell are identical
         '''
         cool = Coolant(cool_temp, 'GFCCCoolant')
         gpb_list = []
         for i in range(0, 14):
-            gpb_list.append(GPb(pb_temp))
+            gpb_list.append(GPb(pb_temp, dir_name))
         FCC.__init__(
             self,
             cool,
             gpb_list,
-            GFCCGen())
+            input_file=input_file,
+            dir_name=dir_name,
+            gen=GFCCGen(dir_name))
 
 
 class PBedLat(Comp):
 
     ''' Lattice of pebble bed(Fcc unit cell) '''
 
-    def __init__(self, pbed, pitch):
+    def __init__(self, pbed, pitch, dir_name='serp_input'):
         ''' arg:
             pbed: fuel pebble or graphite pebble unit cell
             pitch: pitch between two fcc unit cells
@@ -86,4 +106,5 @@ class PBedLat(Comp):
         self.pitch = pitch
         mat_list = pbed.mat_list
         self.pbed = pbed
-        Comp.__init__(self, pbed.temp, name, mat_list, PBedLatGen())
+        Comp.__init__(self, pbed.temp, name,
+                      mat_list, gen=PBedLatGen(dir_name))

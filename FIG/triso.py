@@ -7,7 +7,10 @@ import math
 
 class Triso(Comp):
 
-    def __init__(self, temp_list, fuel, dr_config=None):
+    def __init__(self, temp_list, fuel, dr_config=None, dir_name='serp_input'):
+        '''
+        fuel: fuel material
+        '''
         assert len(temp_list) == 5, '''temp_list for triso particle needs 5
         temperature values, expected 5, got %d''' %len(temp_list)
         if not dr_config:
@@ -29,7 +32,7 @@ class Triso(Comp):
         ]
         name = 'triso'+fuel.name
         self.calculate_r()
-        Comp.__init__(self, fuel.temp, name, self.mat_list, TrisoGen())
+        Comp.__init__(self, fuel.temp, name, self.mat_list, TrisoGen(dir_name))
         # triso temp defined as fuel temp, which is expected to be the highest
         # thus most important to safety analysis
 
