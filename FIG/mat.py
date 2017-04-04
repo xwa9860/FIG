@@ -117,13 +117,14 @@ class Buffer(Mat):
     def __init__(self, temp, tmp_card=True):
         mat_comp = []
         self.temp = temp
+        name = 'Buffer%d' % (math.ceil(temp))
         lib_id = self.calc_lib_id(temp)
         mat_comp.append(
             '%Buffer layer in triso particle\n' +
             '6000.%s 5.26449E-02\n' %
             lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'Buffer', 1.05, temp, mat_comp=mat_comp,
+        Mat.__init__(self, name, 1.05, temp, mat_comp=mat_comp,
                      tmp_card=tmp_card, flag='moder')
 
 
@@ -132,13 +133,14 @@ class iPyC(Mat):
     def __init__(self, temp, tmp_card=True):
         mat_comp = []
         self.temp = temp
+        name = 'iPyC%d' % (math.ceil(temp))
         lib_id = self.calc_lib_id(temp)
         mat_comp.append(
             '%inner pyrocarbon layer in triso particle\n' +
             '6000.%s 9.52621E-02\n' %
             lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'iPyC', 1.90, temp, mat_comp=mat_comp,
+        Mat.__init__(self, name, 1.90, temp, mat_comp=mat_comp,
                      tmp_card=tmp_card, flag='moder')
 
 
@@ -146,6 +148,7 @@ class oPyC(Mat):
 
     def __init__(self, temp, tmp_card=True):
         mat_comp = []
+        name = 'oPyC%d' % (math.ceil(temp))
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
         mat_comp.append(
@@ -153,8 +156,8 @@ class oPyC(Mat):
             '6000.%s 9.52621E-02\n' %
             lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'oPyC', 1.90, temp, mat_comp=mat_comp,
-                    tmp_card=tmp_card, flag='moder')
+        Mat.__init__(self, name, 1.90, temp, mat_comp=mat_comp,
+                     tmp_card=tmp_card, flag='moder')
 
 
 class SiC(Mat):
@@ -162,6 +165,7 @@ class SiC(Mat):
     def __init__(self, temp, tmp_card=True):
         mat_comp = []
         self.temp = temp
+        name = 'SiC%d' % (math.ceil(temp))
         lib_id = self.calc_lib_id(temp)
         mat_comp.append(
             '%silicon carbon layer in triso particle\n' +
@@ -169,7 +173,7 @@ class SiC(Mat):
             (lib_id,
              lib_id))
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'SiC', 3.18, temp, mat_comp=mat_comp,
+        Mat.__init__(self, name, 3.18, temp, mat_comp=mat_comp,
                      tmp_card=tmp_card)
 
 
@@ -179,12 +183,13 @@ class Matrix(Mat):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
+        name = 'Matrix%d' % (math.ceil(temp))
         mat_comp.append('%matrix in triso particle\n' +
                         '6000.%s 8.77414E-02\n' % lib_id +
                         '5010.%s 9.64977E-09\n' % lib_id +
                         '5011.%s 3.90864E-08\n' % lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, 'Matrix', 1.75, temp, mat_comp=mat_comp,
+        Mat.__init__(self, name, 1.75, temp, mat_comp=mat_comp,
                      tmp_card=tmp_card, flag='moder')
 
 
@@ -231,8 +236,6 @@ class Zr(Mat):
             ratio_list=ratio_list)
 
 
-
-
 class SS316(Mat):
     '''SS316 for control rod channel liner
     stainless steel composition and density from:
@@ -265,6 +268,8 @@ class Shell(Mat):
         self.density = 1.75
         isotopes = ['6000']
         ratio_list = [1]
+        name = 'Shell%d' % (math.ceil(temp))
+
         #self.mat_comp = []
         #self.temp = temp
         #lib_id = self.calc_lib_id(temp)
@@ -275,7 +280,7 @@ class Shell(Mat):
         #self.mat_comp = ''.join(self.mat_comp)
         Mat.__init__(
             self,
-            'Shell',
+            name,
             self.density,
             temp,
             isotopes=isotopes,
@@ -291,6 +296,7 @@ class CentralGraphite(Mat):
         self.density = 1.74
         isotopes = ['6000']
         ratio_list = [1]
+        name = 'CentralGraphite%d' % (math.ceil(temp))
         #self.mat_comp = []
         #self.temp = temp
         #lib_id = self.calc_lib_id(temp)
@@ -301,7 +307,7 @@ class CentralGraphite(Mat):
         #self.mat_comp = ''.join(self.mat_comp)
         Mat.__init__(
             self,
-            'CentralGraphite',
+            name,
             self.density,
             temp,
             isotopes=isotopes,

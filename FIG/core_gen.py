@@ -54,7 +54,7 @@ class CoreGen(Gen):
             str_list.append('set pop 200000 500 200\n')
             str_list.append('set bc 1\n')
             str_list.append('set ures 1')
-            str_list.append('set gcu ')
+            str_list.append('set gcu 3 6 9 12 15 18 21 24 27 30 33 36 39 42 45')
             # Plot
             str_list.append('\n%%---Plot the geometry\n')
             str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')

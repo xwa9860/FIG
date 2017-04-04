@@ -16,7 +16,7 @@ class TrisoGen(Gen):
             str_list.append('''%%---Triso particle \nparticle %d''' %
                             self.particle.id)
             for mat in a_triso.mat_list:
-                if mat.name == 'Matrix':
+                if 'Matrix' in mat.name:
                     str_list.append(mat.name + '\n')
                     continue
                 str_list.append('%s %.4f' %

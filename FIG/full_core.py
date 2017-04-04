@@ -64,6 +64,9 @@ if __name__ == "__main__":
     case_nb = 1
     for temp in np.array([300, 600, 900]):
         for j in range(1, 9):
+            Cell.id = 1
+            Universe.id = 1
+            Surface.id = 1
             pb_idxs = np.where(pb_burnup_list == j)[0]
             for pb_idx in pb_idxs:
                 fuel_temp_list[pb_idx] = temp*np.ones(8)
@@ -73,7 +76,4 @@ if __name__ == "__main__":
                 # shell
             dir_name = '_'.join(['mk1_input', str(j), str(temp), '/'])
             create_the_core(fuel_temp_list, pb_burnup_list, dir_name)
-            Cell.id = 1
-            Universe.id = 1
-            Surface.id = 1
             case_nb += 1

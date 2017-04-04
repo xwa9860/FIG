@@ -60,7 +60,8 @@ class Fuel(Comp):
 
     def __init__(self, fpb_list, cool_temp, dir_name='serp_input/'):
         name = 'FuelZone'
-        self.unit_cell = FuelUnitCell(fpb_list, cool_temp, dir_name=dir_name)
+        self.unit_cell = FuelUnitCell(fpb_list, cool_temp,
+                                      dir_name=dir_name)
         self.unit_cell_lat = PBedLat(self.unit_cell,
                                      self.unit_cell.pitch,
                                      dir_name=dir_name)
@@ -112,7 +113,7 @@ class Core(Comp):
         self.OR = OuterRef(temp_OR)
         self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
         self.Fuel = Fuel(fpb_list, temp_cool_F, dir_name)
-        self.Blanket = Blanket(temp_Blanket, temp_cool_B)
+        self.Blanket = Blanket(temp_Blanket, temp_cool_B, dir_name)
 
         self.define_CRCC(self.CRCC.temp, self.CRCC.name, liner=True)
         self.define_CR(self.CR.temp, self.CR.name, liner=True)

@@ -3,20 +3,20 @@ from gen import Gen
 from serp_concept import Universe, Cell, Surface
 from more_itertools import unique_everseen
 
+
 class PBedGen(Gen):
 
-    def __init__(self, input_file='', dir_name='serp_input/'):
-        self.input_file = input_file
+    def __init__(self, dir_name='serp_input/'):
         Gen.__init__(self, dir_name)
 
-    def parse(self, a_pbed, type):
+    def parse(self, a_pbed, input_file, type):
         if type == 's':
             str_list = []
             str_list.append(
                 '%%---Pebble unit cell with position from input file\n' +
                 'pbed %d %d "%s"\n' %
                 (self.univ.id, a_pbed.coolant.gen.univ.id,
-                 self.input_file))
+                 input_file))
             str_list.append(
                 '%%---Coolant in the unit cell\n' +
                 a_pbed.coolant.generate_output())
@@ -27,7 +27,7 @@ class PBedGen(Gen):
             return ''.join(str_list)
 
 
-class FCCGen(PBedGen):
+class FCCGen(Gen):
 
     def generate_pos_file(self, a_fcc, dir_loc):
         ''' generate pebble position file for Serpent from packing fraction'''
@@ -60,12 +60,28 @@ class FCCGen(PBedGen):
     def parse(self, a_fcc, type):
         # dir_loc is the folder path for the generated position file
         dir_loc = self.dir_name
-        print('fuel pb bed %s' %dir_loc)
         file_name = self.generate_pos_file(a_fcc, dir_loc)
-        return PBedGen.parse(self, a_fcc, file_name, 's')
+        return self.parse1(a_fcc, file_name, 's')
+
+    def parse1(self, a_pbed, input_file, type):
+        if type == 's':
+            str_list = []
+            str_list.append(
+                '%%---Pebble unit cell with position from input file\n' +
+                'pbed %d %d "%s"\n' %
+                (self.univ.id, a_pbed.coolant.gen.univ.id,
+                 input_file))
+            str_list.append(
+                '%%---Coolant in the unit cell\n' +
+                a_pbed.coolant.generate_output())
+            str_list.append(
+                '%%---Pebbles in the unit cell(pbed)\n')
+            for pb in list(unique_everseen(a_pbed.pb_list)):
+                str_list.append(pb.generate_output())
+            return ''.join(str_list)
 
 
-class GFCCGen(PBedGen):
+class GFCCGen(Gen):
 
     def generate_pos_file(self, a_g_fcc, dir_loc):
         pb_pos_input = (  # template, pb univ id to be replaced
@@ -97,7 +113,6 @@ class GFCCGen(PBedGen):
         if type == 's':
             dir_loc = self.dir_name
             input_file = self.generate_pos_file(a_g_pbed, dir_loc)
-            print('g pbed %s' %dir_loc)
             str_list = []
             str_list.append(
                 '\n%%---Graphite pebble bed(or unit cell) from input file\n' +
@@ -115,7 +130,7 @@ class GFCCGen(PBedGen):
 
 class PBedLatGen(Gen):
 
-    def __init__(self, dir_name='serp_input'):
+    def __init__(self, dir_name='serp_input/'):
         self.univ = Universe()   # univ of pbed lattice
         self.dir_name = dir_name
 

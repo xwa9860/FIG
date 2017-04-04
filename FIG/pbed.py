@@ -13,16 +13,14 @@ class PBed(Comp):
     '''general pebble bed class, including unit cell'''
 
     def __init__(self, coolant, pb_list, dir_name='serp_input/',
-                 input_file='',
                  gen=PBedGen('serp_input/')):
         self.coolant = coolant
         self.pb_list = pb_list
-        self.input_file = input_file
         temp = coolant.temp
         mat_list = self.collect_mat()
         name = type(self).__name__
         Comp.__init__(self, temp, name,
-                      mat_list, gen=PBedGen(dir_name))
+                      mat_list, gen=gen)
 
     def collect_mat(self):
         ''' get all the materials contained in
@@ -45,7 +43,6 @@ class FCC(PBed):
     base class for fuel pebbles and graphite pebbles
     '''
     def __init__(self, coolant, pb_list, dir_name='serp_input/',
-                 input_file='fccinput',
                  gen=FCCGen('serp_input/')):
         assert(len(pb_list) == 14), "pb_list length is not 14, but %d" % len(
             pb_list)
@@ -53,18 +50,16 @@ class FCC(PBed):
         self.pitch = 2.27541  # fcc pitch for 3cm diam pb at packing frac = 40%
         PBed.__init__(self, coolant, pb_list,
                       dir_name=dir_name,
-                      input_file=input_file,
-                      gen=FCCGen(dir_name))
+                      gen=gen)
 
 
 class FuelUnitCell(FCC):
 
     def __init__(self, fpb_list, cool_temp,
-                 packing_fraction=0.40, input_file='fpbed_pos',
+                 packing_fraction=0.40,
                  dir_name='serp_input/'):
         self.cool = Coolant(cool_temp, 'FuelFCCCoolant')
         FCC.__init__(self, self.cool, fpb_list,
-                     input_file=input_file,
                      dir_name=dir_name,
                      gen=FCCGen(dir_name))
         # TODO: calculate pitch from packing fraction and update FCC class to
@@ -75,7 +70,6 @@ class GraphiteUnitCell(FCC):
 
     def __init__(self, pb_temp, cool_temp,
                  packing_fraction=0.40,
-                 input_file='gpbed_pos',
                  dir_name='serp_input/'):
         '''
         assuming all the graphite pebbles in an FCC unit cell are identical
@@ -88,7 +82,6 @@ class GraphiteUnitCell(FCC):
             self,
             cool,
             gpb_list,
-            input_file=input_file,
             dir_name=dir_name,
             gen=GFCCGen(dir_name))
 
