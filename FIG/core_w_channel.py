@@ -35,6 +35,20 @@ class Vessel(Comp):
         Comp.__init__(self, temp, name, [SS316(temp)])
 
 
+class Downcomer(Comp):
+
+    def __init__(self, temp):
+        name = 'Downcomer'
+        Comp.__init__(self, temp, name, [Flibe(temp)])
+
+
+class Corebarrel(Comp):
+
+    def __init__(self, temp):
+        name = 'Corebarrel'
+        Comp.__init__(self, temp, name, [SS316(temp)])
+
+
 class CenterRef_CoolantChannel(Comp):
 
     def __init__(self, cool_temp):
@@ -100,6 +114,9 @@ class Core(Comp):
             temp_cool_F,
             temp_Blanket,
             temp_cool_B,
+            temp_Corebarrel,
+            temp_Downcomer,
+            temp_Vessel,
             dir_name='serp_input/'):
 
         assert(len(fpb_list) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
@@ -114,6 +131,9 @@ class Core(Comp):
         self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
         self.Fuel = Fuel(fpb_list, temp_cool_F, dir_name)
         self.Blanket = Blanket(temp_Blanket, temp_cool_B, dir_name)
+        self.Vessel = Vessel(temp_Vessel)
+        self.Downcomer = Downcomer(temp_Downcomer)
+        self.Corebarrel = Corebarrel(temp_Corebarrel)
 
         self.define_CRCC(self.CRCC.temp, self.CRCC.name, liner=True)
         self.define_CR(self.CR.temp, self.CR.name, liner=True)
@@ -121,6 +141,9 @@ class Core(Comp):
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
         self.define_Fuel(self.Fuel.temp, self.Fuel.name)
         self.define_Blanket(self.Blanket.temp, self.Blanket.name)
+        self.define_Vessel(self.Vessel.temp, self.Vessel.name)
+        self.define_Downcomer(self.Downcomer.temp, self.Downcomer.name)
+        self.define_Corebarrel(self.Corebarrel.temp, self.Corebarrel.name)
 
         self.comp_dict = {
             'CR': self.CR,
@@ -128,7 +151,10 @@ class Core(Comp):
             'OR': self.OR,
             'ORCC': self.ORCC,
             'Fuel': self.Fuel,
-            'Blanket': self.Blanket}
+            'Blanket': self.Blanket,
+            'Vessel': self.Vessel,
+            'Downcomer': self.Downcomer,
+            'Corebarrel': self.Corebarrel}
 
         self.whole_core = CylComp(fpb_list[0].temp,
                                   'whole_core',
@@ -763,6 +789,45 @@ class Core(Comp):
                                           self.CR.zt_defuel,
                                           fill=self.Blanket.fill)
         self.Blanket.comp_dict['defuel'] = self.Blanket.defuel
+
+    def define_Corebarrel(self, temp, name):
+        self.Corebarrel.ri = 165
+        self.Corebarrel.ro = 168
+        self.Corebarrel.act = AnnuCylComp(temp, name,
+                                          self.Corebarrel.mat_list,
+                                          self.Corebarrel.ri,
+                                          self.Corebarrel.ro,
+                                          self.CR.zb_defuel,
+                                          self.CR.zt_defuel,
+                                          fill=None)
+        self.Corebarrel.comp_dict = {}
+        self.Corebarrel.comp_dict['act'] = self.Corebarrel.act
+
+    def define_Downcomer(self, temp, name):
+        self.Downcomer.ri = 168
+        self.Downcomer.ro = 170.8
+        self.Downcomer.act = AnnuCylComp(temp, name,
+                                         self.Downcomer.mat_list,
+                                         self.Downcomer.ri,
+                                         self.Downcomer.ro,
+                                         self.CR.zb_defuel,
+                                         self.CR.zt_defuel,
+                                         fill=None)
+        self.Downcomer.comp_dict = {}
+        self.Downcomer.comp_dict['act'] = self.Downcomer.act
+
+    def define_Vessel(self, temp, name):
+        self.Vessel.ri = 170.8
+        self.Vessel.ro = 176.8
+        self.Vessel.act = AnnuCylComp(temp, name,
+                                      self.Vessel.mat_list,
+                                      self.Vessel.ri,
+                                      self.Vessel.ro,
+                                      self.CR.zb_defuel,
+                                      self.CR.zt_defuel,
+                                      fill=None)
+        self.Vessel.comp_dict = {}
+        self.Vessel.comp_dict['act'] = self.Vessel.act
 
     def collect_mat(self):
         mat_list = []

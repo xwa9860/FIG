@@ -2,6 +2,7 @@
 from gen import Gen
 from serp_concept import Universe, Cell, Surface
 from more_itertools import unique_everseen
+#  "List unique elements, preserving order. Remember all elements ever seen."
 
 
 class PBedGen(Gen):

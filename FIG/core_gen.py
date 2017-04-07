@@ -4,9 +4,15 @@ from serp_concept import Cell, Universe, Detector
 
 
 class CoreGen(Gen):
+    def generate_sbatch_file(self, dir_name):
+        with open('template.sub', 'r') as rf:
+            text = rf.read()
+            with open(''.join([dir_name, 'sbatch.sub']), 'w') as f:
+                f.write(text)
 
     def parse(self, a_core, type):
         if type == 's':
+            self.generate_sbatch_file(self.dir_name)
             str_list = []
             # define title and library path
             str_list.append('''%%---Cross section data library path\n''')
@@ -53,8 +59,8 @@ class CoreGen(Gen):
             str_list.append('\n%%---set pop neutron-per-cycle cycles skip-cycles\n')
             str_list.append('set pop 200000 500 200\n')
             str_list.append('set bc 1\n')
-            str_list.append('set ures 1')
-            str_list.append('set gcu 3 6 9 12 15 18 21 24 27 30 33 36 39 42 45')
+            str_list.append('set ures 1\n')
+            str_list.append('set gcu 3 6 9 12 15 18 21 24\n')
             # Plot
             str_list.append('\n%%---Plot the geometry\n')
             str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')

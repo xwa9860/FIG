@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from serp_concept import Universe, Cell, SphSurf
-from mat import Mat
 from gen import Gen
+import math
 
 
 class GPbGen(Gen):
@@ -47,15 +47,19 @@ class FuelPbGen(Gen):
             cell1 = Cell()
             cell2 = Cell()
             cell3 = Cell()
+            CG_temp = next(cg for cg in a_f_pb.mat_list
+                           if cg.__class__.__name__=='CentralGraphite').temp
+            shell_temp = next(shell for shell in a_f_pb.mat_list
+                           if shell.__class__.__name__=='Shell').temp
             str_list.append(
                 '%%---Fuel pebble\n' +
-                'cell %d %d CentralGraphite -%d\n' %
-                (cell1.id, self.univ.id, FuelPbGen.surf1.id) +
+                'cell %d %d CentralGraphite%d -%d\n' %
+                (cell1.id, self.univ.id, math.ceil(CG_temp), FuelPbGen.surf1.id) +
                 'cell %d %d fill %d %d -%d\n' %
                 (cell2.id, self.univ.id, a_f_pb.tr_lat.gen.univ.id,
                  FuelPbGen.surf1.id, FuelPbGen.surf2.id)   +
                  a_f_pb.triso.generate_output() +
                  a_f_pb.tr_lat.generate_output()
-                + 'cell %d %d Shell %d\n' %
-                (cell3.id, self.univ.id, FuelPbGen.surf2.id))
+                + 'cell %d %d Shell%d %d\n' %
+                (cell3.id, self.univ.id, math.ceil(shell_temp), FuelPbGen.surf2.id))
             return ''.join(str_list)

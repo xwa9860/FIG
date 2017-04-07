@@ -18,16 +18,16 @@ class MatGen:
                     str_list.append(
                         '\nmat %s -%E moder grph_%s 6000 tmp %f\n %s' %
                         (a_mat.name, a_mat.density, a_mat.name,
-                        a_mat.temp, a_mat.mat_comp))
+                         a_mat.temp, a_mat.mat_comp))
                 else:
                     str_list.append(
                         '\nmat %s -%E moder grph_%s 6000\n %s' %
                         (a_mat.name, a_mat.density, a_mat.name,
-                        a_mat.mat_comp))
+                         a_mat.mat_comp))
                 str_list.append(
                     'therm grph_%s gre7.%dt\n' %
                     (a_mat.name,
-                    id_list[bisect.bisect_left(temp_list, a_mat.temp)]))
+                     id_list[bisect.bisect_left(temp_list, a_mat.temp)]))
             else:
                 if tmp:
                     str_list.append(

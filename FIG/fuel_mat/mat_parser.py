@@ -1,5 +1,4 @@
 #!/usr/bin/python
-from sets import Set
 
 
 class mat_parser:
@@ -9,7 +8,7 @@ class mat_parser:
     '''
 
     # isotopes not defined in serpent library
-    not_in_serpent_lib = Set(
+    not_in_serpent_lib = set(
         ['43107', '55144', '57143', '46116', '45117', '88228', '94245',
          '83210', '92230', '86222', '91234', '92231', '86220', '84210',
          '37082', '28078', '37088', '41109', '34090', '43117', '32083',
@@ -112,7 +111,7 @@ class mat_parser:
                             f.write(line[8: 18])
                             f.write('\n')
                         else:
-                            print 'isotope %s fraction =0 or not in serp lib'
+                            print('isotope %s fraction =0 or not in serp lib')
                     else:
                         if not line[9:19] == '0.0000E+00' and\
                                 line[2:7] not in mat_parser.not_in_serpent_lib:
@@ -121,7 +120,8 @@ class mat_parser:
                             f.write(line[9: 19])
                             f.write('\n')
                         else:
-                            print 'isotope %s fraction =0 or not in serp lib' %line[2:7]
+                            print('isotope %s fraction =0 or not in serp lib'
+                                  %line[2:7])
         f.close
         input.close
 
@@ -137,7 +137,7 @@ class mat_parser:
                     mat_dict[isotope] = fraction
                     text.append(isotope + ' '+fraction+'\n')
                 else:
-                    print 'isotope %s fraction =0 or not in serp lib' %isotope
+                    print('isotope %s fraction =0 or not in serp lib' %isotope)
             with open(self.outp, 'w+') as of:
                 of.write(''.join(text))
         of.close()

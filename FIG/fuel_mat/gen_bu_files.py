@@ -7,9 +7,6 @@ import re
 import os
 import csv
 
-#input file name that is used to get volume of each region
-input_file_volume = 'mk1.txt'
-output_fuel_comp_loc='vol_ave_mcnp'
 
 def get_volume(inputf):
     '''
@@ -60,7 +57,8 @@ def import_mcnpcomp(mat, comp_loc):
 
 def add_mat():
     '''
-    calculate volume averaged fuel composition over the core, for 8 different depletion passes
+    calculate volume averaged fuel composition over the core,
+    for 8 different depletion passes
     '''
     for B in range(1, 9):
         for R in range(1, 5):
@@ -82,12 +80,12 @@ def write_mat(isotope, outf):
 
     with open(outf, 'w+') as csvfile:
         fieldnames = ['zones']
-        for B in range(1,9):
-            fieldnames.append('mat_pass%d'%i)
+        for B in range(1, 9):
+            fieldnames.append('mat_pass%d' %i)
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for B in range(1, 9):
-            mat_dict ={}
+            mat_dict = {}
             for R in range(1, 5):
                 for Z in range(1, 6):
                     mat_loc = 'comp_from_mk1/m%d%d%d00' % (R, Z, B)
@@ -98,6 +96,10 @@ def write_mat(isotope, outf):
                                  vol[R-1][Z-1]})
     csvfile.close()
 
+
+#input file name that is used to get volume of each region
+input_file_volume = 'Mark1.txt'
+output_fuel_comp_loc = 'vol_ave_mcnp'
 volume = get_volume(input_file_volume)
 write_vol(volume, 'volume.csv')
 add_mat()
