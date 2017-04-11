@@ -6,6 +6,7 @@ from pbed_gen import PBedGen, PBedLatGen, FCCGen, GFCCGen
 from coolant import Coolant
 from comp import Comp
 from pb import GPb
+import math
 
 
 class PBed(Comp):
@@ -46,8 +47,9 @@ class FCC(PBed):
                  gen=FCCGen('serp_input/')):
         assert(len(pb_list) == 14), "pb_list length is not 14, but %d" % len(
             pb_list)
-        self.packing_fraction = 0.40
-        self.pitch = 2.27541  # fcc pitch for 3cm diam pb at packing frac = 40%
+        self.packing_fraction = 0.60
+        self.pitch = math.pow(4/3.0*math.pi*math.pow(0.15, 3)*4/0.6, 1/3.0)/2
+        #2.27541  # fcc pitch for 3cm diam pb at packing frac = 40%
         PBed.__init__(self, coolant, pb_list,
                       dir_name=dir_name,
                       gen=gen)
@@ -56,7 +58,7 @@ class FCC(PBed):
 class FuelUnitCell(FCC):
 
     def __init__(self, fpb_list, cool_temp,
-                 packing_fraction=0.40,
+                 packing_fraction=0.60,
                  dir_name='serp_input/'):
         self.cool = Coolant(cool_temp, 'FuelFCCCoolant')
         FCC.__init__(self, self.cool, fpb_list,
@@ -69,7 +71,7 @@ class FuelUnitCell(FCC):
 class GraphiteUnitCell(FCC):
 
     def __init__(self, pb_temp, cool_temp,
-                 packing_fraction=0.40,
+                 packing_fraction=0.60,
                  dir_name='serp_input/'):
         '''
         assuming all the graphite pebbles in an FCC unit cell are identical
