@@ -161,7 +161,7 @@ class Core(Comp):
                                   self.Fuel.act.mat_list,
                                   41.6,
                                   572.85,
-                                  165,
+                                  176.8,
                                   fill=self.Fuel.act)
         # contains not only self.Fuel but other three component, but they are
         # in the same universe, only need it to get the univ id
@@ -797,7 +797,7 @@ class Core(Comp):
                                           self.Corebarrel.mat_list,
                                           self.Corebarrel.ri,
                                           self.Corebarrel.ro,
-                                          self.CR.zb_defuel,
+                                          self.CR.zb_ent,
                                           self.CR.zt_defuel,
                                           fill=None)
         self.Corebarrel.comp_dict = {}
@@ -810,7 +810,7 @@ class Core(Comp):
                                          self.Downcomer.mat_list,
                                          self.Downcomer.ri,
                                          self.Downcomer.ro,
-                                         self.CR.zb_defuel,
+                                         self.CR.zb_ent,
                                          self.CR.zt_defuel,
                                          fill=None)
         self.Downcomer.comp_dict = {}
@@ -823,7 +823,7 @@ class Core(Comp):
                                       self.Vessel.mat_list,
                                       self.Vessel.ri,
                                       self.Vessel.ro,
-                                      self.CR.zb_defuel,
+                                      self.CR.zb_ent,
                                       self.CR.zt_defuel,
                                       fill=None)
         self.Vessel.comp_dict = {}
