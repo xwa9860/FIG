@@ -48,7 +48,7 @@ class FCC(PBed):
         assert(len(pb_list) == 14), "pb_list length is not 14, but %d" % len(
             pb_list)
         self.packing_fraction = 0.60
-        self.pitch = math.pow(4/3.0*math.pi*math.pow(0.15, 3)*4/0.6, 1/3.0)/2
+        self.pitch = math.pow(4/3.0*math.pi*math.pow(0.15, 3)*4/0.6, 1/3.0)/2*10
         #2.27541  # fcc pitch for 3cm diam pb at packing frac = 40%
         PBed.__init__(self, coolant, pb_list,
                       dir_name=dir_name,
