@@ -247,7 +247,7 @@ class SS316(Mat):
         http://www.espimetals.com/index.php/192-technical-data/stainless-steel-316-alloy-composition/202-stainless-steel-316-alloy-composition
     '''
 
-    def __init__(self, temp, tmp_card=True):
+    def __init__(self, temp, tmp_card=True, rgb=[224, 223, 219]):
         self.temp = temp
         self.density = 8.03
         # isotope list: carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
@@ -263,7 +263,8 @@ class SS316(Mat):
             temp,
             tmp_card=tmp_card,
             isotopes=isotopes,
-            ratio_list=ratio_list)
+            ratio_list=ratio_list,
+            rgb=rgb)
 
 
 class Shell(Mat):
