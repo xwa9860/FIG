@@ -104,7 +104,7 @@ class Fuel(Mat):
 
 class Flibe(Mat):
 
-    def __init__(self, temp, tmp_card=True):
+    def __init__(self, temp, tmp_card=True, rgb=[145, 212, 224]):
         density = (2279.92 - 0.488*(temp-273.15))/1000
         self.temp = temp
         # FLiBe chemical formular is Li2BeF4
@@ -112,7 +112,8 @@ class Flibe(Mat):
         ratio_list = [2*0.0001, 2*0.9999, 1.0, 4.0]
         name = 'Flibe%d' % math.ceil(temp)
         Mat.__init__(self, name, density, temp, tmp_card=tmp_card,
-                     isotopes=isotopes, ratio_list=ratio_list)
+                     isotopes=isotopes, ratio_list=ratio_list,
+                     rgb=rgb)
 
 
 class Buffer(Mat):
@@ -198,7 +199,7 @@ class Matrix(Mat):
 
 class Graphite(Mat):
 
-    def __init__(self, temp, tmp_card=True):
+    def __init__(self, temp, tmp_card=True, rgb=[45, 43, 43]):
         self.temp = temp
         self.density = 2.26
         isotopes = ['6000']
@@ -219,7 +220,8 @@ class Graphite(Mat):
             tmp_card=tmp_card,
             isotopes=isotopes,
             ratio_list=ratio_list,
-            flag='moder')
+            flag='moder',
+            rgb=rgb)
 
 class Zr(Mat):
 
@@ -267,7 +269,7 @@ class SS316(Mat):
 class Shell(Mat):
     # graphite shell in the pebbles
 
-    def __init__(self, temp, tmp_card=True):
+    def __init__(self, temp, tmp_card=True, rgb=[45, 43, 43]):
         self.density = 1.75
         isotopes = ['6000']
         ratio_list = [1]
@@ -289,7 +291,8 @@ class Shell(Mat):
             isotopes=isotopes,
             ratio_list=ratio_list,
             tmp_card=tmp_card,
-            flag='moder')
+            flag='moder',
+            rgb=rgb)
 
 
 class CentralGraphite(Mat):
@@ -423,7 +426,7 @@ class mixMat(Mat):
     # volumetric fraction of coolant is 40%
 
     def __init__(self, temp, solid_mat, solid_atomic_mass,
-                 coolant_v_ratio=0.4, tmp_card=True, flag=''):
+                 coolant_v_ratio=0.4, tmp_card=True, flag='', rgb=None):
         '''
         solid_mat and coolant_mat: material objects
         solid_atomic_mass: average atomic(sum of all elements if compound)
@@ -445,7 +448,8 @@ class mixMat(Mat):
             tmp_card=tmp_card,
             isotopes=isotopes,
             ratio_list=ratio_list,
-            flag=flag)
+            flag=flag,
+            rgb=rgb)
         self.calculate_atomic_comp(solid_atomic_mass)
         #self.mat_comp = []
         #lib_id = self.calc_lib_id(temp)
@@ -489,7 +493,7 @@ class GraphiteCoolMix(mixMat):
     # to represent the inner part of the reflectors with coolant channel in it
     # volumetric fraction of coolant is 40%
 
-    def __init__(self, temp, tmp_card=True):
+    def __init__(self, temp, tmp_card=True, rgb=[56, 59, 104]):
         self.temp = temp
         flag='moder'
         mixMat.__init__(
@@ -498,7 +502,8 @@ class GraphiteCoolMix(mixMat):
             Graphite(temp),
             12.0,
             tmp_card=tmp_card,
-            flag=flag)
+            flag=flag,
+            rgb=rgb)
 
 class GraphiteSSCoolMix(mixMat):
     # this is a 'virtual' material defined as a mix of graphite and FliBe and

@@ -65,7 +65,7 @@ class CoreGen(Gen):
             str_list.append('\n%%---Plot the geometry\n')
             str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')
             str_list.append('plot 2 700 700 0 %% xz cross plane at y=0\n')
-            str_list.append('plot 3 700 700 10 %% xy cross plane at z=10\n')
+            str_list.append('plot 3 700 700 100 %% xy cross plane at z=100\n')
 
             # define detectors
             # For cross sections
