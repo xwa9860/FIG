@@ -25,6 +25,7 @@ class Mat(CmpObj):
             isotopes=[],
             ratio_list=[],
             tmp_card=True,
+            rgb=None,
             flag=''):
         '''
         ratio_list: list of atomic ratios of the isotopes, in the same order as
@@ -40,6 +41,7 @@ class Mat(CmpObj):
         self.tmp_card = tmp_card
         self.isotopes = isotopes
         self.ratio_list = ratio_list
+        self.rgb = rgb
         if self.isotopes:
             self.mat_comp = []
             lib_id = self.calc_lib_id(temp)
@@ -80,7 +82,8 @@ class Isotope:
 
 class Fuel(Mat):
 
-    def __init__(self, temp, name, input_file, tmp_card=True):
+    def __init__(self, temp, name,
+                 input_file, tmp_card=True, rgb=[69, 244, 66]):
         '''
         the input_file only contains isotope name and fractions, this init
         funct will calculate lib_id according to the temperature
@@ -96,7 +99,7 @@ class Fuel(Mat):
                     lib_id +
                     line.split(' ')[1])
         Mat.__init__(self, name, 10, temp, mat_comp=''.join(text_comp),
-                     tmp_card=tmp_card)
+                     tmp_card=tmp_card, rgb=rgb)
 
 
 class Flibe(Mat):
