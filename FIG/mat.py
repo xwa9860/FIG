@@ -83,7 +83,7 @@ class Isotope:
 class Fuel(Mat):
 
     def __init__(self, temp, name,
-                 input_file, tmp_card=True, rgb=[69, 244, 66]):
+                 input_file, tmp_card=True, rgb=[226, 2, 2]):
         '''
         the input_file only contains isotope name and fractions, this init
         funct will calculate lib_id according to the temperature
