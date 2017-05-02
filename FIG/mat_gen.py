@@ -16,14 +16,14 @@ class MatGen:
             str_list.append('\nmat %s -%E'
                             % (a_mat.name, a_mat.density))
             if a_mat.flag == 'moder':
-                str_list.append('moder grph_%s 6000'
+                str_list.append(' moder grph_%s 6000'
                                 % a_mat.name)
             if tmp:
-                str_list.append('tmp %f'
+                str_list.append(' tmp %f'
                                 % a_mat.temp)
             if a_mat.rgb:
-                str_list.append('rgb %s'
-                                % (''.join(str(x) for x in a_mat.rgb)))
+                str_list.append(' rgb %s'
+                                % (' '.join(str(x) for x in a_mat.rgb)))
             str_list.append('\n %s'
                             % a_mat.mat_comp)
 
