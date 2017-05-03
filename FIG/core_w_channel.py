@@ -393,7 +393,7 @@ class Core(Comp):
         # entrance zone
         self.OR.zb_ent = 41.6
         self.OR.zt_ent = 112.5
-        self.OR.r_ent = 95.74
+        self.OR.r_ent = 85.74
         self.OR.ent = AnnuCylComp(temp, name,
                                   self.OR.mat_list,
                                   self.OR.r_ent,
@@ -406,7 +406,7 @@ class Core(Comp):
         self.OR.a_div = math.pi*60.0/180
         self.OR.zb_div = 112.5
         self.OR.zt_div = 180.5
-        self.OR.r_cone_div = 135   # self.OR.r_ent + \
+        self.OR.r_cone_div = 125   # self.OR.r_ent + \
             # (self.OR.zt_div - self.OR.zb_div)/math.tan(self.OR.a_div)
         self.OR.h_cone_div = -self.OR.r_cone_div*math.tan(self.OR.a_div)
         #  negative sign means direction -z
@@ -425,7 +425,7 @@ class Core(Comp):
         # active zone
         self.OR.r_act = 125 + 10
         self.OR.zb_act = self.OR.zt_div
-        self.OR.zt_act = 430.5
+        self.OR.zt_act = self.CR.zt_defuel
         self.OR.act = AnnuCylComp(temp, name,
                                   self.OR.mat_list,
                                   self.OR.r_act,
@@ -435,37 +435,6 @@ class Core(Comp):
 
         self.OR.comp_dict['act'] = self.OR.act
 
-        # convergeing zone
-        self.OR.r_cone_conv = self.OR.r_act
-        self.OR.a_conv = 60.0 * math.pi/180
-        self.OR.h_cone_conv = self.OR.r_cone_conv*math.tan(self.OR.a_conv)
-        self.OR.z_cone_conv = self.OR.zt_act
-        self.OR.zb_conv = self.OR.zt_act
-        self.OR.zt_conv = 492.85
-        self.OR.conv = AnnuCylConeComp(
-            temp, name,
-            self.OR.mat_list,
-            self.OR.r_cone_conv,
-            self.OR.h_cone_conv,
-            self.OR.z_cone_conv,
-            self.OR.r_outer,
-            self.OR.zb_conv,
-            self.OR.zt_conv)
-
-        self.OR.comp_dict['conv'] = self.OR.conv
-
-        # defueling zone
-        self.OR.zb_defuel = self.OR.zt_conv
-        self.OR.zt_defuel = self.CR.zt_defuel
-        self.OR.ri_defuel = self.OR.r_cone_conv -\
-            (self.OR.zt_conv-self.OR.zb_conv)/math.tan(self.OR.a_conv)
-        self.OR.defuel = AnnuCylComp(temp, name,
-                                     self.OR.mat_list,
-                                     self.OR.ri_defuel,
-                                     self.OR.r_outer,
-                                     self.OR.zb_defuel,
-                                     self.OR.zt_defuel)
-        self.OR.comp_dict['defuel'] = self.OR.defuel
 
     def define_ORCC(self, temp, name):
         # --------------------------------------------------------
@@ -473,43 +442,43 @@ class Core(Comp):
         self.ORCC.comp_dict = {}
 
         # entrance zone
-        self.ORCC.zb_ent = self.OR.zb_ent
-        self.ORCC.zt_ent = self.OR.zt_ent
-        self.ORCC.ri_ent = self.OR.r_ent - 10
-        self.ORCC.ro_ent = self.OR.r_ent
-        self.ORCC.ent = AnnuCylComp(temp, name,
-                                    self.ORCC.mat_list,
-                                    self.ORCC.ri_ent,
-                                    self.ORCC.ro_ent,
-                                    self.ORCC.zb_ent,
-                                    self.ORCC.zt_ent)
-        self.ORCC.comp_dict['ent'] = self.ORCC.ent
+        #self.ORCC.zb_ent = self.OR.zb_ent
+        #self.ORCC.zt_ent = self.OR.zt_ent
+        #self.ORCC.ri_ent = self.OR.r_ent - 10
+        #self.ORCC.ro_ent = self.OR.r_ent
+        #self.ORCC.ent = AnnuCylComp(temp, name,
+        #                            self.ORCC.mat_list,
+        #                            self.ORCC.ri_ent,
+        #                            self.ORCC.ro_ent,
+        #                            self.ORCC.zb_ent,
+        #                            self.ORCC.zt_ent)
+        #self.ORCC.comp_dict['ent'] = self.ORCC.ent
 
         # diverging  zone
-        self.ORCC.ai_div = math.pi*60.0/180
-        self.ORCC.ao_div = math.pi*60.0/180
-        self.ORCC.zb_div = 112.5
-        self.ORCC.zt_div = 180.5
-        self.ORCC.ri_cone_div = 125
-        self.ORCC.hi_cone_div = -self.ORCC.ri_cone_div * \
-            math.tan(self.ORCC.ai_div)
-        self.ORCC.ro_cone_div = self.OR.r_cone_div
-        self.ORCC.ho_cone_div = -self.ORCC.ro_cone_div * \
-            math.tan(self.ORCC.ao_div)
-        #  negative sign means direction -z
+        #self.ORCC.ai_div = math.pi*60.0/180
+        #self.ORCC.ao_div = math.pi*60.0/180
+        #self.ORCC.zb_div = 112.5
+        #self.ORCC.zt_div = 180.5
+        #self.ORCC.ri_cone_div = 125
+        #self.ORCC.hi_cone_div = -self.ORCC.ri_cone_div * \
+        #    math.tan(self.ORCC.ai_div)
+        #self.ORCC.ro_cone_div = self.OR.r_cone_div
+        #self.ORCC.ho_cone_div = -self.ORCC.ro_cone_div * \
+        #    math.tan(self.ORCC.ao_div)
+        ##  negative sign means direction -z
 
-        self.ORCC.div = AnnuConeConeComp(temp, name,
-                                         self.ORCC.mat_list,
-                                         self.ORCC.ri_cone_div,
-                                         self.ORCC.hi_cone_div,
-                                         self.ORCC.zt_div,
-                                         self.ORCC.ro_cone_div,
-                                         self.ORCC.ho_cone_div,
-                                         self.ORCC.zt_div,
-                                         self.ORCC.zb_div,
-                                         self.ORCC.zt_div)
+        #self.ORCC.div = AnnuConeConeComp(temp, name,
+        #                                 self.ORCC.mat_list,
+        #                                 self.ORCC.ri_cone_div,
+        #                                 self.ORCC.hi_cone_div,
+        #                                 self.ORCC.zt_div,
+        #                                 self.ORCC.ro_cone_div,
+        #                                 self.ORCC.ho_cone_div,
+        #                                 self.ORCC.zt_div,
+        #                                 self.ORCC.zb_div,
+        #                                 self.ORCC.zt_div)
 
-        self.ORCC.comp_dict['div'] = self.ORCC.div
+        #self.ORCC.comp_dict['div'] = self.ORCC.div
 
         # active zone
         self.ORCC.ri_act = self.OR.r_act - 10
@@ -527,34 +496,34 @@ class Core(Comp):
 
         # convergeing zone
         self.ORCC.ri_cone_conv = self.ORCC.ri_act
-        self.ORCC.ro_cone_conv = self.ORCC.ro_act
+        self.ORCC.ro_conv = self.ORCC.ro_act
         self.ORCC.ai_conv = 60.0 * math.pi/180
-        self.ORCC.ao_conv = 60.0 * math.pi/180
+        #self.ORCC.ao_conv = 60.0 * math.pi/180
         self.ORCC.hi_cone_conv = self.ORCC.ri_cone_conv *\
             math.tan(self.ORCC.ai_conv)
-        self.ORCC.ho_cone_conv = self.ORCC.ro_cone_conv *\
-            math.tan(self.ORCC.ao_conv)
+        #self.ORCC.ho_cone_conv = self.ORCC.ro_cone_conv *\
+        #    math.tan(self.ORCC.ao_conv)
         self.ORCC.zb_conv = self.ORCC.zt_act
-        self.ORCC.zt_conv = self.OR.zt_conv
+        self.ORCC.zt_conv = self.CR.zb_defuel
 
-        self.ORCC.conv = AnnuConeConeComp(temp, name,
-                                          self.ORCC.mat_list,
-                                          self.ORCC.ri_cone_conv,
-                                          self.ORCC.hi_cone_conv,
-                                          self.ORCC.zb_conv,
-                                          self.ORCC.ro_cone_conv,
-                                          self.ORCC.ho_cone_conv,
-                                          self.ORCC.zb_conv,
-                                          self.ORCC.zb_conv,
-                                          self.ORCC.zt_conv)
+        self.ORCC.conv = AnnuCylConeComp(temp, name,
+                                        self.ORCC.mat_list,
+                                        self.ORCC.ri_cone_conv,
+                                        self.ORCC.hi_cone_conv,
+                                        self.ORCC.zb_conv,
+                                        self.ORCC.ro_conv,
+                                        self.ORCC.zb_conv,
+                                        self.ORCC.zt_conv)
 
         self.ORCC.comp_dict['conv'] = self.ORCC.conv
 
         # defueling zone
         self.ORCC.zb_defuel = self.ORCC.zt_conv
         self.ORCC.zt_defuel = self.CR.zt_defuel
-        self.ORCC.ri_defuel = self.OR.ri_defuel - 10
-        self.ORCC.ro_defuel = self.OR.ri_defuel
+        self.ORCC.a_conv = math.pi*60/180.0
+        self.ORCC.ri_defuel = self.ORCC.ri_cone_conv -\
+            (self.ORCC.zt_conv-self.ORCC.zb_conv)/math.tan(self.ORCC.a_conv)
+        self.ORCC.ro_defuel = self.ORCC.ro_act
 
         self.ORCC.defuel = AnnuCylComp(temp, name,
                                        self.ORCC.mat_list,
@@ -684,7 +653,7 @@ class Core(Comp):
 
         # defueling zone
         self.Fuel.zb_defuel = self.Fuel.zt_conv
-        self.Fuel.zt_defuel = self.OR.zt_defuel
+        self.Fuel.zt_defuel = self.ORCC.zt_defuel
         self.Fuel.ri_defuel = self.CR.r_defuel
         self.Fuel.ro_defuel = self.Fuel.ro_act -\
             (self.Fuel.zt_conv - self.Fuel.zb_conv)/math.tan(self.Fuel.ao_conv)
@@ -706,7 +675,7 @@ class Core(Comp):
         self.Blanket.zb_ent = 41.6  # in design report 41.6
         self.Blanket.zt_ent = self.OR.zt_ent
         self.Blanket.ri_ent = self.Fuel.ro_ent
-        self.Blanket.ro_ent = self.ORCC.ri_ent
+        self.Blanket.ro_ent = self.OR.r_ent
         self.Blanket.ent = AnnuCylComp(temp, name,
                                        self.Blanket.mat_list,
                                        self.Blanket.ri_ent,
@@ -724,7 +693,7 @@ class Core(Comp):
         self.Blanket.h_cone_i_div = -1.0 * self.Blanket.ri_div * \
             math.tan(self.Blanket.ai_div)
         self.Blanket.ao_div = math.pi*60.0/180
-        self.Blanket.ro_div = self.ORCC.div.ri
+        self.Blanket.ro_div = self.OR.div.ri
         self.Blanket.h_cone_o_div = -1.0*self.Blanket.ro_div * \
             math.tan(self.Blanket.ao_div)
         self.Blanket.div = AnnuConeConeComp(temp, name,
