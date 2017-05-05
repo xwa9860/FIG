@@ -270,7 +270,7 @@ class SS316(Mat):
 class Shell(Mat):
     # graphite shell in the pebbles
 
-    def __init__(self, temp, tmp_card=True, rgb=[45, 43, 43]):
+    def __init__(self, temp, tmp_card=True, rgb=[226, 2, 2]):
         self.density = 1.75
         isotopes = ['6000']
         ratio_list = [1]
@@ -494,7 +494,7 @@ class GraphiteCoolMix(mixMat):
     # to represent the inner part of the reflectors with coolant channel in it
     # volumetric fraction of coolant is 40%
 
-    def __init__(self, temp, tmp_card=True, rgb=[56, 59, 104]):
+    def __init__(self, temp, tmp_card=True, rgb=[137, 244, 66]):
         self.temp = temp
         flag='moder'
         mixMat.__init__(
