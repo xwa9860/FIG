@@ -199,7 +199,7 @@ class Matrix(Mat):
 
 class Graphite(Mat):
 
-    def __init__(self, temp, tmp_card=True, rgb=[45, 43, 43]):
+    def __init__(self, temp, tmp_card=True, rgb=[190, 196, 206]):
         self.temp = temp
         self.density = 2.26
         isotopes = ['6000']
@@ -247,7 +247,7 @@ class SS316(Mat):
         http://www.espimetals.com/index.php/192-technical-data/stainless-steel-316-alloy-composition/202-stainless-steel-316-alloy-composition
     '''
 
-    def __init__(self, temp, tmp_card=True, rgb=[224, 223, 219]):
+    def __init__(self, temp, tmp_card=True, rgb=[0, 8, 20]):
         self.temp = temp
         self.density = 8.03
         # isotope list: carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
@@ -270,7 +270,7 @@ class SS316(Mat):
 class Shell(Mat):
     # graphite shell in the pebbles
 
-    def __init__(self, temp, tmp_card=True, rgb=[226, 2, 2]):
+    def __init__(self, temp, tmp_card=True, rgb=[221, 45, 43]):
         self.density = 1.75
         isotopes = ['6000']
         ratio_list = [1]
@@ -494,7 +494,7 @@ class GraphiteCoolMix(mixMat):
     # to represent the inner part of the reflectors with coolant channel in it
     # volumetric fraction of coolant is 40%
 
-    def __init__(self, temp, tmp_card=True, rgb=[137, 244, 66]):
+    def __init__(self, temp, tmp_card=True, rgb=[13, 226, 162]):
         self.temp = temp
         flag='moder'
         mixMat.__init__(
