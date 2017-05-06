@@ -98,7 +98,7 @@ class Fuel(Mat):
                     '.%s ' %
                     lib_id +
                     line.split(' ')[1])
-        Mat.__init__(self, name, 10, temp, mat_comp=''.join(text_comp),
+        Mat.__init__(self, name, 10.5, temp, mat_comp=''.join(text_comp),
                      tmp_card=tmp_card, rgb=rgb)
 
 
@@ -300,7 +300,7 @@ class CentralGraphite(Mat):
     # graphite core in the pebbles
 
     def __init__(self, temp, tmp_card=True):
-        self.density = 1.74
+        self.density = 1.59368
         isotopes = ['6000']
         ratio_list = [1]
         name = 'CentralGraphite%d' % (math.ceil(temp))
