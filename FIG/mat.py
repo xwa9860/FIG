@@ -189,11 +189,14 @@ class Matrix(Mat):
         lib_id = self.calc_lib_id(temp)
         name = 'Matrix%d' % (math.ceil(temp))
         mat_comp.append('%matrix in triso particle\n' +
-                        '6000.%s 8.77414E-02\n' % lib_id +
-                        '5010.%s 9.64977E-09\n' % lib_id +
-                        '5011.%s 3.90864E-08\n' % lib_id)
+                        '6000.%s 0.1265644\n' % lib_id +
+                        '14028.%s 0.00661035\n' % lib_id)
+        #mat_comp.append('%matrix in triso particle\n' +
+        #                '6000.%s 8.77414E-02\n' % lib_id +
+        #                '5010.%s 9.64977E-09\n' % lib_id +
+        #                '5011.%s 3.90864E-08\n' % lib_id)
         mat_comp = ''.join(mat_comp)
-        Mat.__init__(self, name, 1.75, temp, mat_comp=mat_comp,
+        Mat.__init__(self, name, 1.70386, temp, mat_comp=mat_comp,
                      tmp_card=tmp_card, flag='moder')
 
 
