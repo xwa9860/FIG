@@ -22,9 +22,9 @@ class Triso(Comp):
         else:
             self.dr_config = dr_config
 
-        assert len(temp_list) == len(dr_config), '''
+        assert len(temp_list) == len(self.dr_config), '''
         temp_list for triso particle needs %d
-        temperature values, got %d''' % (len(dr_config),
+        temperature values, got %d''' % (len(self.dr_config),
                                          len(temp_list))
         # material
         if not dr_config:
