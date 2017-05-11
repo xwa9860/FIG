@@ -4,6 +4,7 @@ import core_w_channel
 import pbed
 import pb
 import mat
+from pb_gen import FuelPbGen
 import shutil
 import os
 import numpy as np
@@ -77,9 +78,11 @@ if __name__ == "__main__":
     case_nb = 1
     for temp in np.array([300, 600, 900]):
         for j in range(1, 9):
+            # reset
             Cell.id = 1
             Universe.id = 1
             Surface.id = 1
+            FuelPbGen.wrote_surf = False
             pb_idxs = np.where(pb_burnup_list == j)[0]
             #for pb_idx in pb_idxs:
                 #fuel_temp_list[pb_idx] = temp*np.ones(8)
@@ -87,6 +90,6 @@ if __name__ == "__main__":
                 # fuel, buffer, iPyC, SiC,
                 # oPyC, matrix;
                 # shell
-            dir_name = '_'.join(['mk1_input', str(j), str(temp), '/'])
+            dir_name = 'mk1_input/%d_%d/' %(j, temp)
             create_the_core(fuel_temp_list, pb_burnup_list, dir_name)
             case_nb += 1

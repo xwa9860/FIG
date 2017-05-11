@@ -1,9 +1,9 @@
 #!/bin/sh
-#SBATCH --job-name=gr
-#SBATCH --output=gr.log
-#SBATCH --error=gr.serr
+#SBATCH --job-name=serp_full
+#SBATCH --output=serp_full.log
+#SBATCH --error=serp_full.serr
 #SBATCH --partition=savio
-#SBATCH --time=4:00:00
+#SBATCH --time=40:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=20
 # QoS:
