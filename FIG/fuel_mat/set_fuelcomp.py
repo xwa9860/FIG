@@ -1,5 +1,6 @@
 #!/usr/bin/python
-'''get fuel composition from Mark1.txt file
+'''
+set fuel composition from Mark1.txt file
 '''
 
 for p in range(1, 9):

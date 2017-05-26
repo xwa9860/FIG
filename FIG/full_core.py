@@ -29,7 +29,7 @@ def create_a_fuel_pebble(temp_list, name, burnup, dir_name):
     burnup: used to choose the fuel mat composition
     '''
     fuel_name = 'fuel%d' % burnup
-    fuel_input = 'fuel_mat/vol_ave_mcnp/fuel_mat%d' % burnup
+    fuel_input = 'fuel_mat/fuel_comp/flux_ave_serp/fuel_mat%d' % burnup
     fuel = mat.Fuel(temp_list[1], fuel_name, fuel_input, tmp_card=None)
     tr = triso.Triso(temp_list[2:7], fuel, dr_config=None,
                      dir_name=dir_name)
