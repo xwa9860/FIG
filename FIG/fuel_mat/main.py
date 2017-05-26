@@ -14,6 +14,6 @@ weightmat = np.multiply(fluxmat, volmat)
 
 
 for i in range(1, 9):
-    flux_ave_fuel = sum_comp(weightmat)
+    flux_ave_fuel = sum_comp(weightmat, passno=i)
     outputfile = config.OUTPUT_FLUX_AVE_COMP_FOLDER + 'fuel_mat%d' % i
     flux_ave_fuel.write_mat_to_file(comp_path=outputfile)
