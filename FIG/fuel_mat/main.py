@@ -11,6 +11,7 @@ fluxdf = pd.read_csv(config.FLUX_CSV_PATH, header=None)
 fluxmat = fluxdf.values.reshape((5, 4, 8))
 
 weightmat = np.multiply(fluxmat, volmat)
+weightmat = np.multiply(fluxmat, weightmat)
 
 
 for i in range(1, 9):
