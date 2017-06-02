@@ -29,7 +29,7 @@ def create_a_fuel_pebble(temp_list, name, burnup, dir_name):
     burnup: used to choose the fuel mat composition
     '''
     fuel_name = 'fuel%d' % burnup
-    fuel_input = 'fuel_mat/fuel_comp/flux_ave_serp/fuel_mat%d' % burnup
+    fuel_input = 'fuel_mat/fuel_comp/flux_sq_ave_serp/fuel_mat%d' % burnup
     fuel = mat.Fuel(temp_list[1], fuel_name, fuel_input, tmp_card=None)
     tr = triso.Triso(temp_list[2:7], fuel, dr_config=None,
                      dir_name=dir_name)
@@ -49,7 +49,7 @@ def create_the_core(fuel_temps, burnups, dir_name):
     for i in range(len(burnups)):
         fpb_list.append(unique_fpb_list[burnups[i]-1])
 
-    core = core_w_channel.Core(
+    sq_core = core_w_channel.Core(
         fpb_list,
         900,  # temp_CR
         900,  # temp_g_CRCC
@@ -66,12 +66,12 @@ def create_the_core(fuel_temps, burnups, dir_name):
         dir_name)
     mkdir(dir_name)
     f = open(''.join([dir_name, '/serp_full_core']), 'w+')
-    text = core.generate_output()
+    text = sq_core.generate_output()
     f.write(text)
     f.close
 
 if __name__ == "__main__":
-    pb_burnup_list = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    pb_burnup_list = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
     #pb_burnup_list = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
     fuel_temp_list = [900*np.ones(8) for i in range(14)]
@@ -90,6 +90,6 @@ if __name__ == "__main__":
                 # fuel, buffer, iPyC, SiC,
                 # oPyC, matrix;
                 # shell
-            dir_name = 'mk1_input/%d_%d/' %(j, temp)
+            dir_name = 'mk1_input_1/%d_%d/' %(j, temp)
             create_the_core(fuel_temp_list, pb_burnup_list, dir_name)
             case_nb += 1

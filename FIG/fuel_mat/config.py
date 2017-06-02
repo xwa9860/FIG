@@ -1,6 +1,7 @@
 INPUT_MCNP_FILE = 'inputs/Mark1.txt'
 FLUX_CSV_PATH = 'inputs/flux.csv'
 OUTPUT_RAW_COMPS_FOLDER = 'fuel_comp/raw/'
+OUTPUT_SQUARE_FLUX_AVE_COMP_FOLDER = 'fuel_comp/flux_sq_ave_serp/'
 OUTPUT_FLUX_AVE_COMP_FOLDER = 'fuel_comp/flux_ave_serp/'
 RAW_COMPS_FOLDER = 'fuel_comp/raw_mcnp/'
 # 160 raw mcnp material compositions from mark1.txt

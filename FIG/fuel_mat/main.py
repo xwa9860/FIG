@@ -10,11 +10,11 @@ volmat = np.swapaxes(volmat, 0, 1)
 fluxdf = pd.read_csv(config.FLUX_CSV_PATH, header=None)
 fluxmat = fluxdf.values.reshape((5, 4, 8))
 
-weightmat = np.multiply(fluxmat, volmat)
-weightmat = np.multiply(fluxmat, weightmat)
+weightmat = np.multiply(fluxmat, fluxmat)
+#weightmat = np.multiply(fluxmat, weightmat)
 
 
 for i in range(1, 9):
     flux_ave_fuel = sum_comp(weightmat, passno=i)
-    outputfile = config.OUTPUT_FLUX_AVE_COMP_FOLDER + 'fuel_mat%d' % i
+    outputfile = config.OUTPUT_SQUARE_FLUX_AVE_COMP_FOLDER + 'fuel_mat%d' % i
     flux_ave_fuel.write_mat_to_file(comp_path=outputfile)
