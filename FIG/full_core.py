@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import triso
-import core_w_channel
+import core_2_zones
 import pbed
 import pb
 import mat
@@ -49,7 +49,8 @@ def create_the_core(fuel_temps, burnups, dir_name):
     for i in range(len(burnups)):
         fpb_list.append(unique_fpb_list[burnups[i]-1])
 
-    sq_core = core_w_channel.Core(
+    core = core_2_zones.Core(
+        fpb_list,
         fpb_list,
         900,  # temp_CR
         900,  # temp_g_CRCC
@@ -66,7 +67,7 @@ def create_the_core(fuel_temps, burnups, dir_name):
         dir_name)
     mkdir(dir_name)
     f = open(''.join([dir_name, '/serp_full_core']), 'w+')
-    text = sq_core.generate_output()
+    text = core.generate_output()
     f.write(text)
     f.close
 

@@ -70,10 +70,25 @@ class OuterRef_CoolantChannel(Comp):
         Comp.__init__(self, temp, name, [GraphiteCoolMix(cool_temp)])
 
 
-class Fuel(Comp):
+class Fuel_wall(Comp):
 
     def __init__(self, fpb_list, cool_temp, dir_name='serp_input/'):
-        name = 'FuelZone'
+        name = 'WallFuelZone'
+        self.unit_cell = FuelUnitCell(fpb_list, cool_temp,
+                                      dir_name=dir_name)
+        self.unit_cell_lat = PBedLat(self.unit_cell,
+                                     self.unit_cell.pitch,
+                                     dir_name=dir_name)
+        Comp.__init__(self, fpb_list[0].temp, name,
+                      self.unit_cell_lat.mat_list,
+                      gen=Gen(dir_name),
+                      fill=self.unit_cell_lat)
+
+
+class Fuel_act(Comp):
+
+    def __init__(self, fpb_list, cool_temp, dir_name='serp_input/'):
+        name = 'ActFuelZone'
         self.unit_cell = FuelUnitCell(fpb_list, cool_temp,
                                       dir_name=dir_name)
         self.unit_cell_lat = PBedLat(self.unit_cell,
@@ -104,7 +119,8 @@ class Core(Comp):
 
     def __init__(
             self,
-            fpb_list,
+            fpb_list_w,
+            fpb_list_a,
             temp_CR,
             temp_g_CRCC,
             temp_cool_CRCC,
@@ -119,8 +135,10 @@ class Core(Comp):
             temp_Vessel,
             dir_name='serp_input/'):
 
-        assert(len(fpb_list) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
-            fpb_list)
+        assert(len(fpb_list_w) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
+            fpb_list_w)
+        assert(len(fpb_list_a) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
+            fpb_list_a)
 
         self.comp_dict = {}
 
@@ -129,7 +147,8 @@ class Core(Comp):
         self.CR = CenterRef(temp_CR)
         self.OR = OuterRef(temp_OR)
         self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
-        self.Fuel = Fuel(fpb_list, temp_cool_F, dir_name)
+        self.FuelW = Fuel_wall(fpb_list_w, temp_cool_F, dir_name)
+        self.FuelA = Fuel_act(fpb_list_a, temp_cool_F, dir_name)
         self.Blanket = Blanket(temp_Blanket, temp_cool_B, dir_name)
         self.Vessel = Vessel(temp_Vessel)
         self.Downcomer = Downcomer(temp_Downcomer)
@@ -139,7 +158,8 @@ class Core(Comp):
         self.define_CR(self.CR.temp, self.CR.name, liner=True)
         self.define_OR(self.OR.temp, self.OR.name)
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
-        self.define_Fuel(self.Fuel.temp, self.Fuel.name)
+        self.define_FuelW(self.FuelW.temp, self.FuelA.name)
+        self.define_FuelA(self.FuelW.temp, self.FuelA.name)
         self.define_Blanket(self.Blanket.temp, self.Blanket.name)
         self.define_Vessel(self.Vessel.temp, self.Vessel.name)
         self.define_Downcomer(self.Downcomer.temp, self.Downcomer.name)
@@ -150,24 +170,25 @@ class Core(Comp):
             'CRCC': self.CRCC,
             'OR': self.OR,
             'ORCC': self.ORCC,
-            'Fuel': self.Fuel,
+            'FuelW': self.FuelW,
+            'FuelA': self.FuelA,
             'Blanket': self.Blanket,
             'Vessel': self.Vessel,
             'Downcomer': self.Downcomer,
             'Corebarrel': self.Corebarrel}
 
-        self.whole_core = CylComp(fpb_list[0].temp,
+        self.whole_core = CylComp(fpb_list_a[0].temp,
                                   'whole_core',
-                                  self.Fuel.act.mat_list,
+                                  self.FuelA.act.mat_list,
                                   41.6,
                                   572.85,
                                   176.8,
-                                  fill=self.Fuel.act)
+                                  fill=self.FuelA.act)
         # contains not only self.Fuel but other three component, but they are
         # in the same universe, only need it to get the univ id
         name = 'FullCore'
         mat_list = self.collect_mat()
-        Comp.__init__(self, fpb_list[0].temp,
+        Comp.__init__(self, fpb_list_a[0].temp,
                       name, mat_list, CoreGen(dir_name))
 
     def define_CRCC(self, temp, name, liner=False):
@@ -384,137 +405,157 @@ class Core(Comp):
 
         self.ORCC.comp_dict['defuel'] = self.ORCC.defuel
 
-    def define_Fuel(self, temp, name):
+    def define_FuelW(self, temp, name):
         # ---------------------------------------------------------
         # fuel zone
         # --------------------------------------------------------
-        self.Fuel.comp_dict = {}
+        self.FuelW.comp_dict = {}
         # entrance zone
-        self.Fuel.zb_ent = 41.6  # in design report fuel pb starts at 41.6cm
-        self.Fuel.zt_ent = self.OR.zt_ent
-        self.Fuel.ri_ent = self.CR.r_ent
-        self.Fuel.ro_ent = 75.41
-        self.Fuel.ent = AnnuCylComp(temp, name,
-                                    self.Fuel.mat_list,
-                                    self.Fuel.ri_ent,
-                                    self.Fuel.ro_ent,
-                                    self.Fuel.zb_ent,
-                                    self.Fuel.zt_ent,
-                                    fill=self.Fuel.fill)
-        self.Fuel.comp_dict['ent'] = self.Fuel.ent
+        self.FuelW.zb_ent = 41.6  # in design report fuel pb starts at 41.6cm
+        self.FuelW.zt_ent = self.OR.zt_ent
+        self.FuelW.ri_ent = self.CR.r_ent
+        self.FuelW.ro_ent = 75.41
+        self.FuelW.ent = AnnuCylComp(temp, name,
+                                    self.FuelW.mat_list,
+                                    self.FuelW.ri_ent,
+                                    self.FuelW.ro_ent,
+                                    self.FuelW.zb_ent,
+                                    self.FuelW.zt_ent,
+                                    fill=self.FuelW.fill)
+        self.FuelW.comp_dict['ent'] = self.FuelW.ent
         # diverging  zone 1
-        self.Fuel.ro_act = 105
-        self.Fuel.a_div1 = math.atan((self.OR.zt_div-self.OR.zb_div) /
-                                     (self.Fuel.ro_act-self.Fuel.ro_ent))
-        self.Fuel.zb_div1 = self.OR.zt_ent
-        self.Fuel.zt_div1 = self.CR.zb_div
-        self.Fuel.r_cone_div1 = self.Fuel.ro_act
-        self.Fuel.h_cone_div1 = -self.Fuel.r_cone_div1 * \
-            math.tan(self.Fuel.a_div1)
-        self.Fuel.z_cone_div1 = self.OR.zt_div
+        self.FuelW.ro_div = 105
+        self.FuelW.a_div1 = math.atan((self.OR.zt_div-self.OR.zb_div) /
+                                     (self.FuelW.ro_div-self.FuelW.ro_ent))
+        self.FuelW.zb_div1 = self.OR.zt_ent
+        self.FuelW.zt_div1 = self.CR.zb_div
+        self.FuelW.r_cone_div1 = self.FuelW.ro_div
+        self.FuelW.h_cone_div1 = -self.FuelW.r_cone_div1 * \
+            math.tan(self.FuelW.a_div1)
+        self.FuelW.z_cone_div1 = self.OR.zt_div
         #  negative sign means direction -z
-        self.Fuel.ri_div1 = self.Fuel.ri_ent
-        self.Fuel.div1 = AnnuConeCylComp(temp, name,
-                                         self.Fuel.mat_list,
-                                         self.Fuel.r_cone_div1,
-                                         self.Fuel.h_cone_div1,
-                                         self.Fuel.z_cone_div1,
-                                         self.Fuel.ri_div1,
-                                         self.Fuel.zb_div1,
-                                         self.Fuel.zt_div1,
-                                         fill=self.Fuel.fill)
-        self.Fuel.comp_dict['div1'] = self.Fuel.div1
+        self.FuelW.ri_div1 = self.FuelW.ri_ent
+        self.FuelW.div1 = AnnuConeCylComp(temp, name,
+                                         self.FuelW.mat_list,
+                                         self.FuelW.r_cone_div1,
+                                         self.FuelW.h_cone_div1,
+                                         self.FuelW.z_cone_div1,
+                                         self.FuelW.ri_div1,
+                                         self.FuelW.zb_div1,
+                                         self.FuelW.zt_div1,
+                                         fill=self.FuelW.fill)
+        self.FuelW.comp_dict['div1'] = self.FuelW.div1
 
         # diverging  zone 2
-        self.Fuel.ao_div2 = self.Fuel.a_div1
-        self.Fuel.ai_div2 = math.pi * 60.0/180.0
-        self.Fuel.zb_div2 = self.Fuel.zt_div1
-        self.Fuel.zt_div2 = self.CR.zt_div
-        self.Fuel.ri_div2 = self.Fuel.ri_ent
-        self.Fuel.h_cone_i_div2 = self.Fuel.ri_div2 * \
-            math.tan(self.Fuel.ai_div2)
-        self.Fuel.ro_cone_div2 = self.Fuel.r_cone_div1
-        self.Fuel.ho_cone_div2 = self.Fuel.h_cone_div1
-        self.Fuel.zo_cone_div2 = self.OR.zt_div
-        self.Fuel.div2 = AnnuConeConeComp(temp, name,
-                                          self.Fuel.mat_list,
-                                          self.Fuel.ri_div2,
-                                          self.Fuel.h_cone_i_div2,
-                                          self.Fuel.zb_div2,
-                                          self.Fuel.ro_cone_div2,
-                                          self.Fuel.ho_cone_div2,
-                                          self.Fuel.zo_cone_div2,
-                                          self.Fuel.zb_div2,
-                                          self.Fuel.zt_div2,
-                                          fill=self.Fuel.fill)
-        self.Fuel.comp_dict['div2'] = self.Fuel.div2
+        self.FuelW.ao_div2 = self.FuelW.a_div1
+        self.FuelW.ai_div2 = math.pi * 60.0/180.0
+        self.FuelW.zb_div2 = self.FuelW.zt_div1
+        self.FuelW.zt_div2 = self.CR.zt_div
+        self.FuelW.ri_div2 = self.FuelW.ri_ent
+        self.FuelW.h_cone_i_div2 = self.FuelW.ri_div2 * \
+            math.tan(self.FuelW.ai_div2)
+        self.FuelW.ro_cone_div2 = self.FuelW.r_cone_div1
+        self.FuelW.ho_cone_div2 = self.FuelW.h_cone_div1
+        self.FuelW.zo_cone_div2 = self.OR.zt_div
+        self.FuelW.div2 = AnnuConeConeComp(temp, name,
+                                          self.FuelW.mat_list,
+                                          self.FuelW.ri_div2,
+                                          self.FuelW.h_cone_i_div2,
+                                          self.FuelW.zb_div2,
+                                          self.FuelW.ro_cone_div2,
+                                          self.FuelW.ho_cone_div2,
+                                          self.FuelW.zo_cone_div2,
+                                          self.FuelW.zb_div2,
+                                          self.FuelW.zt_div2,
+                                          fill=self.FuelW.fill)
+        self.FuelW.comp_dict['div2'] = self.FuelW.div2
 
         # diverging  zone 3
-        self.Fuel.a_div3 = self.Fuel.a_div1
-        self.Fuel.zb_div3 = self.Fuel.zt_div2
-        self.Fuel.zt_div3 = self.OR.zt_div
-        self.Fuel.r_i_div3 = self.CR.r_act
-        self.Fuel.r_cone_div3 = self.Fuel.ro_cone_div2
-        self.Fuel.h_cone_div3 = self.Fuel.ho_cone_div2
-        self.Fuel.div3 = AnnuConeCylComp(temp, name,
-                                         self.Fuel.mat_list,
-                                         self.Fuel.r_cone_div3,
-                                         self.Fuel.h_cone_div3,
-                                         self.Fuel.zt_div3,
-                                         self.Fuel.r_i_div3,
-                                         self.Fuel.zb_div3,
-                                         self.Fuel.zt_div3,
-                                         fill=self.Fuel.fill)
-        self.Fuel.comp_dict['div3'] = self.Fuel.div3
+        self.FuelW.a_div3 = self.FuelW.a_div1
+        self.FuelW.zb_div3 = self.FuelW.zt_div2
+        self.FuelW.zt_div3 = self.OR.zt_div
+        self.FuelW.r_i_div3 = self.CR.r_act
+        self.FuelW.r_cone_div3 = self.FuelW.ro_cone_div2
+        self.FuelW.h_cone_div3 = self.FuelW.ho_cone_div2
+        self.FuelW.div3 = AnnuConeCylComp(temp, name,
+                                         self.FuelW.mat_list,
+                                         self.FuelW.r_cone_div3,
+                                         self.FuelW.h_cone_div3,
+                                         self.FuelW.zt_div3,
+                                         self.FuelW.r_i_div3,
+                                         self.FuelW.zb_div3,
+                                         self.FuelW.zt_div3,
+                                         fill=self.FuelW.fill)
+        self.FuelW.comp_dict['div3'] = self.FuelW.div3
 
         # active zone
-        self.Fuel.zb_act = self.Fuel.zt_div3
-        self.Fuel.zt_act = self.CR.zt_act
-        self.Fuel.act = AnnuCylComp(temp, name,
-                                    self.Fuel.mat_list,
+        self.FuelW.zb_act = self.FuelW.zt_div3
+        self.FuelW.zt_act = self.CR.zt_act
+        self.FuelW.ro_act = 46.1
+        self.FuelW.act = AnnuCylComp(temp, name,
+                                    self.FuelW.mat_list,
                                     self.CR.r_act,
-                                    self.Fuel.ro_act,
-                                    self.Fuel.zb_act,
-                                    self.Fuel.zt_act,
-                                    fill=self.Fuel.fill)
-        self.Fuel.comp_dict['act'] = self.Fuel.act
+                                    self.FuelW.ro_act,
+                                    self.FuelW.zb_act,
+                                    self.FuelW.zt_act,
+                                    fill=self.FuelW.fill)
+        self.FuelW.comp_dict['act'] = self.FuelW.act
         # convergeing zone
-        self.Fuel.zb_conv = self.Fuel.zt_act
-        self.Fuel.zt_conv = self.CR.zt_conv
-        self.Fuel.ri_conv = self.CR.r_conv
-        self.Fuel.ai_conv = 60.0 * math.pi/180
-        self.Fuel.hi_conv = -1.0*self.Fuel.ri_conv*math.tan(self.Fuel.ai_conv)
-        self.Fuel.ro_conv = self.Fuel.ro_act
-        self.Fuel.ao_conv = math.atan((self.Fuel.zt_conv - self.Fuel.zb_conv) /
-                                      (self.Fuel.ro_act - 80))
-        self.Fuel.ho_conv = self.Fuel.ro_conv*math.tan(self.Fuel.ao_conv)
-        self.Fuel.conv = AnnuConeConeComp(temp, name,
-                                          self.Fuel.mat_list,
-                                          self.Fuel.ri_conv,
-                                          self.Fuel.hi_conv,
-                                          self.Fuel.zt_conv,
-                                          self.Fuel.ro_conv,
-                                          self.Fuel.ho_conv,
-                                          self.Fuel.zb_conv,
-                                          self.Fuel.zb_conv,
-                                          self.Fuel.zt_conv,
-                                          fill=self.Fuel.fill)
-        self.Fuel.comp_dict['conv'] = self.Fuel.conv
+        self.FuelW.zb_conv = self.FuelW.zt_act
+        self.FuelW.zt_conv = self.CR.zt_conv
+        self.FuelW.ri_conv = self.CR.r_conv
+        self.FuelW.ai_conv = 60.0 * math.pi/180
+        self.FuelW.hi_conv = -1.0*self.FuelW.ri_conv*math.tan(self.FuelW.ai_conv)
+        self.FuelW.ro_conv = self.FuelW.ro_div
+        self.FuelW.ao_conv = math.atan((self.FuelW.zt_conv - self.FuelW.zb_conv) /
+                                      (self.FuelW.ro_div - 80))
+        self.FuelW.ho_conv = self.FuelW.ro_conv*math.tan(self.FuelW.ao_conv)
+        self.FuelW.conv = AnnuConeConeComp(temp, name,
+                                          self.FuelW.mat_list,
+                                          self.FuelW.ri_conv,
+                                          self.FuelW.hi_conv,
+                                          self.FuelW.zt_conv,
+                                          self.FuelW.ro_conv,
+                                          self.FuelW.ho_conv,
+                                          self.FuelW.zb_conv,
+                                          self.FuelW.zb_conv,
+                                          self.FuelW.zt_conv,
+                                          fill=self.FuelW.fill)
+        self.FuelW.comp_dict['conv'] = self.FuelW.conv
 
         # defueling zone
-        self.Fuel.zb_defuel = self.Fuel.zt_conv
-        self.Fuel.zt_defuel = self.ORCC.zt_defuel
-        self.Fuel.ri_defuel = self.CR.r_defuel
-        self.Fuel.ro_defuel = self.Fuel.ro_act -\
-            (self.Fuel.zt_conv - self.Fuel.zb_conv)/math.tan(self.Fuel.ao_conv)
-        self.Fuel.defuel = AnnuCylComp(temp, name,
-                                       self.Fuel.mat_list,
-                                       self.Fuel.ri_defuel,
-                                       self.Fuel.ro_defuel,
-                                       self.Fuel.zb_defuel,
-                                       self.Fuel.zt_defuel,
-                                       fill=self.Fuel.fill)
-        self.Fuel.comp_dict['defuel'] = self.Fuel.defuel
+        self.FuelW.zb_defuel = self.FuelW.zt_conv
+        self.FuelW.zt_defuel = self.ORCC.zt_defuel
+        self.FuelW.ri_defuel = self.CR.r_defuel
+        self.FuelW.ro_defuel = self.FuelW.ro_div -\
+            (self.FuelW.zt_conv - self.FuelW.zb_conv)/math.tan(self.FuelW.ao_conv)
+        self.FuelW.defuel = AnnuCylComp(temp, name,
+                                       self.FuelW.mat_list,
+                                       self.FuelW.ri_defuel,
+                                       self.FuelW.ro_defuel,
+                                       self.FuelW.zb_defuel,
+                                       self.FuelW.zt_defuel,
+                                       fill=self.FuelW.fill)
+        self.FuelW.comp_dict['defuel'] = self.FuelW.defuel
+
+    def define_FuelA(self, temp, name):
+        # ---------------------------------------------------------
+        # fuel zone
+        # --------------------------------------------------------
+        self.FuelA.comp_dict = {}
+        # active zone
+        self.FuelA.zb_act = self.FuelW.zt_div3
+        self.FuelA.zt_act = self.CR.zt_act
+        self.FuelA.ro_act = self.FuelW.ro_div
+        self.FuelA.act = AnnuCylComp(temp, name,
+                                    self.FuelA.mat_list,
+                                    self.FuelW.ro_act,
+                                    self.FuelA.ro_act,
+                                    self.FuelA.zb_act,
+                                    self.FuelA.zt_act,
+                                    fill=self.FuelA.fill)
+        self.FuelA.comp_dict['act'] = self.FuelA.act
+
 
     def define_Blanket(self, temp, name):
         # -------------------------------------------------------------
@@ -524,7 +565,7 @@ class Core(Comp):
         # entrance zone
         self.Blanket.zb_ent = 41.6  # in design report 41.6
         self.Blanket.zt_ent = self.OR.zt_ent
-        self.Blanket.ri_ent = self.Fuel.ro_ent
+        self.Blanket.ri_ent = self.FuelW.ro_ent
         self.Blanket.ro_ent = self.OR.r_ent
         self.Blanket.ent = AnnuCylComp(temp, name,
                                        self.Blanket.mat_list,
@@ -536,10 +577,10 @@ class Core(Comp):
         self.Blanket.comp_dict['ent'] = self.Blanket.ent
 
         # diverging  zone
-        self.Blanket.ai_div = self.Fuel.a_div1
+        self.Blanket.ai_div = self.FuelW.a_div1
         self.Blanket.zb_div = self.Blanket.zt_ent
         self.Blanket.zt_div = self.OR.zt_div
-        self.Blanket.ri_div = self.Fuel.div3.ro
+        self.Blanket.ri_div = self.FuelW.div3.ro
         self.Blanket.h_cone_i_div = -1.0 * self.Blanket.ri_div * \
             math.tan(self.Blanket.ai_div)
         self.Blanket.ao_div = math.pi*60.0/180
@@ -560,7 +601,7 @@ class Core(Comp):
         self.Blanket.comp_dict['div'] = self.Blanket.div
 
         # active zone
-        self.Blanket.ri_act = self.Fuel.act.ro
+        self.Blanket.ri_act = self.FuelA.act.ro
         self.Blanket.ro_act = self.ORCC.ri_act
         self.Blanket.zb_act = self.Blanket.zt_div
         self.Blanket.zt_act = self.CR.zt_act
@@ -574,8 +615,8 @@ class Core(Comp):
         self.Blanket.comp_dict['act'] = self.Blanket.act
 
         # convergeing zone
-        self.Blanket.ri_conv = self.Fuel.ro_conv
-        self.Blanket.ai_conv = self.Fuel.ao_conv
+        self.Blanket.ri_conv = self.FuelW.ro_conv
+        self.Blanket.ai_conv = self.FuelW.ao_conv
         self.Blanket.hi_conv = self.Blanket.ri_conv * \
             math.tan(self.Blanket.ai_conv)
         self.Blanket.ro_conv = self.Blanket.ro_act
@@ -598,7 +639,7 @@ class Core(Comp):
         self.Blanket.comp_dict['conv'] = self.Blanket.conv
 
         # defueling zone
-        self.Blanket.ri_defuel = self.Fuel.ro_defuel
+        self.Blanket.ri_defuel = self.FuelW.ro_defuel
         self.Blanket.ro_defuel = self.ORCC.ri_defuel
         self.Blanket.defuel = AnnuCylComp(temp, name,
                                           self.Blanket.mat_list,
