@@ -22,22 +22,20 @@ def mkdir(path):
             raise
 
 
-def create_a_fuel_pebble(temp_list, name, burnup, dir_name):
+def create_a_fuel_pebble(temp_list, name, burnup, pb_comp_dir, gen_dir_name):
     '''
     temp_list: a list that contains temperature for each triso
     layer in the pebble
     burnup: used to choose the fuel mat composition
     '''
     fuel_name = 'fuel%d' % burnup
-    fuel_input = 'fuel_mat/fuel_comp/flux_sq_ave_serp/fuel_mat%d' % burnup
+    fuel_input = '%s/fuel_mat%d' % (pb_comp_dir, burnup)
     fuel = mat.Fuel(temp_list[1], fuel_name, fuel_input, tmp_card=None)
     tr = triso.Triso(temp_list[2:7], fuel, dr_config=None,
-                     dir_name=dir_name)
-    return pb.FPb(tr, temp_list[0], temp_list[7], dir_name=dir_name)
+                     dir_name=gen_dir_name)
+    return pb.FPb(tr, temp_list[0], temp_list[7], dir_name=gen_dir_name)
 
-
-def create_the_core(fuel_temps, burnups, dir_name):
-
+def create_a_pb_unit_cell(fuel_temps, burnups, pb_comp_dir, gen_dir_name):
     fpb_list = []
     unique_fpb_list = []
     unique_burnups = list(unique_everseen(burnups))
@@ -45,13 +43,20 @@ def create_the_core(fuel_temps, burnups, dir_name):
         name = 'fuelpb%d' % i
         unique_fpb_list.append(
             create_a_fuel_pebble(fuel_temps[i], name,
-                                 unique_burnups[i], dir_name))
+                                 unique_burnups[i], pb_comp_dir, gen_dir_name))
     for i in range(len(burnups)):
         fpb_list.append(unique_fpb_list[burnups[i]-1])
+    return fpb_list
+
+
+def create_the_core(fuel_temps, burnups1, burnups2, pb_comp_dir1, pb_comp_dir2, gen_dir_name):
+
+    fpb_list1 = create_a_pb_unit_cell(fuel_temps, burnups1, pb_comp_dir1, gen_dir_name)
+    fpb_list2 = create_a_pb_unit_cell(fuel_temps, burnups2, pb_comp_dir2, gen_dir_name)
 
     core = core_2_zones.Core(
-        fpb_list,
-        fpb_list,
+        fpb_list1,
+        fpb_list2,
         900,  # temp_CR
         900,  # temp_g_CRCC
         900,  # temp_cool_CRCC
@@ -64,18 +69,19 @@ def create_the_core(fuel_temps, burnups, dir_name):
         900,  # temp_Corebarrel
         900,  # temp_Downcomer
         900,  # temp_vessel
-        dir_name)
-    mkdir(dir_name)
-    f = open(''.join([dir_name, '/serp_full_core']), 'w+')
+        gen_dir_name)
+    mkdir(gen_dir_name)
+    f = open(''.join([gen_dir_name, '/serp_full_core']), 'w+')
     text = core.generate_output()
     f.write(text)
     f.close
 
 if __name__ == "__main__":
-    pb_burnup_list = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
-    #pb_burnup_list = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    pb_burnups1 = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
+    pb_burnups2 = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
 
     fuel_temp_list = [900*np.ones(8) for i in range(14)]
+
     case_nb = 1
     for temp in np.array([300, 600, 900]):
         for j in range(1, 9):
@@ -84,13 +90,18 @@ if __name__ == "__main__":
             Universe.id = 1
             Surface.id = 1
             FuelPbGen.wrote_surf = False
-            pb_idxs = np.where(pb_burnup_list == j)[0]
+            pb_idxs = np.where(pb_burnups1 == j)[0]
             #for pb_idx in pb_idxs:
                 #fuel_temp_list[pb_idx] = temp*np.ones(8)
                 # list of temperatures:central graphie kernel;
                 # fuel, buffer, iPyC, SiC,
                 # oPyC, matrix;
                 # shell
-            dir_name = 'mk1_input_1/%d_%d/' %(j, temp)
-            create_the_core(fuel_temp_list, pb_burnup_list, dir_name)
+            output_dir_name = 'mk1_input/%d_%d/' %(j, temp)
+            fuel_comp_folder1 = 'fuel_mat/fuel_comp/flux_ave_serp/'
+            fuel_comp_folder2 = 'fuel_mat/fuel_comp/flux_ave_serp/'
+            create_the_core(fuel_temp_list, pb_burnups1, pb_burnups2,
+                fuel_comp_folder1,
+                fuel_comp_folder2,
+                output_dir_name)
             case_nb += 1
