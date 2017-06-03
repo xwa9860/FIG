@@ -64,8 +64,9 @@ class FuelMat():
                 if isotope not in config.NOT_IN_SERPENT_LIB:
                     self.comp[isotope] = float(fraction)
                 else:
-                    print('isotope %s fraction =0 or not in serp lib'
-                          % isotope)
+                    pass
+                    #print('isotope %s fraction =0 or not in serp lib'
+                    #      % isotope)
 
     def write_mat_to_file(self, comp_path=None):
         '''

@@ -160,7 +160,8 @@ class Flibe(Mat):
         self.temp = temp
         # FLiBe chemical formular is Li2BeF4
         isotopes = ['3006', '3007', '4009', '9019']
-        ratio_list = [2*0.00001, 2*0.99999, 1.0, 4.0]
+        #ratio_list = [2*0.00001, 2*0.99999, 1.0, 4.0]
+        ratio_list = [0.00002458465, 1.999979, 0.9999995, 4.000002]
         name = 'Flibe%d' % math.ceil(temp)
         Mat.__init__(self, name, density, temp, tmp_card=tmp_card,
                      isotopes=isotopes, ratio_list=ratio_list,
