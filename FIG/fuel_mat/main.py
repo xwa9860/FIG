@@ -33,12 +33,12 @@ print(fluxmat[2,3,2])
 
 
 for i in range(1, 9):
-    flux_ave_fuel1 = sum_comp(fluxmat_wall, passno=i)
+    flux_ave_fuel1 = sum_comp(fluxmat_wall*fluxmat_wall, passno=i)
     outputfile1 = config.OUTPUT_FLUX_WALL_AVE_COMP_FOLDER + 'fuel_mat%d' % i
     flux_ave_fuel1.write_mat_to_file(comp_path=outputfile1)
 
 print('compute for zone2')
 for i in range(1, 9):
-    flux_ave_fuel2 = sum_comp(fluxmat_act, passno=i)
+    flux_ave_fuel2 = sum_comp(fluxmat_act*fluxmat_act, passno=i)
     outputfile2 = config.OUTPUT_FLUX_ACT_AVE_COMP_FOLDER + 'fuel_mat%d' % i
     flux_ave_fuel2.write_mat_to_file(comp_path=outputfile2)
