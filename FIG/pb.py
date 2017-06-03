@@ -31,8 +31,8 @@ class FPb(Comp):
         mat = [CentralGraphite(cg_temp), Shell(shell_temp)]
         mat.extend(self.tr_lat.mat_list)
         self.dr_config = {
-            'CentralGraphite': 1.25000,  # cm
-            'TrLat': 0.15000,  # cm
+            'CentralGraphite': 1.25114,  # cm
+            'TrLat': 0.14886,  # cm
             'Shell': 0.1000  # cm
         }
         self.calculate_r()

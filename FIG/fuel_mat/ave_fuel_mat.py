@@ -12,11 +12,11 @@ def sum_comp(weights,
     calculate weighted averaged fuel composition over the core,
     from 20 zones,
     for 8 different depletion passes
-    weights: 4x5x8 matrix
+    weights: 5x4x8 matrix
     '''
     new_mat = FuelMat()
     for R in range(1, 5):
-        for Z in range(1, 6):
+      for Z in range(1, 6): 
             mat = FuelMat()
             mat_loc = ''.join(
                       [raw_comps_folder, 'm%d%d%d00' % (R, Z, passno)])

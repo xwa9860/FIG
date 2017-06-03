@@ -43,12 +43,12 @@ class FCC(PBed):
     '''Fcc unit cell
     base class for fuel pebbles and graphite pebbles
     '''
-    def __init__(self, coolant, pb_list, dir_name='serp_input/',
+    def __init__(self, coolant, pb_list, packing_fraction, dir_name='serp_input/',
                  gen=FCCGen('serp_input/')):
         assert(len(pb_list) == 14), "pb_list length is not 14, but %d" % len(
             pb_list)
-        self.packing_fraction = 0.60
-        self.pitch = math.pow(4/3.0*math.pi*math.pow(0.15, 3)*4/0.6, 1/3.0)/2*10
+        self.packing_fraction = packing_fraction 
+        self.pitch = math.pow(4/3.0*math.pi*math.pow(0.15, 3)*4/packing_fraction, 1/3.0)/2*10
         #2.27541  # fcc pitch for 3cm diam pb at packing frac = 40%
         PBed.__init__(self, coolant, pb_list,
                       dir_name=dir_name,
@@ -61,7 +61,7 @@ class FuelUnitCell(FCC):
                  packing_fraction=0.60,
                  dir_name='serp_input/'):
         self.cool = Coolant(cool_temp, 'FuelFCCCoolant')
-        FCC.__init__(self, self.cool, fpb_list,
+        FCC.__init__(self, self.cool, fpb_list, packing_fraction,
                      dir_name=dir_name,
                      gen=FCCGen(dir_name))
         # TODO: calculate pitch from packing fraction and update FCC class to
@@ -84,6 +84,7 @@ class GraphiteUnitCell(FCC):
             self,
             cool,
             gpb_list,
+            packing_fraction,
             dir_name=dir_name,
             gen=GFCCGen(dir_name))
 

@@ -40,7 +40,8 @@ class mat_parser:
                             f.write(line[8: 18])
                             f.write('\n')
                         else:
-                            print('isotope %s fraction =0 or not in serp lib')
+                            pass
+                            #print('isotope %s fraction =0 or not in serp lib')
                     else:
                         if not line[9:19] == '0.0000E+00' and\
                                 line[2:7] not in mat_parser.not_in_serpent_lib:
@@ -49,8 +50,9 @@ class mat_parser:
                             f.write(line[9: 19])
                             f.write('\n')
                         else:
-                            print('isotope %s fraction =0 or not in serp lib'
-                                  %line[2:7])
+                            pass
+                            #print('isotope %s fraction =0 or not in serp lib'
+                            #      %line[2:7])
         f.close
         input.close
 
