@@ -102,6 +102,57 @@ class Fuel(Mat):
                      tmp_card=tmp_card, rgb=rgb)
 
 
+class SS316T(Mat):
+    '''
+    ss316 with isotope composition fractions from a composition file
+    '''
+    def __init__(self, temp,
+                 input_file='SS316_comp', tmp_card=True, rgb=[0, 8, 20]):
+        '''
+        the input_file only contains isotope name and fractions, this init
+        funct will calculate lib_id according to the temperature
+        and include it in the file
+        '''
+        lib_id = self.calc_lib_id(temp)
+        name = 'SS316T%d' % (math.ceil(temp))
+        text_comp = []
+        with open(input_file, 'r') as inpf:
+            for line in inpf:
+                text_comp.append(
+                    line.split(' ')[0].split('.')[0] +
+                    '.%s ' %
+                    lib_id +
+                    line.split(' ')[1])
+        Mat.__init__(self, name, 8, temp, mat_comp=''.join(text_comp),
+                     tmp_card=tmp_card, rgb=rgb)
+
+
+class SS316(Mat):
+    '''SS316 for control rod channel liner
+    stainless steel composition and density from:
+        http://www.espimetals.com/index.php/192-technical-data/stainless-steel-316-alloy-composition/202-stainless-steel-316-alloy-composition
+    '''
+
+    def __init__(self, temp, tmp_card=True, rgb=[0, 8, 20]):
+        self.temp = temp
+        self.density = 8.03
+        # isotope list: carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
+        isotopes = ['6000', '28000', '24000', '42000', '26000',
+                    '14000', '25055', '15031', '16000']
+        ratio_list = [0.08/12.0, 12/56.0, 17/48.0, 2.5/84.0, 65.345/52.0,
+                      1/28.0, 2/55.0, 0.045/31.0, 0.03/32.0]
+        self.name = 'SS316%d' % (math.ceil(temp))
+        Mat.__init__(
+            self,
+            self.name,
+            self.density,
+            temp,
+            tmp_card=tmp_card,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            rgb=rgb)
+
+
 class Flibe(Mat):
 
     def __init__(self, temp, tmp_card=True, rgb=[145, 212, 224]):
@@ -244,30 +295,6 @@ class Zr(Mat):
             ratio_list=ratio_list)
 
 
-class SS316(Mat):
-    '''SS316 for control rod channel liner
-    stainless steel composition and density from:
-        http://www.espimetals.com/index.php/192-technical-data/stainless-steel-316-alloy-composition/202-stainless-steel-316-alloy-composition
-    '''
-
-    def __init__(self, temp, tmp_card=True, rgb=[0, 8, 20]):
-        self.temp = temp
-        self.density = 8.03
-        # isotope list: carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
-        isotopes = ['6000', '28000', '24000', '42000', '26000',
-                    '14000', '25055', '15031', '16000']
-        ratio_list = [0.08/12.0, 12/56.0, 17/48.0, 2.5/84.0, 65.345/52.0,
-                      1/28.0, 2/55.0, 0.045/31.0, 0.03/32.0]
-        self.name = 'SS316%d' % (math.ceil(temp))
-        Mat.__init__(
-            self,
-            self.name,
-            self.density,
-            temp,
-            tmp_card=tmp_card,
-            isotopes=isotopes,
-            ratio_list=ratio_list,
-            rgb=rgb)
 
 
 class Shell(Mat):

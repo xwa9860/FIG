@@ -7,7 +7,7 @@ channels inside the center and outer reflectors
 '''
 
 from core_gen import CoreGen
-from mat import Graphite, Flibe, SS316, Zr
+from mat import Graphite, Flibe, SS316T
 from mat import GraphiteCoolMix
 from comp import *
 from pbed import FuelUnitCell, GraphiteUnitCell, PBedLat
@@ -32,7 +32,7 @@ class Vessel(Comp):
 
     def __init__(self, temp):
         name = 'VESSEL'
-        Comp.__init__(self, temp, name, [SS316(temp)])
+        Comp.__init__(self, temp, name, [SS316T(temp)])
 
 
 class Downcomer(Comp):
@@ -46,7 +46,7 @@ class Corebarrel(Comp):
 
     def __init__(self, temp):
         name = 'Corebarrel'
-        Comp.__init__(self, temp, name, [SS316(temp)])
+        Comp.__init__(self, temp, name, [SS316T(temp)])
 
 
 class CenterRef_CoolantChannel(Comp):
