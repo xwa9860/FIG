@@ -50,7 +50,7 @@ class Mat(CmpObj):
             self.calc_atomic_ratio(self.ratio_list)
             for isotope in self.isotopes:
                 self.mat_comp.append(
-                    '%s.%s %f\n' %
+                    '%s.%s %.5e\n' %
                     (isotope, lib_id, self.atomic_ratio[isotope]))
             self.mat_comp = ''.join(self.mat_comp)
         CmpObj.__init__(self, temp, name)
@@ -257,8 +257,8 @@ class Graphite(Mat):
     def __init__(self, temp, tmp_card=True, rgb=[190, 196, 206]):
         self.temp = temp
         self.density = 2.26
-        isotopes = ['6000']
-        ratio_list = [1]
+        isotopes = ['6000', '5010', '5011']
+        ratio_list = [8.77414E-02, 9.64977E-09, 3.90864E-08]
         #self.mat_comp = []
         #lib_id = self.calc_lib_id(temp)
         #self.mat_comp.append(
