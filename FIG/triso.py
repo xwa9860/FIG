@@ -5,41 +5,44 @@ from comp import Comp
 from mat import Buffer, iPyC, SiC, oPyC, Matrix
 import math
 
+
 class Triso(Comp):
 
-    def __init__(self, temp_list, fuel, dr_config=None, dir_name='serp_input'):
+    def __init__(self,
+                 temp_list, fuel_list, dr_config=None, dir_name='serp_input'):
         '''
-        fuel: fuel material
+        fuel: fuel material in a list
+        dr_config: thickness of the layers
         '''
+        # material
+        self.mat_list = []
         if not dr_config:
-            self.dr_config = {
-                'Fuel': .02,
-                'Buffer': .01,
-                'iPyC': .0035,
-                'SiC': .0035,
-                'oPyC': .0035,
-            }
+            for fuel in fuel_list:
+                self.mat_list.append(fuel)
+            self.mat_list.extend([Buffer(temp_list[0]),
+                                  iPyC(temp_list[1]),
+                                  SiC(temp_list[2]),
+                                  oPyC(temp_list[3]),
+                                  Matrix(temp_list[4])])
+        else:
+            print('not implementd')
+
+        if not dr_config:
+            r_3 = 0.02
+            r_1 = ((r_3**3.0)/3.0)**(1/3.0)
+            r_2 = ((r_3**3.0)/1.5)**(1/3.0)
+            dr_list = [r_1, r_2 - r_1, r_3 - r_2, 0.01, 0.0035, 0.0035, 0.0035]
+            self.dr_config = {}
+            for i, dr in enumerate(dr_list):
+                self.dr_config[self.mat_list[i].name] = dr
         else:
             self.dr_config = dr_config
 
-        assert len(temp_list) == len(self.dr_config), '''
-        temp_list for triso particle needs %d
-        temperature values, got %d''' % (len(self.dr_config),
-                                         len(temp_list))
-        # material
-        if not dr_config:
-            self.mat_list = [
-                fuel,
-                Buffer(temp_list[0]),
-                iPyC(temp_list[1]),
-                SiC(temp_list[2]),
-                oPyC(temp_list[3]),
-                Matrix(temp_list[4])
-            ]
-        else:
-            self.mat_list = [fuel,
-                             Matrix(temp_list[0])]
-            # TODO hard coded
+        assert len(temp_list) + len(fuel_list) == 1 + len(self.dr_config), '''
+        temp_list and fuel_list for triso particle needs %d
+        temperature values, got %d and %d''' % (len(self.dr_config),
+                                                len(temp_list),
+                                                len(fuel_list))
         name = 'triso'+fuel.name
         self.calculate_r()
         Comp.__init__(self, fuel.temp, name, self.mat_list, TrisoGen(dir_name))
@@ -48,11 +51,11 @@ class Triso(Comp):
 
     def calculate_r(self):
         self.r_config = {}
-        self.r_config[self.mat_list[0].__class__.__name__] =\
-        self.dr_config[self.mat_list[0].__class__.__name__]
+        self.r_config[self.mat_list[0].name] =\
+        self.dr_config[self.mat_list[0].name]
         for i in range(1, len(self.mat_list)-1):
-            prev_name = self.mat_list[i-1].__class__.__name__
-            curr_name = self.mat_list[i].__class__.__name__
+            prev_name = self.mat_list[i-1].name
+            curr_name = self.mat_list[i].name
             self.r_config[curr_name] = self.r_config[
                 prev_name] + self.dr_config[curr_name]
 

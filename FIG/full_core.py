@@ -1,3 +1,9 @@
+'''
+This file is used to generate cross-sections
+
+create core with two fuel zones
+
+'''
 #!/usr/bin/python
 import triso
 import core_2_zones
@@ -28,14 +34,21 @@ def create_a_fuel_pebble(temp_list, name, burnup, pb_comp_dir, gen_dir_name):
     layer in the pebble
     burnup: used to choose the fuel mat composition
     '''
-    fuel_name = 'fuelin%s' % name 
+    fuel_name1 = 'fuel1in%s' % name
+    fuel_name2 = 'fuel2in%s' % name
+    fuel_name3 = 'fuel3in%s' % name
     fuel_input = '%s/fuel_mat%d' % (pb_comp_dir, burnup)
-    fuel = mat.Fuel(temp_list[1], fuel_name, fuel_input, tmp_card=None)
-    tr = triso.Triso(temp_list[2:7], fuel, dr_config=None,
+    fuel1 = mat.Fuel(temp_list[1], fuel_name1, fuel_input, tmp_card=None)
+    fuel2 = mat.Fuel(temp_list[2], fuel_name2, fuel_input, tmp_card=None)
+    fuel3 = mat.Fuel(temp_list[3], fuel_name3, fuel_input, tmp_card=None)
+    tr = triso.Triso(temp_list[4:9], [fuel1, fuel2, fuel3], dr_config=None,
                      dir_name=gen_dir_name)
-    return pb.FPb(tr, temp_list[0], temp_list[7], dir_name=gen_dir_name)
+    return pb.FPb(tr, temp_list[0], temp_list[9], dir_name=gen_dir_name)
 
 def create_a_pb_unit_cell(fuel_temps, uc_name, burnups, pb_comp_dir, gen_dir_name):
+    '''
+    fuel_temps: temperature list for pebbles in the unit cell
+    '''
     fpb_list = []
     unique_fpb_list = []
     unique_burnups = list(unique_everseen(burnups))
@@ -80,7 +93,7 @@ if __name__ == "__main__":
     pb_burnups_w = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
     pb_burnups_a = np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
 
-    fuel_temp_list = [900*np.ones(8) for i in range(14)]
+    fuel_temp_list = [900*np.ones(10) for i in range(14)]
 
     case_nb = 1
     for temp in np.array([300, 600, 900]):
