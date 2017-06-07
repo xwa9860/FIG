@@ -41,7 +41,9 @@ def create_a_fuel_pebble(temp_list, name, burnup, pb_comp_dir, gen_dir_name):
     fuel1 = mat.Fuel(temp_list[1], fuel_name1, fuel_input, tmp_card=None)
     fuel2 = mat.Fuel(temp_list[2], fuel_name2, fuel_input, tmp_card=None)
     fuel3 = mat.Fuel(temp_list[3], fuel_name3, fuel_input, tmp_card=None)
-    tr = triso.Triso(temp_list[4:9], [fuel1, fuel2, fuel3], dr_config=None,
+    tr = triso.Triso(temp_list[4:9], 
+                     [fuel1, fuel2, fuel3], 
+                     dr_config=None,
                      dir_name=gen_dir_name)
     return pb.FPb(tr, temp_list[0], temp_list[9], dir_name=gen_dir_name)
 
@@ -70,15 +72,15 @@ def create_the_core(fuel_temps, burnupsw, burnupsa, pb_comp_dir_w, pb_comp_dir_a
     core = core_2_zones.Core(
         fpb_list_w,
         fpb_list_a,
-        900,  # temp_CR
-        900,  # temp_g_CRCC
-        900,  # temp_cool_CRCC
-        900,  # temp_OR
-        900,  # temp_g_ORCC
-        900,  # temp_cool_ORCC
-        900,  # temp_cool_F
-        900,  # temp_blanket
-        900,  # temp_cool_B
+        1000,  # temp_CR
+        1000,  # temp_g_CRCC
+        1000,  # temp_cool_CRCC
+        1000,  # temp_OR
+        1000,  # temp_g_ORCC
+        1000,  # temp_cool_ORCC
+        950,  # temp_cool_F
+        1000,  # temp_blanket
+        950,  # temp_cool_B
         900,  # temp_Corebarrel
         900,  # temp_Downcomer
         900,  # temp_vessel
@@ -89,12 +91,21 @@ def create_the_core(fuel_temps, burnupsw, burnupsa, pb_comp_dir_w, pb_comp_dir_a
     f.write(text)
     f.close
 
+
+
 if __name__ == "__main__":
     pb_burnups_w = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
     pb_burnups_a = np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
 
     fuel_temp_list = [900*np.ones(10) for i in range(14)]
+    from sample_temperature import sampling_temp
+    tempsa = sampling_temp(12, 100)
+    tempsw = sampling_temp(24, 100)
 
+    # generating a set of input files for serpent
+    # to generat cross sections for different temperatures
+    # each of the 3 fuel layers in triso particles
+    # each of the 4 or 8 burnups
     case_nb = 1
     for temp in np.array([300, 600, 900]):
         for j in range(1, 9):
@@ -113,8 +124,8 @@ if __name__ == "__main__":
             output_dir_name = 'mk1_input/%d_%d/' %(j, temp)
             fuel_comp_folder_w = 'fuel_mat/fuel_comp/flux_wall_ave_serp/'
             fuel_comp_folder_a = 'fuel_mat/fuel_comp/flux_act_ave_serp/'
-            create_the_core(fuel_temp_list, pb_burnups_w, pb_burnups_a,
-                fuel_comp_folder_w,
-                fuel_comp_folder_a,
-                output_dir_name)
+            #create_the_core(fuel_temp_list, pb_burnups_w, pb_burnups_a,
+            #    fuel_comp_folder_w,
+            #    fuel_comp_folder_a,
+            #    output_dir_name)
             case_nb += 1
