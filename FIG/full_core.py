@@ -107,13 +107,14 @@ if __name__ == "__main__":
     # each of the 3 fuel layers in triso particles
     # each of the 4 or 8 burnups
     case_nb = 1
-    for temp in np.array([300, 600, 900]):
+    for temp in tempsa:
         for j in range(1, 9):
-            # reset
+            # reset incremental parameters for a new serpent input
             Cell.id = 1
             Universe.id = 1
             Surface.id = 1
             FuelPbGen.wrote_surf = False
+
             pb_idxs = np.where(pb_burnups_w == j)[0]
             #for pb_idx in pb_idxs:
                 #fuel_temp_list[pb_idx] = temp*np.ones(8)
@@ -121,11 +122,12 @@ if __name__ == "__main__":
                 # fuel, buffer, iPyC, SiC,
                 # oPyC, matrix;
                 # shell
-            output_dir_name = 'mk1_input/%d_%d/' %(j, temp)
+            output_dir_name = 'mk1_input/input%d/' %(j)
+            j += 1
             fuel_comp_folder_w = 'fuel_mat/fuel_comp/flux_wall_ave_serp/'
             fuel_comp_folder_a = 'fuel_mat/fuel_comp/flux_act_ave_serp/'
-            #create_the_core(fuel_temp_list, pb_burnups_w, pb_burnups_a,
-            #    fuel_comp_folder_w,
-            #    fuel_comp_folder_a,
-            #    output_dir_name)
+            create_the_core(fuel_temp_list, pb_burnups_w, pb_burnups_a,
+                fuel_comp_folder_w,
+                fuel_comp_folder_a,
+                output_dir_name)
             case_nb += 1
