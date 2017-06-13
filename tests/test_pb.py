@@ -3,7 +3,7 @@ from pb import FPb
 from triso import Triso
 from mat import Fuel
 from coolant import Coolant
-from fuel_mat import config
+import config
 TEMP = [800.0, 900.0, 1000.0, 800.0, 800.0, 800.0, 800.0, 800.0, 770.0]
 
 
