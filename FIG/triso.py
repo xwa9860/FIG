@@ -9,7 +9,10 @@ import math
 class Triso(Comp):
 
     def __init__(self,
-                 temp_list, fuel_list, dr_config=None, dir_name='serp_input'):
+                 temp_list, 
+                 fuel_list, 
+                 dr_config=None, 
+                 dir_name='serp_input'):
         '''
         fuel: fuel material in a list
         dr_config: thickness of the layers
