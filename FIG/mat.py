@@ -107,7 +107,7 @@ class SS316T(Mat):
     ss316 with isotope composition fractions from a composition file
     '''
     def __init__(self, temp,
-                 input_file='SS316_comp', tmp_card=True, rgb=[0, 8, 20]):
+                 input_file='data/SS316_comp', tmp_card=True, rgb=[0, 8, 20]):
         '''
         the input_file only contains isotope name and fractions, this init
         funct will calculate lib_id according to the temperature

@@ -18,7 +18,7 @@ class MatGen:
             if a_mat.flag == 'moder':
                 str_list.append(' moder grph_%s 6000'
                                 % a_mat.name)
-            if tmp:
+            if a_mat.tmp_card:
                 str_list.append(' tmp %f'
                                 % a_mat.temp)
             if a_mat.rgb:

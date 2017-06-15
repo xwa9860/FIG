@@ -1,5 +1,6 @@
 #!/usr/bin/python
-import core_w_channel, triso, pbed, pb, mat
+from FIG import core_w_channel, triso, pbed, pb, mat
+import config
 import shutil
 import os
 
@@ -17,11 +18,14 @@ def create_fuel_pebbles(fuel_temp_list):
     fpb_list = [] #list of different pebbles, 8 in this design
     fpb_list_all=[] #list of 14 pebbles
     for i in xrange(0, 8):
-        fuel_name = 'fuel%d' %i
-        fuel_input = '../fuel_mat/vol_ave/fuel_mat%d' %(i+1)
-        fuel = mat.Fuel(fuel_temp_list[1], fuel_name, fuel_input, tmp_card=None)
-        # range in python: list[2:7] means list[2,3,4,5,6]
-        tr = triso.Triso(fuel_temp_list[2:7], fuel)
+
+        fuel_input = '%sfuel_mat%d' %(config.OUTPUT_FLUX_WALL_AVE_COMP_FOLDER,
+         i+1)
+        fuel1 = mat.Fuel(fuel_temp_list[1], 'fuel_name1', fuel_input)
+        fuel2 = mat.Fuel(fuel_temp_list[1], 'fuel_name2', fuel_input)
+        fuel3 = mat.Fuel(fuel_temp_list[1], 'fuel_name3', fuel_input)
+        tr = triso.Triso(fuel_temp_list[2:7], [fuel1, fuel2, fuel3])
+
         fpb_list.append(pb.FPb(tr, fuel_temp_list[0], fuel_temp_list[7]))
     for i in xrange(0, 14):
         fpb_list_all.append(fpb_list[pb_burnup_list[i]-1])
@@ -47,8 +51,9 @@ core = core_w_channel.Core(
     1200,  # temp_cool_ORCC
     1200,  # temp_cool_F
     1200,  # temp_blanket
-    1200)  # temp_cool_B
-f = open('serp_input/test_full_core_res', 'w+')
+    1200,
+    1200, 
+    1200,
+    1200)  
 text = core.generate_output()
-f.write(text)
-f.close
+print(text)

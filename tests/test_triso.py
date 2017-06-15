@@ -3,21 +3,21 @@
 from triso import Triso
 from mat import Fuel
 from pb import FPb
+import config
 import os
 
 TEMP = [900, 900, 800, 900, 1000, 800, 800, 800, 800, 800, 770]
 
 
-i = 1
-fuel_name = 'fuel%d' % i
-fuel_input = '../fuel_mat/fuel_comp/flux_ave_serp/fuel_mat%d' % 1
-fuel = Fuel(TEMP[1], fuel_name, fuel_input)
-tr = Triso(TEMP[2:7], [fuel])
-#fuelpebble = FuelPebble(tr, TEMP[0], TEMP[8])
+fuel_input = '%sfuel_mat%d' %(config.OUTPUT_FLUX_WALL_AVE_COMP_FOLDER,
+ 1)
+fuel1 = Fuel(TEMP[1], 'fuel_name1', fuel_input)
+fuel2 = Fuel(TEMP[1], 'fuel_name2', fuel_input)
+fuel3 = Fuel(TEMP[1], 'fuel_name3', fuel_input)
+tr = Triso(TEMP[2:7], [fuel1, fuel2, fuel3])
 
-f = open('test_triso_res', 'w+')
-f.write('triso input script\n' + tr.generate_output())
-f.write('triso material input script\n')
+
+print(tr.generate_output())
+print('triso material input script\n')
 for mat in tr.mat_list:
-    f.write(mat.generate_output())
-f.close
+    print(mat.generate_output())

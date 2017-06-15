@@ -19,7 +19,9 @@ class Triso(Comp):
         '''
         # material
         self.mat_list = []
+        print(temp_list)
         if not dr_config:
+            assert len(temp_list) == 5, 'wrong temperature number %d' %(len(temp_list))
             for fuel in fuel_list:
                 self.mat_list.append(fuel)
             self.mat_list.extend([Buffer(temp_list[0]),
