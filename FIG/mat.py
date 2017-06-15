@@ -46,7 +46,7 @@ class Mat(CmpObj):
             self.mat_comp = []
             lib_id = self.calc_lib_id(temp)
             #TODO self.mat_comp.append(comments)
-            print('defined isotopes%s' %self.name)
+            #print('defined isotopes%s' %self.name)
             self.calc_atomic_ratio(self.ratio_list)
             for isotope in self.isotopes:
                 self.mat_comp.append(
@@ -56,7 +56,7 @@ class Mat(CmpObj):
         CmpObj.__init__(self, temp, name)
 
     def generate_output(self):
-        return self.gen.parse(self, 's', self.tmp_card)
+        return self.gen.parse(self, 's')
 
     def calc_lib_id(self, temp):
         if temp//300*3 < 10:

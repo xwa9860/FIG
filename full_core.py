@@ -31,13 +31,13 @@ def create_a_fuel_pebble(fuel_temps, cgt, sht, name, burnup, pb_comp_dir, gen_di
     burnup: used to choose the fuel mat composition file in pb_comp_dir
     '''
     assert len(fuel_temps) == 8, 'wrong number of temps, need 8, got %d' %len(fuel_temps)
-    fuel_name1 = 'fuel1in%s' % name
-    fuel_name2 = 'fuel2in%s' % name
-    fuel_name3 = 'fuel3in%s' % name
+    fuel_name1 = 'fuel1%s' % name
+    fuel_name2 = 'fuel2%s' % name
+    fuel_name3 = 'fuel3%s' % name
     fuel_input = '%s/fuel_mat%d' % (pb_comp_dir, burnup)
-    fuel1 = mat.Fuel(fuel_temps[0], fuel_name1, fuel_input, tmp_card=None)
-    fuel2 = mat.Fuel(fuel_temps[1], fuel_name2, fuel_input, tmp_card=None)
-    fuel3 = mat.Fuel(fuel_temps[2], fuel_name3, fuel_input, tmp_card=None)
+    fuel1 = mat.Fuel(fuel_temps[0], fuel_name1, fuel_input)
+    fuel2 = mat.Fuel(fuel_temps[1], fuel_name2, fuel_input)
+    fuel3 = mat.Fuel(fuel_temps[2], fuel_name3, fuel_input)
     tr = triso.Triso(fuel_temps[3:], 
                      [fuel1, fuel2, fuel3], 
                      dr_config=None,
@@ -51,8 +51,6 @@ def create_a_pb_unit_cell(fuel_temps, cgt, sht, uc_name, burnups, pb_comp_dir, g
     cgt: central graphite temperature
     sht: shell temperature
     '''
-    print('fuel_temps shape')
-    print(fuel_temps.shape)
     fpb_list = []
     unique_fpb_list = []
     unique_burnups = list(unique_everseen(burnups))
@@ -118,14 +116,6 @@ if __name__ == "__main__":
           Surface.id = 1
           FuelPbGen.wrote_surf = False
 
-          #pb_idxs = np.where(pb_burnups_w == j)[0]
-          #print(pb_idxs)
-          #for pb_idx in pb_idxs:
-              #fuel_temp_list[pb_idx] = temp*np.ones(8)
-              # list of temperatures:central graphie kernel;
-              # fuel, buffer, iPyC, SiC,
-              # oPyC, matrix;
-              # shell
           output_dir_name = 'res/mk1_input/input%d/' %(case)
           fuel_comp_folder_w = 'fuel_mat/fuel_comp/flux_wall_ave_serp/'
           fuel_comp_folder_a = 'fuel_mat/fuel_comp/flux_act_ave_serp/'

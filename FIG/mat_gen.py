@@ -10,7 +10,7 @@ id_list = [16, 18, 20, 22, 24, 26]
 
 class MatGen:
 
-    def parse(self, a_mat, type, tmp):
+    def parse(self, a_mat, type):
         if type == 's':
             str_list = []
             str_list.append('\nmat %s -%E'
