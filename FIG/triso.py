@@ -2,7 +2,7 @@
 from triso_gen import TrisoGen
 from triso_gen import TrisoLatticeGen
 from comp import Comp
-from mat import Buffer, iPyC, SiC, oPyC, Matrix
+from mat import Buffer, iPyC, SiC, oPyC, Matrix, CMatrix
 import math
 
 
@@ -19,7 +19,6 @@ class Triso(Comp):
         '''
         # material
         self.mat_list = []
-        print(temp_list)
         if not dr_config:
             assert len(temp_list) == 5, 'wrong temperature number %d' %(len(temp_list))
             for fuel in fuel_list:
@@ -29,19 +28,29 @@ class Triso(Comp):
                                   SiC(temp_list[2]),
                                   oPyC(temp_list[3]),
                                   Matrix(temp_list[4])])
+        elif dr_config == 2:
+            assert len(temp_list) == 1, 'wrong temperature number %d' %len(temp_list)
+            for fuel in fuel_list:
+                self.mat_list.append(fuel)
+            self.mat_list.append(CMatrix(temp_list[0]))
         else:
-            print('not implementd')
+            raise ValueError, 'triso dr_config not implemented'
 
+        r_3 = 0.02
+        r_1 = ((r_3**3.0)/3.0)**(1/3.0)
+        r_2 = ((r_3**3.0)/1.5)**(1/3.0)
         if not dr_config:
-            r_3 = 0.02
-            r_1 = ((r_3**3.0)/3.0)**(1/3.0)
-            r_2 = ((r_3**3.0)/1.5)**(1/3.0)
             dr_list = [r_1, r_2 - r_1, r_3 - r_2, 0.01, 0.0035, 0.0035, 0.0035]
             self.dr_config = {}
             for i, dr in enumerate(dr_list):
                 self.dr_config[self.mat_list[i].name] = dr
+        elif dr_config == 2:
+            dr_list = [r_1, r_2 - r_1, r_3 - r_2]
+            self.dr_config = {}
+            for i, dr in enumerate(dr_list):
+                self.dr_config[self.mat_list[i].name] = dr
         else:
-            self.dr_config = dr_config
+             self.dr_config = dr_config
 
         assert len(temp_list) + len(fuel_list) == 1 + len(self.dr_config), '''
         temp_list and fuel_list for triso particle needs %d

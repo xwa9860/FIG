@@ -30,7 +30,7 @@ def create_a_fuel_pebble(fuel_temps, cgt, sht, name, burnup, pb_comp_dir, gen_di
     sht: shell temperature
     burnup: used to choose the fuel mat composition file in pb_comp_dir
     '''
-    assert len(fuel_temps) == 8, 'wrong number of temps, need 8, got %d' %len(fuel_temps)
+    assert len(fuel_temps) == 4, 'wrong number of temps, need 4, got %d' %len(fuel_temps)
     fuel_name1 = 'fuel1%s' % name
     fuel_name2 = 'fuel2%s' % name
     fuel_name3 = 'fuel3%s' % name
@@ -40,7 +40,7 @@ def create_a_fuel_pebble(fuel_temps, cgt, sht, name, burnup, pb_comp_dir, gen_di
     fuel3 = mat.Fuel(fuel_temps[2], fuel_name3, fuel_input)
     tr = triso.Triso(fuel_temps[3:], 
                      [fuel1, fuel2, fuel3], 
-                     dr_config=None,
+                     dr_config=2,
                      dir_name=gen_dir_name)
     return pb.FPb(tr, cgt, sht, dir_name=gen_dir_name)
 
@@ -97,7 +97,9 @@ def create_the_core(fuel_temps_w, fuel_temps_a, burnups_w, burnups_a, pb_comp_di
 
 
 if __name__ == "__main__":
+    #pb_burnups_w = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
     pb_burnups_w = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
+    #pb_burnups_a =  np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
     pb_burnups_a = np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
 
     from util.sample_temperature import sample_temperature

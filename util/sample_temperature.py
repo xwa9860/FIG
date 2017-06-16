@@ -35,7 +35,7 @@ def reshape(mat, burnup_list, layer_nb, sample_nb):
   '''
   bu_nb = len(list(unique_everseen(burnup_list)))
   full_mat =np.append(mat[:, :, 0:layer_nb-1], 
-                      mat[:,:, layer_nb-1].reshape(sample_nb, bu_nb, 1)*np.ones((sample_nb, bu_nb, 5)), axis=2)
+                      mat[:,:, layer_nb-1].reshape(sample_nb, bu_nb, 1)*np.ones((sample_nb, bu_nb, 1)), axis=2)
   return full_mat 
 
 def fcc_sample(full_mat, burnup_list):

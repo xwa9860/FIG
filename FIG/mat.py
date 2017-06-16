@@ -251,6 +251,23 @@ class Matrix(Mat):
         Mat.__init__(self, name, 1.70386, temp, mat_comp=mat_comp,
                      tmp_card=tmp_card, flag='moder')
 
+class CMatrix(Mat):
+    '''
+    coatings and matrix
+    used when the triso layers are combined into one material
+    '''
+
+    def __init__(self, temp, tmp_card=True):
+        mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        name = 'CMatrix%d' % (math.ceil(temp))
+        mat_comp.append('%matrix in triso particle\n' +
+                        '6000.%s 0.1265644\n' % lib_id +
+                        '14028.%s 0.00661035\n' % lib_id)
+        mat_comp = ''.join(mat_comp)
+        Mat.__init__(self, name, 1.70386, temp, mat_comp=mat_comp,
+                     tmp_card=tmp_card, flag='moder')
 
 class Graphite(Mat):
 
