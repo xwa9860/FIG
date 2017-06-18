@@ -72,7 +72,7 @@ class OuterRef_CoolantChannel(Comp):
 
 class Fuel(Comp):
 
-    def __init__(self, fpb_list, cool_temp, dir_name='serp_input/'):
+    def __init__(self, fpb_list, cool_temp, dir_name='res/serp_input/'):
         name = 'FuelZone'
         self.unit_cell = FuelUnitCell(fpb_list, cool_temp,
                                       dir_name=dir_name)
@@ -87,7 +87,7 @@ class Fuel(Comp):
 
 class Blanket(Comp):
 
-    def __init__(self, pb_temp, cool_temp, dir_name='serp_input/'):
+    def __init__(self, pb_temp, cool_temp, dir_name='res/serp_input/'):
         self.pb_temp = pb_temp
         self.cool_temp = cool_temp
         name = 'Blanket'
@@ -117,7 +117,7 @@ class Core(Comp):
             temp_Corebarrel,
             temp_Downcomer,
             temp_Vessel,
-            dir_name='serp_input/'):
+            dir_name='res/serp_input/'):
 
         assert(len(fpb_list) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
             fpb_list)

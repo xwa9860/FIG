@@ -17,7 +17,7 @@ tr = Triso(TEMP[2:7], [fuel1, fuel2, fuel3])
 cool_temp = 800.0
 cool = Coolant(800.0)
 pb = FPb(tr, TEMP[0], TEMP[7])
-f = open('test_pb_res', 'w+')
+f = open('tests/test_pb_res', 'w+')
 f.write(pb.generate_output())
 for mat in pb.mat_list:
     f.write(mat.generate_output())

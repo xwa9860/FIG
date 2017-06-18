@@ -83,7 +83,7 @@ class Isotope:
 class Fuel(Mat):
 
     def __init__(self, temp, name,
-                 input_file, tmp_card=True, rgb=[226, 2, 2]):
+                 input_file, tmp_card=True, rgb=[255, 75, 134]):
         '''
         the input_file only contains isotope name and fractions, this init
         funct will calculate lib_id according to the temperature
@@ -155,7 +155,7 @@ class SS316(Mat):
 
 class Flibe(Mat):
 
-    def __init__(self, temp, tmp_card=True, rgb=[145, 212, 224]):
+    def __init__(self, temp, tmp_card=True, rgb=[0, 181, 238]):
         density = (2279.92 - 0.488*(temp-273.15))/1000
         self.temp = temp
         # FLiBe chemical formular is Li2BeF4
@@ -235,7 +235,7 @@ class SiC(Mat):
 
 class Matrix(Mat):
 
-    def __init__(self, temp, tmp_card=True):
+    def __init__(self, temp, tmp_card=True, rgb=[255, 75, 134]):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
@@ -249,7 +249,7 @@ class Matrix(Mat):
                         '5011.%s 3.90864E-08\n' % lib_id)
         mat_comp = ''.join(mat_comp)
         Mat.__init__(self, name, 1.70386, temp, mat_comp=mat_comp,
-                     tmp_card=tmp_card, flag='moder')
+                     tmp_card=tmp_card, rgb=rgb, flag='moder')
 
 class CMatrix(Mat):
     '''
@@ -257,7 +257,7 @@ class CMatrix(Mat):
     used when the triso layers are combined into one material
     '''
 
-    def __init__(self, temp, tmp_card=True):
+    def __init__(self, temp, tmp_card=True, rgb=[255, 75, 134]):
         mat_comp = []
         self.temp = temp
         lib_id = self.calc_lib_id(temp)
@@ -267,11 +267,11 @@ class CMatrix(Mat):
                         '14028.%s 0.00661035\n' % lib_id)
         mat_comp = ''.join(mat_comp)
         Mat.__init__(self, name, 1.70386, temp, mat_comp=mat_comp,
-                     tmp_card=tmp_card, flag='moder')
+                     tmp_card=tmp_card, rgb=rgb, flag='moder')
 
 class Graphite(Mat):
 
-    def __init__(self, temp, tmp_card=True, rgb=[190, 196, 206]):
+    def __init__(self, temp, tmp_card=True, rgb=[139, 147, 147]):
         self.temp = temp
         self.density = 2.26
         isotopes = ['6000', '5010', '5011']
@@ -318,7 +318,7 @@ class Zr(Mat):
 class Shell(Mat):
     # graphite shell in the pebbles
 
-    def __init__(self, temp, tmp_card=True, rgb=[221, 45, 43]):
+    def __init__(self, temp, tmp_card=True, rgb=[255, 75, 134]):
         self.density = 1.75
         isotopes = ['6000']
         ratio_list = [1]
@@ -347,7 +347,7 @@ class Shell(Mat):
 class CentralGraphite(Mat):
     # graphite core in the pebbles
 
-    def __init__(self, temp, tmp_card=True):
+    def __init__(self, temp, tmp_card=True, rgb=[255, 75, 134]):
         self.density = 1.59368
         isotopes = ['6000']
         ratio_list = [1]
@@ -368,6 +368,7 @@ class CentralGraphite(Mat):
             isotopes=isotopes,
             ratio_list=ratio_list,
             tmp_card=tmp_card,
+            rgb=rgb,
             flag='moder')
 
 

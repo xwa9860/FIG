@@ -19,59 +19,87 @@ import os
 import numpy as np
 
 
-def create_a_fuel_pebble(fuel_temps, cgt, sht, name, burnup, pb_comp_dir, gen_dir_name):
+def create_a_fuel_pebble(fuel_temps, coating_temps, cgt, sht, pbname, burnup, pb_comp_dir, gen_dir_name):
     '''
     create a fuel pebble, assuming all the triso particles in the pebble have
     same temperature configurations(can have different temp in different triso 
     layers though)
-    fuel_temps: a list that contains temperature for each triso
-    layer in the pebble
+    fuel_temps: a list that contains temperature for each fuel 
+    layer in the triso, 1d array of length 1 or 3
+    coating_temps: a list that contains temp for each of the non-fuel layers in triso
     cgt: central graphite temperature
     sht: shell temperature
     burnup: used to choose the fuel mat composition file in pb_comp_dir
     '''
-    assert len(fuel_temps) == 4, 'wrong number of temps, need 4, got %d' %len(fuel_temps)
-    fuel_name1 = 'fuel1%s' % name
-    fuel_name2 = 'fuel2%s' % name
-    fuel_name3 = 'fuel3%s' % name
-    fuel_input = '%s/fuel_mat%d' % (pb_comp_dir, burnup)
-    fuel1 = mat.Fuel(fuel_temps[0], fuel_name1, fuel_input)
-    fuel2 = mat.Fuel(fuel_temps[1], fuel_name2, fuel_input)
-    fuel3 = mat.Fuel(fuel_temps[2], fuel_name3, fuel_input)
-    tr = triso.Triso(fuel_temps[3:], 
-                     [fuel1, fuel2, fuel3], 
-                     dr_config=2,
-                     dir_name=gen_dir_name)
+    assert fuel_temps.shape == (1,) or fuel_temps.shape == (3,), 'wrong fuel temp shape:%r' %(fuel_temps.shape)
+    assert coating_temps.shape == (1,) or coating_temps.shape == (5,), 'wrong coating temp shape:%r' %(fuel_temps.shape)
+
+    # create fuel materials
+    fuels = []
+    for i, temp in enumerate(fuel_temps):
+        fuel_name = 'fuel%d%s' % (i, pbname)
+        fuel_input = '%s/fuel_mat%d' % (pb_comp_dir, burnup)
+        fuels.append(mat.Fuel(temp, fuel_name, fuel_input))
+    
+    # create triso particle
+    if coating_temps.shape == (1,):
+        tr = triso.Triso(coating_temps,
+                         fuels, 
+                         dr_config='homogenized',
+                         dir_name=gen_dir_name)
+    else:
+        tr = triso.Triso(coating_temps,
+                         fuels, 
+                         dr_config=None,
+                         dir_name=gen_dir_name)
     return pb.FPb(tr, cgt, sht, dir_name=gen_dir_name)
 
-def create_a_pb_unit_cell(fuel_temps, cgt, sht, uc_name, burnups, pb_comp_dir, gen_dir_name):
+
+def create_a_pb_unit_cell(fuel_temps, coating_temps, cgt, sht, uc_name, burnups, pb_comp_dir, gen_dir_name):
     '''
     fuel_temps: temperature list for pebbles in the unit cell
-    a matrix of unique pebbles x 8 layers in a triso
+    a matrix of unique pebbles x n layers of fuel in a triso
+    triso_temps: a list that contains temp for each of the non-fuel layers in triso
     cgt: central graphite temperature
     sht: shell temperature
     '''
     fpb_list = []
     unique_fpb_list = []
     unique_burnups = list(unique_everseen(burnups))
+    unique_burnup_nb = len(unique_burnups)
+
+    assert fuel_temps.shape[0] == unique_burnup_nb, 'wrong dimension %s' %str(fuel_temps.shape)
+    assert coating_temps.shape[0] == unique_burnup_nb, 'wrong dimension' 
+    
+    # create a list of unique pebbles
     for i in range(len(unique_burnups)):
         pb_name = 'pb%s%d' % (uc_name, i)
         unique_fpb_list.append(
-            create_a_fuel_pebble(fuel_temps[unique_burnups[i]-1, :], cgt, sht,
+            create_a_fuel_pebble(fuel_temps[unique_burnups[i]-1, :], 
+                                 coating_temps[unique_burnups[i]-1, :],
+                                 cgt, sht,
                                  pb_name,
                                  unique_burnups[i], pb_comp_dir, gen_dir_name))
+    # create a list of all the 14 fuel pebbles, some of them are exactly the same
     for i in range(len(burnups)):
         fpb_list.append(unique_fpb_list[burnups[i]-1])
     return fpb_list
 
 
-def create_the_core(fuel_temps_w, fuel_temps_a, burnups_w, burnups_a, pb_comp_dir_w, pb_comp_dir_a, gen_dir_name):
+def create_the_core(fuel_temps_w, 
+                    triso_temps_w,
+                    fuel_temps_a, 
+                    triso_temps_a,
+                    burnups_w, burnups_a, 
+                    pb_comp_dir_w, pb_comp_dir_a, 
+                    gen_dir_name):
     '''
-    fuel_temps_w: a list of temperatures used to define fuel pebbles in the near-wall region
+    fuel_temps_w: a list of temperatures used to define fuel layers in the near-wall region
+    triso_temps_w: a list of temperatures used to define  layers in the near-wall region
     '''
 
-    fpb_list_w = create_a_pb_unit_cell(fuel_temps_w, 900, 900, 'w', burnups_w, pb_comp_dir_w, gen_dir_name)
-    fpb_list_a = create_a_pb_unit_cell(fuel_temps_a, 900, 900, 'a', burnups_a, pb_comp_dir_a, gen_dir_name)
+    fpb_list_w = create_a_pb_unit_cell(fuel_temps_w, triso_temps_w, 900, 900, 'w', burnups_w, pb_comp_dir_w, gen_dir_name)
+    fpb_list_a = create_a_pb_unit_cell(fuel_temps_a, triso_temps_a, 900, 900, 'a', burnups_a, pb_comp_dir_a, gen_dir_name)
 
     core = core_2_zones.Core(
         fpb_list_w,
@@ -97,33 +125,42 @@ def create_the_core(fuel_temps_w, fuel_temps_a, burnups_w, burnups_a, pb_comp_di
 
 
 if __name__ == "__main__":
-    #pb_burnups_w = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
     pb_burnups_w = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
-    #pb_burnups_a =  np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
     pb_burnups_a = np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
 
     from util.sample_temperature import sample_temperature
-    temps_w_mat = sample_temperature(pb_burnups_w, 4, 10)
-    temps_a_mat = sample_temperature(pb_burnups_a, 4, 10)
+    #temps_w_mat = sample_temperature(pb_burnups_w, 4, 10)
+    sample_nb = 10
+    fuel_nb = 3
+    coating_nb = 1
+    burnup_nb = 4
+    temps_a_mat = sample_temperature(burnup_nb, fuel_nb, coating_nb, sample_nb)
 
     # generating a set of input files for serpent
     # to generat cross sections for different temperatures
     # each of the 3 fuel layers in triso particles
     # each of the 4 or 8 burnups
     for case, temps_a in enumerate(temps_a_mat):
-          temps_w = temps_w_mat[case] 
           # reset incremental parameters for a new serpent input
           Cell.id = 1
           Universe.id = 1
           Surface.id = 1
           FuelPbGen.wrote_surf = False
 
+          temps_a_f = temps_a[:, 0:3]
+          temps_a_t = temps_a[:, 3].reshape(4,1)
+
+          temps_w_f = np.ones((8, 1))*900
+          temps_w_t = np.ones((8, 1))*900
+
           output_dir_name = 'res/mk1_input/input%d/' %(case)
           fuel_comp_folder_w = 'fuel_mat/fuel_comp/flux_wall_ave_serp/'
           fuel_comp_folder_a = 'fuel_mat/fuel_comp/flux_act_ave_serp/'
 
-          create_the_core(temps_w, 
-                          temps_a,
+          create_the_core(temps_w_f, 
+                          temps_w_t,
+                          temps_a_f,
+                          temps_a_t,
                           pb_burnups_w,
                           pb_burnups_a,
                           fuel_comp_folder_w,

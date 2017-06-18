@@ -9,53 +9,55 @@ import math
 class Triso(Comp):
 
     def __init__(self,
-                 temp_list, 
+                 coating_t_list, 
                  fuel_list, 
                  dr_config=None, 
                  dir_name='serp_input'):
         '''
-        fuel: fuel material in a list
+        coating_t_list: non_fuel coating layers temperatures in a list
+        fuel_list: fuel material in a list
         dr_config: thickness of the layers
         '''
-        # material
-        self.mat_list = []
-        if not dr_config:
-            assert len(temp_list) == 5, 'wrong temperature number %d' %(len(temp_list))
-            for fuel in fuel_list:
-                self.mat_list.append(fuel)
-            self.mat_list.extend([Buffer(temp_list[0]),
-                                  iPyC(temp_list[1]),
-                                  SiC(temp_list[2]),
-                                  oPyC(temp_list[3]),
-                                  Matrix(temp_list[4])])
-        elif dr_config == 2:
-            assert len(temp_list) == 1, 'wrong temperature number %d' %len(temp_list)
-            for fuel in fuel_list:
-                self.mat_list.append(fuel)
-            self.mat_list.append(CMatrix(temp_list[0]))
+        if dr_config == None:
+            assert len(coating_t_list) == 5, 'wrong temperature number %d' %(len(coating_t_list))
+        elif dr_config =='homogenized':
+            assert len(coating_t_list) == 1, 'wrong temperature number %d' %len(coating_t_list)
         else:
             raise ValueError, 'triso dr_config not implemented'
 
-        r_3 = 0.02
-        r_1 = ((r_3**3.0)/3.0)**(1/3.0)
-        r_2 = ((r_3**3.0)/1.5)**(1/3.0)
+        # materials
+        self.mat_list = []
         if not dr_config:
-            dr_list = [r_1, r_2 - r_1, r_3 - r_2, 0.01, 0.0035, 0.0035, 0.0035]
-            self.dr_config = {}
-            for i, dr in enumerate(dr_list):
-                self.dr_config[self.mat_list[i].name] = dr
-        elif dr_config == 2:
-            dr_list = [r_1, r_2 - r_1, r_3 - r_2]
-            self.dr_config = {}
-            for i, dr in enumerate(dr_list):
-                self.dr_config[self.mat_list[i].name] = dr
-        else:
-             self.dr_config = dr_config
+            for fuel in fuel_list:
+                self.mat_list.append(fuel)
+            self.mat_list.extend([Buffer(coating_t_list[0]),
+                                  iPyC(coating_t_list[1]),
+                                  SiC(coating_t_list[2]),
+                                  oPyC(coating_t_list[3]),
+                                  Matrix(coating_t_list[4])])
+        elif dr_config == 'homogenized':
+            for fuel in fuel_list:
+                self.mat_list.append(fuel)
+            self.mat_list.append(CMatrix(coating_t_list[0]))
 
-        assert len(temp_list) + len(fuel_list) == 1 + len(self.dr_config), '''
-        temp_list and fuel_list for triso particle needs %d
+        dr_list = []
+        self.dr_config = {}
+        # fuel layers radius
+        for i, fuel in enumerate(fuel_list):
+            tot_nb = len(fuel_list)
+            tot_r = 0.02
+            dr_list.append(((tot_r**3.0)/float(tot_nb)*(i+1))**(1/3.0))
+        if not dr_config:
+            dr_list.extend([0.01, 0.0035, 0.0035, 0.0035])
+        elif dr_config == 'homogenized':
+            assert len(self.mat_list) == len(fuel_list) + 1, 'wrong length of mat_list'
+        for i, dr in enumerate(dr_list):
+            self.dr_config[self.mat_list[i].name] = dr
+
+        assert len(coating_t_list) + len(fuel_list) == 1 + len(self.dr_config), '''
+        coating_t_list and fuel_list for triso particle needs %d
         temperature values, got %d and %d''' % (len(self.dr_config),
-                                                len(temp_list),
+                                                len(coating_t_list),
                                                 len(fuel_list))
         name = 'triso'+fuel.name
         self.calculate_r()
