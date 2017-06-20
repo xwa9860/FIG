@@ -25,7 +25,7 @@ def LHS(burnup_nb, layer_nb, sample_nb):
   '''
   range = [600, 1200]  # range of the temperatures in K
   sample = lhs(burnup_nb*layer_nb, samples = sample_nb)
-  tsample = uniform(loc=range[0], scale=600).ppf(sample).reshape((sample_nb, burnup_nb, layer_nb))
+  tsample = uniform(loc=range[0], scale=(range[1]-range[0])).ppf(sample).reshape((sample_nb, burnup_nb, layer_nb))
   return np.vectorize(math.floor)(tsample)
 
 def reshape(mat, burnup_nb, fuel_nb, coating_nb, sample_nb):

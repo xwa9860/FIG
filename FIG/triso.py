@@ -46,7 +46,7 @@ class Triso(Comp):
         for i, fuel in enumerate(fuel_list):
             tot_nb = len(fuel_list)
             tot_r = 0.02
-            dr_list.append(((tot_r**3.0)/float(tot_nb)*(i+1))**(1/3.0))
+            dr_list.append(((tot_r**3.0)/float(tot_nb)*(i+1))**(1/3.0) - ((tot_r**3.0)/float(tot_nb)*(i))**(1/3.0))
         if not dr_config:
             dr_list.extend([0.01, 0.0035, 0.0035, 0.0035])
         elif dr_config == 'homogenized':

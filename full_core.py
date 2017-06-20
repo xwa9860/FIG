@@ -14,6 +14,7 @@ from FIG.pb_gen import FuelPbGen
 from FIG.serp_concept import Cell, Universe, Surface
 from more_itertools import unique_everseen
 from util.mkdir import mkdir
+import config
 import shutil
 import os
 import numpy as np
@@ -37,7 +38,7 @@ def create_a_fuel_pebble(fuel_temps, coating_temps, cgt, sht, pbname, burnup, pb
     # create fuel materials
     fuels = []
     for i, temp in enumerate(fuel_temps):
-        fuel_name = 'fuel%d%s' % (i, pbname)
+        fuel_name = 'fuel%d%s' % (i+1, pbname)
         fuel_input = '%s/fuel_mat%d' % (pb_comp_dir, burnup)
         fuels.append(mat.Fuel(temp, fuel_name, fuel_input))
     
@@ -57,32 +58,33 @@ def create_a_fuel_pebble(fuel_temps, coating_temps, cgt, sht, pbname, burnup, pb
 
 def create_a_pb_unit_cell(fuel_temps, coating_temps, cgt, sht, uc_name, burnups, pb_comp_dir, gen_dir_name):
     '''
-    fuel_temps: temperature list for pebbles in the unit cell
+    fuel_temps: temperature list for unique pebbles in the unit cell
     a matrix of unique pebbles x n layers of fuel in a triso
-    triso_temps: a list that contains temp for each of the non-fuel layers in triso
+    coating_temps: a list that contains temp for each of the non-fuel layers in triso, e.g. 4x5
     cgt: central graphite temperature
     sht: shell temperature
     '''
     fpb_list = []
-    unique_fpb_list = []
+    unique_fpb_list = {}
     unique_burnups = list(unique_everseen(burnups))
-    unique_burnup_nb = len(unique_burnups)
 
+    unique_burnup_nb = len(unique_burnups)
     assert fuel_temps.shape[0] == unique_burnup_nb, 'wrong dimension %s' %str(fuel_temps.shape)
     assert coating_temps.shape[0] == unique_burnup_nb, 'wrong dimension' 
     
     # create a list of unique pebbles
-    for i in range(len(unique_burnups)):
-        pb_name = 'pb%s%d' % (uc_name, i)
-        unique_fpb_list.append(
-            create_a_fuel_pebble(fuel_temps[unique_burnups[i]-1, :], 
-                                 coating_temps[unique_burnups[i]-1, :],
-                                 cgt, sht,
-                                 pb_name,
-                                 unique_burnups[i], pb_comp_dir, gen_dir_name))
+    for i, bu in enumerate(unique_burnups):
+        pb_name = 'pb%s%d' % (uc_name, bu)
+        unique_fpb_list[bu] = create_a_fuel_pebble(fuel_temps[bu-1, :], 
+                                                   coating_temps[unique_burnups[i]-1, :],
+                                                   cgt, sht,
+                                                   pb_name,
+                                                   unique_burnups[i], 
+                                                   pb_comp_dir, 
+                                                   gen_dir_name)
     # create a list of all the 14 fuel pebbles, some of them are exactly the same
-    for i in range(len(burnups)):
-        fpb_list.append(unique_fpb_list[burnups[i]-1])
+    for bu in burnups:
+        fpb_list.append(unique_fpb_list[bu])
     return fpb_list
 
 
@@ -130,11 +132,11 @@ if __name__ == "__main__":
 
     from util.sample_temperature import sample_temperature
     #temps_w_mat = sample_temperature(pb_burnups_w, 4, 10)
-    sample_nb = 10
-    fuel_nb = 3
-    coating_nb = 1
-    burnup_nb = 4
-    temps_a_mat = sample_temperature(burnup_nb, fuel_nb, coating_nb, sample_nb)
+    sample_nb_a = 100
+    fuel_nb_a = 3 
+    coating_nb_a = 5 
+    burnup_nb_a = len(list(unique_everseen(pb_burnups_a)))
+    temps_a_mat = sample_temperature(burnup_nb_a, fuel_nb_a, coating_nb_a, sample_nb_a)
 
     # generating a set of input files for serpent
     # to generat cross sections for different temperatures
@@ -147,15 +149,17 @@ if __name__ == "__main__":
           Surface.id = 1
           FuelPbGen.wrote_surf = False
 
-          temps_a_f = temps_a[:, 0:3]
-          temps_a_t = temps_a[:, 3].reshape(4,1)
+          temps_a_f = temps_a[:, 0:fuel_nb_a]
+          temps_a_t = temps_a[:, fuel_nb_a:fuel_nb_a+coating_nb_a]#.reshape(4,1)
 
+          #temps_a_f = np.ones((burnup_nb_a, fuel_nb_a))*900
+          #temps_a_t = np.ones((burnup_nb_a, coating_nb_a))*900
           temps_w_f = np.ones((8, 1))*900
-          temps_w_t = np.ones((8, 1))*900
+          temps_w_t = np.ones((8, 5))*900
 
           output_dir_name = 'res/mk1_input/input%d/' %(case)
-          fuel_comp_folder_w = 'fuel_mat/fuel_comp/flux_wall_ave_serp/'
-          fuel_comp_folder_a = 'fuel_mat/fuel_comp/flux_act_ave_serp/'
+          fuel_comp_folder_w = config.FLUX_WALL_AVE_FOLDER
+          fuel_comp_folder_a = config.FLUX_ACT_AVE_FOLDER
 
           create_the_core(temps_w_f, 
                           temps_w_t,
