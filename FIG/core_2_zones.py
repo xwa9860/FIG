@@ -7,114 +7,15 @@ channels inside the center and outer reflectors
 '''
 
 from core_gen import CoreGen
-from mat import Graphite, Flibe, SS316T
-from mat import GraphiteCoolMix
 from comp import *
-from pbed import FuelUnitCell, GraphiteUnitCell, PBedLat
 import math
-
-
-class CenterRef(Comp):
-
-    def __init__(self, temp):
-        name = 'CR'
-        Comp.__init__(self, temp, name, [Graphite(temp)])
-
-
-class OuterRef(Comp):
-
-    def __init__(self, temp):
-        name = 'OR'
-        Comp.__init__(self, temp, name, [Graphite(temp)])
-
-
-class Vessel(Comp):
-
-    def __init__(self, temp):
-        name = 'VESSEL'
-        Comp.__init__(self, temp, name, [SS316T(temp)])
-
-
-class Downcomer(Comp):
-
-    def __init__(self, temp):
-        name = 'Downcomer'
-        Comp.__init__(self, temp, name, [Flibe(temp)])
-
-
-class Corebarrel(Comp):
-
-    def __init__(self, temp):
-        name = 'Corebarrel'
-        Comp.__init__(self, temp, name, [SS316T(temp)])
-
-
-class CenterRef_CoolantChannel(Comp):
-
-    def __init__(self, cool_temp):
-        name = 'CRCC'
-        Comp.__init__(self, cool_temp, name, [Flibe(cool_temp)])
-
-
-class CRCC_liner(Comp):
-
-    def __init__(self, temp):
-        name = 'CRCC_liner'
-        Comp.__init__(self, temp, name, [Flibe(temp)])
-
-
-class OuterRef_CoolantChannel(Comp):
-
-    def __init__(self, temp, cool_temp):
-        name = 'ORCC'
-        Comp.__init__(self, temp, name, [GraphiteCoolMix(cool_temp)])
-
-
-class Fuel_wall(Comp):
-
-    def __init__(self, fpb_list, cool_temp, dir_name='serp_input/'):
-        name = 'WallFuelZone'
-        self.unit_cell = FuelUnitCell(fpb_list, cool_temp,
-                                      packing_fraction=0.57,
-                                      dir_name=dir_name)
-        self.unit_cell_lat = PBedLat(self.unit_cell,
-                                     self.unit_cell.pitch,
-                                     dir_name=dir_name)
-        Comp.__init__(self, fpb_list[0].temp, name,
-                      self.unit_cell_lat.mat_list,
-                      gen=Gen(dir_name),
-                      fill=self.unit_cell_lat)
-
-
-class Fuel_act(Comp):
-
-    def __init__(self, fpb_list, cool_temp, dir_name='serp_input/'):
-        name = 'ActFuelZone'
-        self.unit_cell = FuelUnitCell(fpb_list, cool_temp,
-                                      packing_fraction=0.61,
-                                      dir_name=dir_name)
-        self.unit_cell_lat = PBedLat(self.unit_cell,
-                                     self.unit_cell.pitch,
-                                     dir_name=dir_name)
-        Comp.__init__(self, fpb_list[0].temp, name,
-                      self.unit_cell_lat.mat_list,
-                      gen=Gen(dir_name),
-                      fill=self.unit_cell_lat)
-
-
-class Blanket(Comp):
-
-    def __init__(self, pb_temp, cool_temp, dir_name='serp_input/'):
-        self.pb_temp = pb_temp
-        self.cool_temp = cool_temp
-        name = 'Blanket'
-        self.unit_cell = GraphiteUnitCell(self.pb_temp, self.cool_temp,
-                                          dir_name=dir_name)
-        self.unit_cell_lat = PBedLat(self.unit_cell, self.unit_cell.pitch
-                                     )
-        Comp.__init__(self, pb_temp, name, self.unit_cell_lat.mat_list,
-                      gen=Gen(dir_name),
-                      fill=self.unit_cell_lat)
+from centerref import CenterRef, CenterRef_CoolantChannel, CRCC_liner
+from outerref import OuterRef, OuterRef_CoolantChannel
+from vessel import Vessel
+from downcomer import Downcomer
+from corebarrel import Corebarrel
+from blanket import Blanket
+from fuel import Fuel_wall, Fuel_act
 
 
 class Core(Comp):
