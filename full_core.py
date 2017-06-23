@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     from util.sample_temperature import sample_temperature
     #temps_w_mat = sample_temperature(pb_burnups_w, 4, 10)
-    sample_nb_a = 100
+    sample_nb_a = 12
     fuel_nb_a = 3 
     coating_nb_a = 5 
     burnup_nb_a = len(list(unique_everseen(pb_burnups_a)))
