@@ -13,13 +13,13 @@ class MatGen:
     def parse(self, a_mat, type):
         if type == 's':
             str_list = []
-            str_list.append('\nmat %s -%E'
+            str_list.append('\nmat %s -%.4g'
                             % (a_mat.name, a_mat.density))
             if a_mat.flag == 'moder':
                 str_list.append(' moder grph_%s 6000'
                                 % a_mat.name)
             if a_mat.tmp_card:
-                str_list.append(' tmp %f'
+                str_list.append(' tmp %d'
                                 % a_mat.temp)
                 #str_list.append(' tms %f'
                 #                % a_mat.temp)
