@@ -6,7 +6,7 @@ create core with two fuel zones
 '''
 #!/usr/bin/python
 from FIG import triso
-from FIG import core_2_zones
+from FIG.core import Core
 from FIG import pbed
 from FIG import pb
 from FIG import mat
@@ -103,7 +103,7 @@ def create_the_core(fuel_temps_w,
     fpb_list_w = create_a_pb_unit_cell(fuel_temps_w, triso_temps_w, 900, 900, 'w', burnups_w, pb_comp_dir_w, gen_dir_name)
     fpb_list_a = create_a_pb_unit_cell(fuel_temps_a, triso_temps_a, 900, 900, 'a', burnups_a, pb_comp_dir_a, gen_dir_name)
 
-    core = core_2_zones.Core(
+    core = Core(
         fpb_list_w,
         fpb_list_a,
         1000,  # temp_CR
