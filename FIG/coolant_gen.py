@@ -16,7 +16,7 @@ class CoolantGen(Gen):
         if type == 's':
             str_list = []
             str_list.append(
-                '%%---Coolant\n' +
+                '\n%%---Coolant\n' +
                 'surf %d inf\n' %surf.id +
                 'cell %d %d %s -%d\n' %
                 (cell.id, self.univ.id, a_cool.mat[0].name, surf.id))

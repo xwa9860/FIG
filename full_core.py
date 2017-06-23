@@ -16,16 +16,15 @@ from more_itertools import unique_everseen
 from util.mkdir import mkdir
 import config
 import shutil
-import os
 import numpy as np
 
 
 def create_a_fuel_pebble(fuel_temps, coating_temps, cgt, sht, pbname, burnup, pb_comp_dir, gen_dir_name):
     '''
-    create a fuel pebble, assuming all the triso particles in the pebble have
-    same temperature configurations(can have different temp in different triso 
+    create a fuel pebble, assuming all the triso particles in the pebble have the
+    same temperature configurations(can have different temp in different triso
     layers though)
-    fuel_temps: a list that contains temperature for each fuel 
+    fuel_temps: a list that contains temperature for each fuel
     layer in the triso, 1d array of length 1 or 3
     coating_temps: a list that contains temp for each of the non-fuel layers in triso
     cgt: central graphite temperature
@@ -71,7 +70,6 @@ def create_a_pb_unit_cell(fuel_temps, coating_temps, cgt, sht, uc_name, burnups,
     unique_burnup_nb = len(unique_burnups)
     assert fuel_temps.shape[0] == unique_burnup_nb, 'wrong dimension %s' %str(fuel_temps.shape)
     assert coating_temps.shape[0] == unique_burnup_nb, 'wrong dimension' 
-    
     # create a list of unique pebbles
     for i, bu in enumerate(unique_burnups):
         pb_name = 'pb%s%d' % (uc_name, bu)
@@ -88,12 +86,14 @@ def create_a_pb_unit_cell(fuel_temps, coating_temps, cgt, sht, uc_name, burnups,
     return fpb_list
 
 
-def create_the_core(fuel_temps_w, 
+def create_the_core(fuel_temps_w,
                     triso_temps_w,
-                    fuel_temps_a, 
+                    fuel_temps_a,
                     triso_temps_a,
-                    burnups_w, burnups_a, 
-                    pb_comp_dir_w, pb_comp_dir_a, 
+                    burnups_w,
+                    burnups_a,
+                    pb_comp_dir_w,
+                    pb_comp_dir_a,
                     gen_dir_name):
     '''
     fuel_temps_w: a list of temperatures used to define fuel layers in the near-wall region

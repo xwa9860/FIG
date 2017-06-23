@@ -53,7 +53,7 @@ class FuelPbGen(Gen):
                            if shell.__class__.__name__=='Shell').temp
             str_list.append(
                 '%%---Fuel pebble\n' +
-                'cell %d %d CentralGraphite%d -%d\n' %
+                'cell %d %d CG%d -%d\n' %
                 (cell1.id, self.univ.id, math.ceil(CG_temp), FuelPbGen.surf1.id) +
                 'cell %d %d fill %d %d -%d\n' %
                 (cell2.id, self.univ.id, a_f_pb.tr_lat.gen.univ.id,

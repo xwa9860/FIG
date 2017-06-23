@@ -156,15 +156,15 @@ class SS316(Mat):
 class Flibe(Mat):
 
     def __init__(self, temp, tmp_card=True, rgb=[0, 181, 238]):
-        density = (2279.92 - 0.488*(temp-273.15))/1000
+        self.density = (2279.92 - 0.488*(temp-273.15))/1000
         self.temp = temp
         # FLiBe chemical formular is Li2BeF4
-        isotopes = ['3006', '3007', '4009', '9019']
+        self.isotopes = ['3006', '3007', '4009', '9019']
         #ratio_list = [2*0.00001, 2*0.99999, 1.0, 4.0]
-        ratio_list = [0.00002458465, 1.999979, 0.9999995, 4.000002]
-        name = 'Flibe%d' % math.ceil(temp)
-        Mat.__init__(self, name, density, temp, tmp_card=tmp_card,
-                     isotopes=isotopes, ratio_list=ratio_list,
+        self.ratio_list = [0.00002458465, 1.999979, 0.9999995, 4.000002]
+        self.name = 'Flibe%d' % math.ceil(temp)
+        Mat.__init__(self, self.name, self.density, self.temp, tmp_card=tmp_card,
+                     isotopes=self.isotopes, ratio_list=self.ratio_list,
                      rgb=rgb)
 
 
@@ -313,32 +313,31 @@ class Zr(Mat):
             ratio_list=ratio_list)
 
 
-
-
 class Shell(Mat):
     # graphite shell in the pebbles
 
     def __init__(self, temp, tmp_card=True, rgb=[255, 75, 134]):
         self.density = 1.75
-        isotopes = ['6000']
-        ratio_list = [1]
+        #isotopes = ['6000']
+        #ratio_list = [1]
         name = 'Shell%d' % (math.ceil(temp))
 
-        #self.mat_comp = []
-        #self.temp = temp
-        #lib_id = self.calc_lib_id(temp)
-        #self.mat_comp.append(
-        #    '%Graphite shell(outermost layer of fuel pebble)\n' +
-        #    '6000.%s 1.0\n' %
-        #    lib_id)
-        #self.mat_comp = ''.join(self.mat_comp)
+        self.mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        self.mat_comp.append(
+            '%Graphite shell(outermost layer of fuel pebble)\n' +
+            '6000.%s 1.0\n' %
+            lib_id)
+        self.mat_comp = ''.join(self.mat_comp)
         Mat.__init__(
             self,
             name,
             self.density,
             temp,
-            isotopes=isotopes,
-            ratio_list=ratio_list,
+            #isotopes=isotopes,
+            #ratio_list=ratio_list,
+            mat_comp=self.mat_comp,
             tmp_card=tmp_card,
             flag='moder',
             rgb=rgb)
@@ -349,24 +348,25 @@ class CentralGraphite(Mat):
 
     def __init__(self, temp, tmp_card=True, rgb=[255, 75, 134]):
         self.density = 1.59368
-        isotopes = ['6000']
-        ratio_list = [1]
-        name = 'CentralGraphite%d' % (math.ceil(temp))
-        #self.mat_comp = []
-        #self.temp = temp
-        #lib_id = self.calc_lib_id(temp)
-        #self.mat_comp.append(
-        #    '%graphite core in fuel pebble(also called moderator\n' +
-        #    '6000.%s 1.0\n' %
-        #    lib_id)
-        #self.mat_comp = ''.join(self.mat_comp)
+        #isotopes = ['6000']
+        #ratio_list = [1]
+        name = 'CG%d' % (math.ceil(temp))
+        self.mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        self.mat_comp.append(
+            '%graphite core in fuel pebble\n' +
+            '6000.%s 1.0\n' %
+            lib_id)
+        self.mat_comp = ''.join(self.mat_comp)
         Mat.__init__(
             self,
             name,
             self.density,
             temp,
-            isotopes=isotopes,
-            ratio_list=ratio_list,
+            #isotopes=isotopes,
+            #ratio_list=ratio_list,
+            mat_comp=self.mat_comp,
             tmp_card=tmp_card,
             rgb=rgb,
             flag='moder')
