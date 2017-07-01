@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import config
+from not_in_lib import NOT_IN_SERPENT_LIB
 
 
 class FuelMat():
@@ -61,7 +62,7 @@ class FuelMat():
             for line in f:
                 isotope = line.split()[0].split('.')[0]
                 fraction = line.split()[1]
-                if isotope not in config.NOT_IN_SERPENT_LIB:
+                if isotope not in NOT_IN_SERPENT_LIB:
                     self.comp[isotope] = float(fraction)
                 else:
                     pass
