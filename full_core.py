@@ -127,12 +127,18 @@ def create_the_core(fuel_temps_w,
 
 
 if __name__ == "__main__":
-    pb_burnups_w = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
-    pb_burnups_a = np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
+    #pb_burnups_w = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
+    pb_burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    pb_burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    #np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
+    #np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
+
+
+    #np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
 
     from util.sample_temperature import sample_temperature
     #temps_w_mat = sample_temperature(pb_burnups_w, 4, 10)
-    sample_nb_a = 12
+    sample_nb_a = 20
     fuel_nb_a = 3 
     coating_nb_a = 5 
     burnup_nb_a = len(list(unique_everseen(pb_burnups_a)))
@@ -158,8 +164,9 @@ if __name__ == "__main__":
           temps_w_t = np.ones((8, 5))*900
 
           output_dir_name = 'res/mk1_input/input%d/' %(case)
-          fuel_comp_folder_w = config.FLUX_WALL_AVE_FOLDER
-          fuel_comp_folder_a = config.FLUX_ACT_AVE_FOLDER
+          fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
+          fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
+#config.FLUX_ACT_AVE_FOLDER
 
           create_the_core(temps_w_f, 
                           temps_w_t,
