@@ -27,6 +27,7 @@ def LHS(burnup_nb, layer_nb, sample_nb):
   np.random.seed(3)
   sample = lhs(burnup_nb*layer_nb, samples = sample_nb)
   tsample = uniform(loc=range[0], scale=(range[1]-range[0])).ppf(sample).reshape((sample_nb, burnup_nb, layer_nb))
+  np.save('sample', tsample)
   return np.vectorize(math.floor)(tsample)
 
 def reshape(mat, burnup_nb, fuel_nb, coating_nb, sample_nb):
