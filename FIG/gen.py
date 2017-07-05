@@ -38,8 +38,8 @@ class AnnularCompGen(Gen):
         if type == 's':
             # generate cell cid uid fill uid/ mat nb
             if a_anComp.fill is not None:
-                print('%s has one or more filling universe(id=%d)' %(
-                a_anComp.name, a_anComp.fill.gen.univ.id))
+                #print('%s has one or more filling universe(id=%d)' %(
+                #a_anComp.name, a_anComp.fill.gen.univ.id))
                 fill_card = 'fill %d ' % a_anComp.fill.gen.univ.id
             else:
                 assert len(a_anComp.mat_list) == 1, \
@@ -75,7 +75,10 @@ class EmbeddedCompGen(Gen):
         if type == 's':
             ## start with the mother comp
             # generate cell cid uid fill uid/ mat nb
-            fill_card = a_EmComp.mother_comp.mat_list[0].name
+            if a_EmComp.mother_comp.fill is not None:
+              fill_card = 'fill %d' % a_EmComp.mother_comp.fill.gen.univ.id
+            else:
+              fill_card = a_EmComp.mother_comp.mat_list[0].name
             cell_text = (
                 'cell %d %d %s ' % (
                     a_EmComp.mother_comp.gen.cell.id,

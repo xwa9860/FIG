@@ -22,6 +22,7 @@ class CoreGen(Gen):
             # define geometry, cells, universe in the core in different files
             univ = Universe()
             for key1 in a_core.comp_dict:
+                #univ = Universe()
                 filename = '%s' % key1
                 comp_str = []
                 comp_str.append('\n%%---%s\n' % key1)
@@ -61,7 +62,7 @@ class CoreGen(Gen):
             str_list.append('set pop 200000 500 200\n')
             str_list.append('set bc 1\n')
             str_list.append('set ures 1\n')
-            str_list.append('set gcu 3 6 9 12 15 18 21 24\n')
+            str_list.append('set gcu 27 45 96 3 6 9 12 15 18 21 24\n')
             str_list.append('set nfg 8\n')
             str_list.append('5.8e-8\n')
             str_list.append('1.9e-7\n')

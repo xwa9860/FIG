@@ -7,98 +7,15 @@ channels inside the center and outer reflectors
 '''
 
 from core_gen import CoreGen
-from mat import Graphite, Flibe, SS316, Zr
-from mat import GraphiteCoolMix
 from comp import *
-from pbed import FuelUnitCell, GraphiteUnitCell, PBedLat
 import math
-
-
-class CenterRef(Comp):
-
-    def __init__(self, temp):
-        name = 'CR'
-        Comp.__init__(self, temp, name, [Graphite(temp)])
-
-
-class OuterRef(Comp):
-
-    def __init__(self, temp):
-        name = 'OR'
-        Comp.__init__(self, temp, name, [Graphite(temp)])
-
-
-class Vessel(Comp):
-
-    def __init__(self, temp):
-        name = 'VESSEL'
-        Comp.__init__(self, temp, name, [SS316(temp)])
-
-
-class Downcomer(Comp):
-
-    def __init__(self, temp):
-        name = 'Downcomer'
-        Comp.__init__(self, temp, name, [Flibe(temp)])
-
-
-class Corebarrel(Comp):
-
-    def __init__(self, temp):
-        name = 'Corebarrel'
-        Comp.__init__(self, temp, name, [SS316(temp)])
-
-
-class CenterRef_CoolantChannel(Comp):
-
-    def __init__(self, cool_temp):
-        name = 'CRCC'
-        Comp.__init__(self, cool_temp, name, [Flibe(cool_temp)])
-
-
-class CRCC_liner(Comp):
-
-    def __init__(self, temp):
-        name = 'CRCC_liner'
-        Comp.__init__(self, temp, name, [Flibe(temp)])
-
-
-class OuterRef_CoolantChannel(Comp):
-
-    def __init__(self, temp, cool_temp):
-        name = 'ORCC'
-        Comp.__init__(self, temp, name, [GraphiteCoolMix(cool_temp)])
-
-
-class Fuel(Comp):
-
-    def __init__(self, fpb_list, cool_temp, dir_name='res/serp_input/'):
-        name = 'FuelZone'
-        self.unit_cell = FuelUnitCell(fpb_list, cool_temp,
-                                      dir_name=dir_name)
-        self.unit_cell_lat = PBedLat(self.unit_cell,
-                                     self.unit_cell.pitch,
-                                     dir_name=dir_name)
-        Comp.__init__(self, fpb_list[0].temp, name,
-                      self.unit_cell_lat.mat_list,
-                      gen=Gen(dir_name),
-                      fill=self.unit_cell_lat)
-
-
-class Blanket(Comp):
-
-    def __init__(self, pb_temp, cool_temp, dir_name='res/serp_input/'):
-        self.pb_temp = pb_temp
-        self.cool_temp = cool_temp
-        name = 'Blanket'
-        self.unit_cell = GraphiteUnitCell(self.pb_temp, self.cool_temp,
-                                          dir_name=dir_name)
-        self.unit_cell_lat = PBedLat(self.unit_cell, self.unit_cell.pitch
-                                     )
-        Comp.__init__(self, pb_temp, name, self.unit_cell_lat.mat_list,
-                      gen=Gen(dir_name),
-                      fill=self.unit_cell_lat)
-
+from centerref import CenterRef, CenterRef_CoolantChannel, CRCC_liner
+from outerref import OuterRef, OuterRef_CoolantChannel
+from vessel import Vessel
+from downcomer import Downcomer
+from corebarrel import Corebarrel
+from blanket import Blanket
+from fuel import Fuel
 
 class Core(Comp):
 
@@ -137,6 +54,7 @@ class Core(Comp):
 
         self.define_CRCC(self.CRCC.temp, self.CRCC.name, liner=True)
         self.define_CR(self.CR.temp, self.CR.name, liner=True)
+        #self.adding_CRCC_to_CR()
         self.define_OR(self.OR.temp, self.OR.name)
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
         self.define_Fuel(self.Fuel.temp, self.Fuel.name)
@@ -201,6 +119,11 @@ class Core(Comp):
                                     xandys['y'][i])
                 self.CRCC.comp_dict[str(i)+'ss'] = liner
 
+    # def adding_CRCC_to_CR(self):
+    #   for key in self.CRCC.comp_dict:
+    #       name = 'cc%s'%key
+    #       self.CR.comp_dict[name] = self.CRCC.comp_dict[key]
+
     def define_CR(self, temp, name, liner):
         '''
         liner
@@ -214,7 +137,8 @@ class Core(Comp):
         self.CR.r_ent = 35+10
         self.CR.ent = CylComp(temp, name,
                               self.CR.mat_list, self.CR.zb_ent,
-                              self.CR.zt_ent, self.CR.r_ent)
+                              self.CR.zt_ent, self.CR.r_ent,
+                              fill=self.CR.fill)
         self.CR.comp_dict['ent'] = EmbeddedComp(self.CR.ent,
                                                 self.CRCC.comp_dict)
 
@@ -231,15 +155,18 @@ class Core(Comp):
             self.CR.zt_div,
             self.CR.zb_div,
             self.CR.h_cone_div,
-            self.CR.r_div)
+            self.CR.r_div,
+            fill=self.CR.fill)
         self.CR.comp_dict['div'] = EmbeddedComp(self.CR.div,
                                                 self.CRCC.comp_dict)
         # active zone
         self.CR.zb_act = self.CR.zt_div
         self.CR.zt_act = 430.50
         self.CR.r_act = 35
-        self.CR.act = CylComp(temp, name, self.CR.mat_list, self.CR.zb_act,
-                              self.CR.zt_act, self.CR.r_act)
+        self.CR.act = CylComp(temp, name, 
+                              self.CR.mat_list, self.CR.zb_act,
+                              self.CR.zt_act, self.CR.r_act,
+                              fill=self.CR.fill)
         self.CR.comp_dict['act'] = EmbeddedComp(self.CR.act,
                                                 self.CRCC.comp_dict)
 
@@ -256,7 +183,8 @@ class Core(Comp):
                                      self.CR.zt_conv,
                                      self.CR.zt_conv,
                                      self.CR.h_cone_conv,
-                                     self.CR.r_conv)
+                                     self.CR.r_conv,
+                                     fill=self.CR.fill)
         self.CR.comp_dict['conv'] = EmbeddedComp(self.CR.conv,
                                                  self.CRCC.comp_dict)
 
@@ -268,7 +196,8 @@ class Core(Comp):
                                  self.CR.mat_list,
                                  self.CR.zb_defuel,
                                  self.CR.zt_defuel,
-                                 self.CR.r_defuel)
+                                 self.CR.r_defuel,
+                                 fill=self.CR.fill)
         self.CR.comp_dict['defuel'] = EmbeddedComp(self.CR.defuel,
                                                    self.CRCC.comp_dict)
 
@@ -399,7 +328,8 @@ class Core(Comp):
                                   self.OR.r_ent,
                                   self.OR.r_outer,
                                   self.OR.zb_ent,
-                                  self.OR.zt_ent)
+                                  self.OR.zt_ent,
+                                  fill=self.OR.fill)
         self.OR.comp_dict['ent'] = self.OR.ent
 
         # diverging  zone
@@ -411,14 +341,15 @@ class Core(Comp):
         self.OR.h_cone_div = -self.OR.r_cone_div*math.tan(self.OR.a_div)
         #  negative sign means direction -z
         self.OR.div = AnnuCylConeComp(
-            temp, name,
-            self.OR.mat_list,
-            self.OR.r_cone_div,
-            self.OR.h_cone_div,
-            self.OR.zt_div,
-            self.OR.r_outer,
-            self.OR.zb_div,
-            self.OR.zt_div)
+                temp, name,
+                self.OR.mat_list,
+                self.OR.r_cone_div,
+                self.OR.h_cone_div,
+                self.OR.zt_div,
+                self.OR.r_outer,
+                self.OR.zb_div,
+                self.OR.zt_div,
+                fill=self.OR.fill)
 
         self.OR.comp_dict['div'] = self.OR.div
 
@@ -431,7 +362,8 @@ class Core(Comp):
                                   self.OR.r_act,
                                   self.OR.r_outer,
                                   self.OR.zb_act,
-                                  self.OR.zt_act)
+                                  self.OR.zt_act,
+                                  fill=self.OR.fill)
 
         self.OR.comp_dict['act'] = self.OR.act
 
