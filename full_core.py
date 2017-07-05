@@ -143,7 +143,6 @@ if __name__ == "__main__":
     coating_nb_a = 5 
     burnup_nb_a = len(list(unique_everseen(pb_burnups_a)))
     temps_a_mat = sample_temperature(burnup_nb_a, fuel_nb_a, coating_nb_a, sample_nb_a)
-    np.save('temp', temps_a_mat)
 
     # generating a set of input files for serpent
     # to generat cross sections for different temperatures
