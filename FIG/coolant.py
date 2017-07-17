@@ -10,5 +10,4 @@ class Coolant(Comp):
         self.mat = [Flibe(temp)]
         Comp.__init__(self, temp, name, self.mat, CoolantGen())
 
-    def generate_output(self):
-        return self.gen.parse(self, 's')
+    def generate_output(self):        return self.gen.parse(self, 's')

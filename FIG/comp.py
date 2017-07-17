@@ -23,8 +23,9 @@ class Comp(CmpObj):
         assert isinstance(
             mat_list, list), "%r mat_list is not a list:%r" % (
             name, mat_list)
-        assert all(isinstance(x, Mat) for x in mat_list), '''mat_list contains
-        non mat object: %r''' % mat_list
+        #for mat in mat_list:
+        #  assert isinstance(mat, Mat), '''mat_list contains non mat object: %r''' %mat
+
         self.mat_list = mat_list  # self.collect_mat()
         self.gen = gen
         self.fill = fill
