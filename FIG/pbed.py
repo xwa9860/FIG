@@ -3,7 +3,7 @@ pebble bed classes, including fuel bed, graphite pebbles bed
 '''
 #!/usr/bin/python
 from pbed_gen import PBedGen, PBedLatGen, FCCGen, GFCCGen
-from coolant import Coolant
+from infu import FlibeU
 from comp import Comp
 from pb import GPb
 import math
@@ -60,7 +60,7 @@ class FuelUnitCell(FCC):
     def __init__(self, fpb_list, cool_temp,
                  packing_fraction=0.60,
                  dir_name='serp_input/'):
-        self.cool = Coolant(cool_temp, 'FuelFCCCoolant')
+        self.cool = FlibeU(cool_temp, 'FuelFCCCoolant')
         FCC.__init__(self, self.cool, fpb_list, packing_fraction,
                      dir_name=dir_name,
                      gen=FCCGen(dir_name))
@@ -76,7 +76,7 @@ class GraphiteUnitCell(FCC):
         '''
         assuming all the graphite pebbles in an FCC unit cell are identical
         '''
-        cool = Coolant(cool_temp, 'GFCCCoolant')
+        cool = FlibeU(cool_temp, 'GFCCCoolant')
         gpb_list = []
         for i in range(0, 14):
             gpb_list.append(GPb(pb_temp, dir_name))

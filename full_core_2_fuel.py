@@ -6,7 +6,7 @@ create core with two fuel zones
 '''
 #!/usr/bin/python
 from FIG import triso
-from FIG.core_w_channel import Core
+from FIG.core import Core
 from FIG import pbed
 from FIG import pb
 from FIG import mat
@@ -86,20 +86,26 @@ def create_a_pb_unit_cell(fuel_temps, coating_temps, cgt, sht, uc_name, burnups,
     return fpb_list
 
 
-def create_the_core(fuel_temps,
-                    triso_temps,
-                    burnups,
-                    pb_comp_dir,
+def create_the_core(fuel_temps_w,
+                    triso_temps_w,
+                    fuel_temps_a,
+                    triso_temps_a,
+                    burnups_w,
+                    burnups_a,
+                    pb_comp_dir_w,
+                    pb_comp_dir_a,
                     gen_dir_name):
     '''
     fuel_temps_w: a list of temperatures used to define fuel layers in the near-wall region
     triso_temps_w: a list of temperatures used to define  layers in the near-wall region
     '''
 
-    fpb_list = create_a_pb_unit_cell(fuel_temps, triso_temps, 900, 900, '', burnups, pb_comp_dir, gen_dir_name)
+    fpb_list_w = create_a_pb_unit_cell(fuel_temps_w, triso_temps_w, 900, 900, 'w', burnups_w, pb_comp_dir_w, gen_dir_name)
+    fpb_list_a = create_a_pb_unit_cell(fuel_temps_a, triso_temps_a, 900, 900, 'a', burnups_a, pb_comp_dir_a, gen_dir_name)
 
     core = Core(
-        fpb_list,
+        fpb_list_w,
+        fpb_list_a,
         1000,  # temp_CR
         1000,  # temp_g_CRCC
         1000,  # temp_cool_CRCC
@@ -121,35 +127,53 @@ def create_the_core(fuel_temps,
 
 
 if __name__ == "__main__":
-    pb_burnups = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    #pb_burnups_w = np.array([1, 1, 1, 1, 5, 5, 5, 5, 2, 6, 3, 7, 4, 8])
+    pb_burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    pb_burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    #np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
+    #np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
+
+
+    #np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
 
     from util.sample_temperature import sample_temperature
-    sample_nb = 20
-    fuel_nb = 3 
-    coating_nb = 5 
-    burnup_nb = len(list(unique_everseen(pb_burnups)))
-    temps_mat = sample_temperature(burnup_nb, fuel_nb, coating_nb, sample_nb)
-    np.save('temp', temps_mat)
+    #temps_w_mat = sample_temperature(pb_burnups_w, 4, 10)
+    sample_nb_a = 20
+    fuel_nb_a = 3 
+    coating_nb_a = 5 
+    burnup_nb_a = len(list(unique_everseen(pb_burnups_a)))
+    temps_a_mat = sample_temperature(burnup_nb_a, fuel_nb_a, coating_nb_a, sample_nb_a)
 
     # generating a set of input files for serpent
     # to generat cross sections for different temperatures
     # each of the 3 fuel layers in triso particles
     # each of the 4 or 8 burnups
-    for case, temps in enumerate(temps_mat):
+    for case, temps_a in enumerate(temps_a_mat):
           # reset incremental parameters for a new serpent input
           Cell.id = 1
           Universe.id = 1
           Surface.id = 1
           FuelPbGen.wrote_surf = False
 
-          tempsf = temps[:, 0:fuel_nb]
-          tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
+          temps_a_f = temps_a[:, 0:fuel_nb_a]
+          temps_a_t = temps_a[:, fuel_nb_a:fuel_nb_a+coating_nb_a]#.reshape(4,1)
+
+          #temps_a_f = np.ones((burnup_nb_a, fuel_nb_a))*900
+          #temps_a_t = np.ones((burnup_nb_a, coating_nb_a))*900
+          temps_w_f = np.ones((8, 1))*900
+          temps_w_t = np.ones((8, 5))*900
 
           output_dir_name = 'res/mk1_input/input%d/' %(case)
-          fuel_comp_folder = config.FLUX_ALL_AVE_FOLDER
+          fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
+          fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
+#config.FLUX_ACT_AVE_FOLDER
 
-          create_the_core(tempsf, 
-                          tempst,
-                          pb_burnups,
-                          fuel_comp_folder,
+          create_the_core(temps_w_f, 
+                          temps_w_t,
+                          temps_a_f,
+                          temps_a_t,
+                          pb_burnups_w,
+                          pb_burnups_a,
+                          fuel_comp_folder_w,
+                          fuel_comp_folder_a,
                           output_dir_name)

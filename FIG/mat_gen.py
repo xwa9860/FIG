@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # assume mat density defined as mass density g/cm3
 import bisect
+from serp_concept import Universe, Surface, Cell
 
 # temp available in the ENDF/B-VII  thermal scattering lib for graphite
 # http://montecarlo.vtt.fi/download/SSS_THERMAL.pdf

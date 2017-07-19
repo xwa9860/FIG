@@ -4,10 +4,6 @@
  composition fraction in atomic fraction (in serpent atomic if positive, mass
  if negative)
  temperatures in K
-#
-#
-#TODO: add coolant and solid reflector mix class and make graphite_coolant, B2C
-#mix and  Yh2 mix subclasses
 #'''
 ##!/usr/bin/python
 from mat_gen import MatGen
@@ -632,4 +628,3 @@ class ZrH2CoolMix(mixMat):
             ZrH2(temp),
             93.224,
             tmp_card)
-

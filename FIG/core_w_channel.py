@@ -104,7 +104,8 @@ class Core(Comp):
                                       572.85,
                                       5-3,  # 3cm liner
                                       xandys['x'][i],
-                                      xandys['y'][i])
+                                      xandys['y'][i],
+                                      fill=self.CRCC.fill)
             self.CRCC.comp_dict[i] = coolant_channel
             if liner:
                 liner = AnnuCylComp(temp, name,
@@ -116,7 +117,8 @@ class Core(Comp):
                                     xandys['x'][i],
                                     xandys['y'][i],
                                     xandys['x'][i],
-                                    xandys['y'][i])
+                                    xandys['y'][i],
+                                    fill=self.CRCC.fill)
                 self.CRCC.comp_dict[str(i)+'ss'] = liner
 
     # def adding_CRCC_to_CR(self):
@@ -422,7 +424,8 @@ class Core(Comp):
                                     self.ORCC.ri_act,
                                     self.ORCC.ro_act,
                                     self.ORCC.zb_act,
-                                    self.ORCC.zt_act)
+                                    self.ORCC.zt_act,
+                                    fill=self.ORCC.fill)
 
         self.ORCC.comp_dict['act'] = self.ORCC.act
 
@@ -445,7 +448,8 @@ class Core(Comp):
                                         self.ORCC.zb_conv,
                                         self.ORCC.ro_conv,
                                         self.ORCC.zb_conv,
-                                        self.ORCC.zt_conv)
+                                        self.ORCC.zt_conv,
+                                        fill=self.ORCC.fill)
 
         self.ORCC.comp_dict['conv'] = self.ORCC.conv
 
@@ -462,7 +466,8 @@ class Core(Comp):
                                        self.ORCC.ri_defuel,
                                        self.ORCC.ro_defuel,
                                        self.ORCC.zb_defuel,
-                                       self.ORCC.zt_defuel)
+                                       self.ORCC.zt_defuel,
+                                       fill=self.ORCC.fill)
 
         self.ORCC.comp_dict['defuel'] = self.ORCC.defuel
 
@@ -700,7 +705,7 @@ class Core(Comp):
                                           self.Corebarrel.ro,
                                           self.CR.zb_ent,
                                           self.CR.zt_defuel,
-                                          fill=None)
+                                          fill=self.Corebarrel.fill)
         self.Corebarrel.comp_dict = {}
         self.Corebarrel.comp_dict['act'] = self.Corebarrel.act
 
@@ -713,7 +718,7 @@ class Core(Comp):
                                          self.Downcomer.ro,
                                          self.CR.zb_ent,
                                          self.CR.zt_defuel,
-                                         fill=None)
+                                         fill=self.Downcomer.fill)
         self.Downcomer.comp_dict = {}
         self.Downcomer.comp_dict['act'] = self.Downcomer.act
 
@@ -726,7 +731,8 @@ class Core(Comp):
                                       self.Vessel.ro,
                                       self.CR.zb_ent,
                                       self.CR.zt_defuel,
-                                      fill=None)
+                                      fill=self.Vessel.fill
+                                      )
         self.Vessel.comp_dict = {}
         self.Vessel.comp_dict['act'] = self.Vessel.act
 

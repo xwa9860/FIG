@@ -1,9 +1,11 @@
 from comp import Comp
-from mat import SS316T
+from mat import SS316
+from infu import SSU
 
 
 class Vessel(Comp):
 
     def __init__(self, temp):
         name = 'VESSEL'
-        Comp.__init__(self, temp, name, [SS316T(temp)])
+        ss = SSU(temp)
+        Comp.__init__(self, temp, name, [SS316(temp)], fill=ss)
