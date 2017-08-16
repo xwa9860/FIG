@@ -59,11 +59,11 @@ class CoreGen(Gen):
             # define neutron source and BC
             str_list.append('\n%%---Neutron source and BC\n')
             str_list.append('\n%%---set pop neutron-per-cycle cycles skip-cycles\n')
-            str_list.append('set pop 200000 500 200\n')
+            str_list.append('set pop 100000 500 200\n')
             str_list.append('set bc 1\n')
             str_list.append('set ures 1\n')
             str_list.append('%OR, ORCC, CR, CRCC, Vsl, Dcmer, barrel, Blanket, Fuel\n')
-            str_list.append('set gcu 28 29 27 25 52 53 54 50 30\n')
+            str_list.append('set gcu 28 29 27 25 52 53 54 50 32\n')
             str_list.append('set nfg 8\n')
             str_list.append('5.8e-8\n')
             str_list.append('1.9e-7\n')
