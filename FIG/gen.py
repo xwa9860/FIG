@@ -73,7 +73,6 @@ class EmbeddedCompGen(Gen):
     '''
     def parse(self, a_EmComp, type):
         if type == 's':
-            ## start with the mother comp
             # generate cell cid uid fill uid/ mat nb
             if a_EmComp.mother_comp.fill is not None:
               fill_card = 'fill %d' % a_EmComp.mother_comp.fill.gen.univ.id
@@ -99,4 +98,3 @@ class EmbeddedCompGen(Gen):
             # if not a_EmComp.fill == None:
             #    text += a_EmComp.fill.generate_output()
             return text
-

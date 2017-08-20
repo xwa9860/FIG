@@ -106,3 +106,10 @@ class PzSurf(Surface):
         Surface.__init__(self)
         self.z = z
         self.text = 'surf %d pz %f\n' % (self.id, self.z)
+
+
+class CrossSurf(Surface):
+
+    def __init__(self, x0, y0, r, d):
+        Surface.__init__(self)
+        self.text = 'surf %d cross %f %f %f %f \n' % (self.id, x0, y0, r, d)

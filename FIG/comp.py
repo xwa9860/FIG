@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from gen import Gen, AnnularCompGen, EmbeddedCompGen
-from serp_concept import CylSurf, ConeSurf, PzSurf
+from serp_concept import CylSurf, ConeSurf, PzSurf, CrossSurf
 from comparable_object import CmpObj
 from types import *
 from mat import Mat
@@ -227,3 +227,39 @@ class ConeComp(AnnularComp):
             fill = None):
         surf = ConeSurf(r, h_cone, z_cone, x, y)
         AnnularComp.__init__(self,  temp, name, mat_list, None, surf, fill = fill)
+
+
+class CrossComp(AnnularComp):
+  # a component inside a 'cross' surface
+
+    def __init__(self,
+               temp,
+               name,
+               mat_list,
+               zb,
+               zt,
+               x0,
+               y0,
+               r,
+               d,
+               fill=None):
+        surf_o = CrossSurf(x0, y0, r, d)
+        surf_t = PzSurf(zt)
+        surf_b = PzSurf(zb)
+        AnnularComp.__init__(self,  temp, name, mat_list, 
+            None, surf_o, surf_t, surf_b, fill = fill)
+
+
+class AnnuCrossCylComp(AnnularComp):
+
+    def __init__(self,  temp, name, mat_list, zb, zt,
+                 x=0.0, y=0.0, ri=0.0, di=0.0, 
+                 ro=0.0, fill = None):
+        surf_i = CrossSurf(x, y, ri, di)
+        surf_o = CylSurf(ro, zb, zt, x, y)
+        surf_t = PzSurf(zt)
+        surf_b = PzSurf(zb)
+        AnnularComp.__init__(self,  temp, name, mat_list,
+                             surf_i, surf_o, surf_t, surf_b, fill)
+
+
