@@ -36,7 +36,7 @@ class CoreGen(Gen):
                 comp_str.append(a_core.comp_dict[key1].generate_output())
                 open(self.dir_name+filename, 'w+').write(''.join(comp_str))
                 str_list.append('include "%s"\n' %filename)
-            #open(dir+'Fuel', 'a').write(a_core.Fuel.unit_cell_lat2.generate_output())
+
 
             # define the whole core as universe 0, and cell 'outside'
             a_core.whole_core.gen.set_univId(0)
@@ -63,7 +63,7 @@ class CoreGen(Gen):
             str_list.append('set bc 1\n')
             str_list.append('set ures 1\n')
             str_list.append('%OR, ORCC, CR, CRCC, Vsl, Dcmer, barrel, Blanket, Fuel\n')
-            str_list.append('set gcu 28 29 27 25 52 53 54 50 32\n')
+            # str_list.append('set gcu 28 29 27 25 52 53 54 50 32\n')
             str_list.append('set nfg 8\n')
             str_list.append('5.8e-8\n')
             str_list.append('1.9e-7\n')

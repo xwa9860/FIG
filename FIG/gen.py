@@ -48,7 +48,7 @@ class AnnularCompGen(Gen):
                         a_anComp.name, a_anComp.mat_list)
                 fill_card = a_anComp.mat_list[0].name
             cell_text = (
-                'cell %d %d %s ' % (
+                'cell %r %r %s ' % (
                     a_anComp.gen.cell.id,
                     a_anComp.gen.univ.id,
                     fill_card))
@@ -92,7 +92,8 @@ class EmbeddedCompGen(Gen):
                     cell_text += ('%d ' % (math.pow(-1, i)*surf.id))
                 i = i+1
             for key, child in a_EmComp.children_comps.items():
-                cell_text += ('%d ' % child.surf_list[1].id)
+              for key2, channel in child.channels.items():
+                cell_text += ('%d ' % channel.surf_list[1].id)
             text += cell_text + '\n'
             # generate higher level universes that fills this component
             # if not a_EmComp.fill == None:

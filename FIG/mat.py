@@ -388,6 +388,26 @@ class B4C(Mat):
             tmp_card=tmp_card)
 
 
+class B4CT(Mat):
+    # natural boron carbide in control rods
+
+    def __init__(self, temp, tmp_card=True):
+        self.density = 2.52  # g/cm3
+        self.mat_comp = []
+        self.temp = temp
+        lib_id = self.calc_lib_id(temp)
+        self.mat_comp.append('6000.%s 0.04674909\n5010.%s 0.09795057\n5011.%s 0.08904589' %
+                             (lib_id, lib_id, lib_id))
+        self.mat_comp = ''.join(self.mat_comp)
+        Mat.__init__(
+            self,
+            'B4C',
+            self.density,
+            temp,
+            mat_comp=self.mat_comp,
+            tmp_card=tmp_card)
+
+
 class Be2C(Mat):
     # berrylium carbide in reflectors
 

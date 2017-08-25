@@ -113,3 +113,9 @@ class CrossSurf(Surface):
     def __init__(self, x0, y0, r, d):
         Surface.__init__(self)
         self.text = 'surf %d cross %f %f %f %f \n' % (self.id, x0, y0, r, d)
+
+class PadSurf(Surface):
+
+    def __init__(self, x0, y0, ri, ro, theta1, theta2):
+        Surface.__init__(self)
+        self.text = 'surf %d pad %f %f %f %f %f %f\n' % (self.id, x0, y0, ri, ro, theta1, theta2)

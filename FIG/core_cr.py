@@ -9,8 +9,8 @@ channels inside the center and outer reflectors
 from core_gen import CoreGen
 from comp import *
 import math
-from centerref import CenterRef, CenterRef_CoolantChannel, CRCC_liner
-from control_rod import Control_rod
+from centerref import CenterRef, CRCC, CRCC_Cool, CRCC_liner, CRCC_axial_segment, CRCC_gr, Control_rod
+# from control_rod import Control_rod
 from outerref import OuterRef, OuterRef_CoolantChannel
 from vessel import Vessel
 from downcomer import Downcomer
@@ -24,7 +24,7 @@ class Core(Comp):
             self,
             fpb_list,
             temp_CR,
-            temp_g_CRCC,
+            temp_rod_CRCC,
             temp_cool_CRCC,
             temp_OR,
             temp_g_ORCC,
@@ -43,10 +43,8 @@ class Core(Comp):
 
         self.comp_dict = {}
 
-        self.CRCC = CenterRef_CoolantChannel(temp_cool_CRCC)
-        self.CRCC_liner = CRCC_liner(temp_cool_CRCC)
-        self.Control_rod = Control_rod(temp_cool_CRCC)
         self.CR = CenterRef(temp_CR)
+        self.CRCC = CRCC(temp_rod_CRCC, temp_cool_CRCC, temp_CR)
         self.OR = OuterRef(temp_OR)
         self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
         self.Fuel = Fuel(fpb_list, temp_cool_F, dir_name)
@@ -55,11 +53,8 @@ class Core(Comp):
         self.Downcomer = Downcomer(temp_Downcomer)
         self.Corebarrel = Corebarrel(temp_Corebarrel)
 
-        self.define_CRCC(self.CRCC.temp, self.CRCC.name, liner=True, rod_zb=rod_zb)
-        self.define_CRCC_liner(self.CRCC.temp, self.CRCC_liner.name)
-        self.define_Control_rod(self.Control_rod.temp, self.Control_rod.name, rod_zb)
+
         self.define_CR(self.CR.temp, self.CR.name, liner=True)
-        #self.adding_CRCC_to_CR()
         self.define_OR(self.OR.temp, self.OR.name)
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
         self.define_Fuel(self.Fuel.temp, self.Fuel.name)
@@ -70,9 +65,7 @@ class Core(Comp):
 
         self.comp_dict = {
             'CR': self.CR,
-            'CRCC': self.CRCC,
-            'CRCC_liner': self.CRCC_liner,
-            'Controlrod':self.Control_rod,
+            'CRCC':self.CRCC,
             'OR': self.OR,
             'ORCC': self.ORCC,
             'Fuel': self.Fuel,
@@ -95,74 +88,6 @@ class Core(Comp):
         Comp.__init__(self, fpb_list[0].temp,
                       name, mat_list, CoreGen(dir_name))
 
-    def define_CRCC(self, temp, name, liner=False, rod_zb=112.5):
-        '''
-        CRCC is a 10 cm bande at the outer layer of the center reflector
-        that is a mix of graphite and flibe, to represent the coolant channel
-        in the reflector
-        '''
-        self.CRCC.comp_dict = {}
-        # 8 coolant channels
-        xandys = self.calculate_coolant_channel_locations()
-        for i in range(len(xandys['x'])):
-
-            coolant_channel_lower = CylComp(temp, name,
-                                      self.CRCC.mat_list,
-                                      41.6,
-                                      rod_zb,
-                                      5-0.5,  # 3cm liner
-                                      xandys['x'][i],
-                                      xandys['y'][i],
-                                      fill=self.CRCC.fill)
-            self.CRCC.comp_dict[str(i)+'lower'] = coolant_channel_lower
-
-            coolant_channel_up = AnnuCrossCylComp(temp, name,
-                                      self.CRCC.mat_list,
-                                      rod_zb,
-                                      572.85,
-                                      xandys['x'][i],
-                                      xandys['y'][i],
-                                      4,
-                                      1,
-                                      5-0.5,
-                                      fill=self.CRCC.fill)
-            self.CRCC.comp_dict[str(i)+'up'] = coolant_channel_up
-
-
-    def define_CRCC_liner(self, temp, name):
-        self.CRCC_liner.comp_dict = {}
-        xandys = self.calculate_coolant_channel_locations()
-        for i in range(len(xandys['x'])):
-                liner = AnnuCylComp(temp, name,
-                                    self.CRCC_liner.mat_list,
-                                    5-0.5,
-                                    5,
-                                    41.6,
-                                    572.85,
-                                    xandys['x'][i],
-                                    xandys['y'][i],
-                                    xandys['x'][i],
-                                    xandys['y'][i],
-                                    fill=self.CRCC_liner.fill)
-                self.CRCC_liner.comp_dict[str(i)+'ss'] = liner
-
-
-    def define_Control_rod(self, temp, name, rod_zb):
-        self.Control_rod.comp_dict = {}
-        # 8 coolant channels
-        xandys = self.calculate_coolant_channel_locations()
-        for i in range(len(xandys['x'])):
-              rod = CrossComp(temp, name,
-                              self.Control_rod.mat_list,
-                              rod_zb,
-                              572.85,
-                              xandys['x'][i],
-                              xandys['y'][i],
-                              4,
-                              1,
-                              fill=self.Control_rod.fill)
-              self.Control_rod.comp_dict[str(i)+'rod'] = rod
-
     # def adding_CRCC_to_CR(self):
     #   for key in self.CRCC.comp_dict:
     #       name = 'cc%s'%key
@@ -184,7 +109,7 @@ class Core(Comp):
                               self.CR.zt_ent, self.CR.r_ent,
                               fill=self.CR.fill)
         self.CR.comp_dict['ent'] = EmbeddedComp(self.CR.ent,
-                                                self.CRCC_liner.comp_dict)
+                                                self.CRCC.comp_dict)
 
         # diverging
         self.CR.zb_div = self.CR.zt_ent
@@ -202,7 +127,7 @@ class Core(Comp):
             self.CR.r_div,
             fill=self.CR.fill)
         self.CR.comp_dict['div'] = EmbeddedComp(self.CR.div,
-                                                self.CRCC_liner.comp_dict)
+                                                self.CRCC.comp_dict)
         # active zone
         self.CR.zb_act = self.CR.zt_div
         self.CR.zt_act = 430.50
@@ -212,7 +137,7 @@ class Core(Comp):
                               self.CR.zt_act, self.CR.r_act,
                               fill=self.CR.fill)
         self.CR.comp_dict['act'] = EmbeddedComp(self.CR.act,
-                                                self.CRCC_liner.comp_dict)
+                                                self.CRCC.comp_dict)
 
         # Converging
         self.CR.zb_conv = self.CR.zt_act
@@ -230,7 +155,7 @@ class Core(Comp):
                                      self.CR.r_conv,
                                      fill=self.CR.fill)
         self.CR.comp_dict['conv'] = EmbeddedComp(self.CR.conv,
-                                                 self.CRCC_liner.comp_dict)
+                                                 self.CRCC.comp_dict)
 
         # defueling
         self.CR.r_defuel = self.CR.r_conv
@@ -243,7 +168,7 @@ class Core(Comp):
                                  self.CR.r_defuel,
                                  fill=self.CR.fill)
         self.CR.comp_dict['defuel'] = EmbeddedComp(self.CR.defuel,
-                                                   self.CRCC_liner.comp_dict)
+                                                   self.CRCC.comp_dict)
 
         # substract CRCC's from CR
         #self.comp_dict['CR'] = CenterRefWithoutCC(self.CR, self.CRCC)
@@ -786,16 +711,3 @@ class Core(Comp):
                     mat_list.append(mat)
         return mat_list
 
-    def calculate_coolant_channel_locations(self):
-        '''compute x's and y's for the 8 coolant channels in the center reflector
-        and output them in a dictionary
-        TODO: check the value for R
-        '''
-        xandy = {'x': [], 'y': []}
-        R = 27.5  # the channels are situated at 27.5cm from the center
-                  # and at 8 evenly distributed angles
-        for i in range(8):
-            angle = i*2*math.pi/8.0
-            xandy['x'].append(R*math.cos(angle))
-            xandy['y'].append(R*math.sin(angle))
-        return xandy
