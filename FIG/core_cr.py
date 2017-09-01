@@ -35,8 +35,7 @@ class Core(Comp):
             temp_Corebarrel,
             temp_Downcomer,
             temp_Vessel,
-            dir_name='res/serp_input/',
-            rod_zb=112.5):
+            dir_name='res/serp_input/'):
 
         assert(len(fpb_list) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
             fpb_list)

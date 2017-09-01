@@ -81,6 +81,10 @@ class CoreGen(Gen):
             #  str_list.append('det %d  dm fuel2pb%d dr -8 fuel2pb%d\n' %(i*3+1, i+1, i+1))
             #  str_list.append('det %d  dm fuel3pb%d dr -8 fuel3pb%d\n' %(i*3+2, i+1, i+1))
 
+            str_list.append('%% detector for power\n')
+            str_list.append('%det <name> dn 1 <rmin> <rmax> <nr>  <amin> <amax> <na> <zmin> <zmax> <nz>\n')
+            str_list.append('det 1 dr -8 void dn 1 0  178 89 0 360 1 41 573 266\n')
+
             str_list.append('\n%%---Plot the geometry\n')
             str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')
             str_list.append('plot 2 700 700 0 %% xz cross plane at y=0\n')
