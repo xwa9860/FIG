@@ -2,11 +2,12 @@
 This file is used to generate cross-sections
 
 create core with two fuel zones
+and control rods
 
 '''
 #!/usr/bin/python
 from FIG import triso
-from FIG.core_cr import Core
+from FIG.core_rods_multiR import Core
 from FIG import pbed
 from FIG import pb
 from FIG import mat
@@ -86,43 +87,49 @@ def create_a_pb_unit_cell(fuel_temps, coating_temps, cgt, sht, uc_name, burnups,
     return fpb_list
 
 
-def create_the_core(fuel_temps,
-                    triso_temps,
-                    cool_temp,
-                    burnups,
-                    pb_comp_dir,
+def create_the_core(fuel_temps_w,
+                    triso_temps_w,
+                    fuel_temps_a,
+                    triso_temps_a,
+                    burnups_w,
+                    burnups_a,
+                    pb_comp_dir_w,
+                    pb_comp_dir_a,
                     gen_dir_name):
     '''
     fuel_temps_w: a list of temperatures used to define fuel layers in the near-wall region
     triso_temps_w: a list of temperatures used to define  layers in the near-wall region
     '''
 
-    fpb_list = create_a_pb_unit_cell(fuel_temps, triso_temps, 900, 900, '', burnups, pb_comp_dir, gen_dir_name)
+    fpb_list_w = create_a_pb_unit_cell(fuel_temps_w, triso_temps_w, 900, 900, 'w', burnups_w, pb_comp_dir_w, gen_dir_name)
+    fpb_list_a = create_a_pb_unit_cell(fuel_temps_a, triso_temps_a, 900, 900, 'a', burnups_a, pb_comp_dir_a, gen_dir_name)
 
     core = Core(
-        fpb_list,
-        900,  # temp_CR
-        900,  # temp_g_CRCC
-        900,  # temp_cool_CRCC
-        900,  # temp_OR
-        900,  # temp_g_ORCC
-        900,  # temp_cool_ORCC
-        cool_temp,  # temp_cool_F
-        900,  # temp_blanket
-        900,  # temp_cool_B
+        fpb_list_w,
+        fpb_list_a,
+        1000,  # temp_CR
+        1000,  # temp_g_CRCC
+        1000,  # temp_cool_CRCC
+        1000,  # temp_OR
+        1000,  # temp_g_ORCC
+        1000,  # temp_cool_ORCC
+        950,  # temp_cool_F
+        1000,  # temp_blanket
+        950,  # temp_cool_B
         900,  # temp_Corebarrel
         900,  # temp_Downcomer
         900,  # temp_vessel
         gen_dir_name)
     mkdir(gen_dir_name)
-    f = open(''.join([gen_dir_name, 'serp_full_core']), 'w+')
+    f = open(''.join([gen_dir_name, '/serp_full_core']), 'w+')
     text = core.generate_output()
     f.write(text)
     f.close
 
 
 if __name__ == "__main__":
-    pb_burnups = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    pb_burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    pb_burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
 
     # generating a set of input files for serpent
     # to generat cross sections for different temperatures
@@ -141,12 +148,16 @@ if __name__ == "__main__":
     tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
     tempcool = 950# 950 nominal
 
-    output_dir_name = 'res/rod_xs/no_rod/'
-    fuel_comp_folder = config.FLUX_ALL_AVE_FOLDER
+    output_dir_name = 'res/two_zones/no_rod/'
+    fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
+    fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
 
     create_the_core(tempsf, 
                     tempst,
-                    tempcool,
-                    pb_burnups,
-                    fuel_comp_folder,
+                    tempsf,
+                    tempst,
+                    pb_burnups_w,
+                    pb_burnups_a,
+                    fuel_comp_folder_w,
+                    fuel_comp_folder_a,
                     output_dir_name)
