@@ -22,7 +22,7 @@ class CRCC(Comp):
         name = 'CRCC'
         Comp.__init__(self, temp_rod_CRCC, name, [B4C(temp_rod_CRCC)])
         # center reflector control rod channel, 4 axial zones
-        CRCC_1= CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 572.85, 430.85, hasCR=False)
+        CRCC_1= CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 572.85, 430.85, hasCR=True)
         CRCC_2 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 430.85, 272, hasCR=False)
         CRCC_3 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 272, 112.5, hasCR=False)
         CRCC_4 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 112.5, 41.6, hasCR=False)

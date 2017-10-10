@@ -24,7 +24,10 @@ class Core(Comp):
     def __init__(
             self,
             fpb_list_w,
-            fpb_list_a,
+            fpb_list_a1,
+            fpb_list_a2,
+            fpb_list_a3,
+            fpb_list_a4,
             temp_CR,
             temp_rod_CRCC,
             temp_cool_CRCC,
@@ -41,8 +44,14 @@ class Core(Comp):
 
         assert(len(fpb_list_w) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
             fpb_list_w)
-        assert(len(fpb_list_a) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
-            fpb_list_a)
+        assert(len(fpb_list_a1) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
+            fpb_list_a1)
+        assert(len(fpb_list_a2) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
+            fpb_list_a2)
+        assert(len(fpb_list_a3) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
+            fpb_list_a3)
+        assert(len(fpb_list_a4) == 14), 'pb_list length is wrong, expected 14 pbs, got %d' % len(
+            fpb_list_a4)
 
         self.comp_dict = {}
 
@@ -50,19 +59,24 @@ class Core(Comp):
         self.CRCC = CRCC(temp_rod_CRCC, temp_cool_CRCC, temp_CR)
         self.OR = OuterRef(temp_OR)
         self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
+        self.FuelA1 = Fuel_act(fpb_list_a1, temp_cool_F, dir_name)
+        self.FuelA2 = Fuel_act(fpb_list_a2, temp_cool_F, dir_name)
+        self.FuelA3 = Fuel_act(fpb_list_a3, temp_cool_F, dir_name)
+        self.FuelA4 = Fuel_act(fpb_list_a4, temp_cool_F, dir_name)
         self.FuelW = Fuel_wall(fpb_list_w, temp_cool_F, dir_name)
-        self.FuelA = Fuel_act(fpb_list_a, temp_cool_F, dir_name)
         self.Blanket = Blanket(temp_Blanket, temp_cool_B, dir_name)
         self.Vessel = Vessel(temp_Vessel)
         self.Downcomer = Downcomer(temp_Downcomer)
         self.Corebarrel = Corebarrel(temp_Corebarrel)
 
-
         self.define_CR(self.CR.temp, self.CR.name, liner=True)
         self.define_OR(self.OR.temp, self.OR.name)
         self.define_ORCC(self.ORCC.temp, self.ORCC.name)
+        self.define_FuelA1(self.FuelA1.temp, self.FuelA1.name)
+        self.define_FuelA2(self.FuelA2.temp, self.FuelA2.name)
+        self.define_FuelA3(self.FuelA3.temp, self.FuelA3.name)
+        self.define_FuelA4(self.FuelA4.temp, self.FuelA4.name)
         self.define_FuelW(self.FuelW.temp, self.FuelW.name)
-        self.define_FuelA(self.FuelA.temp, self.FuelA.name)
         self.define_Blanket(self.Blanket.temp, self.Blanket.name)
         self.define_Vessel(self.Vessel.temp, self.Vessel.name)
         self.define_Downcomer(self.Downcomer.temp, self.Downcomer.name)
@@ -74,7 +88,10 @@ class Core(Comp):
             'OR': self.OR,
             'ORCC': self.ORCC,
             'FuelW': self.FuelW,
-            'FuelA': self.FuelA,
+            'FuelA1': self.FuelA1,
+            'FuelA2': self.FuelA2,
+            'FuelA3': self.FuelA3,
+            'FuelA4': self.FuelA4,
             'Blanket': self.Blanket,
             'Vessel': self.Vessel,
             'Downcomer': self.Downcomer,
@@ -82,11 +99,11 @@ class Core(Comp):
 
         self.whole_core = CylComp(fpb_list_w[0].temp,
                                   'whole_core',
-                                  self.FuelA.act.mat_list,
+                                  self.FuelA1.act.mat_list,
                                   41.6,
                                   572.85,
                                   176.8,
-                                  fill=self.FuelA.act)
+                                  fill=self.FuelA1.act)
         # contains not only self.Fuel but other three component, but they are
         # in the same universe, only need it to get the univ id
         name = 'FullCore'
@@ -444,6 +461,80 @@ class Core(Comp):
 
         self.ORCC.comp_dict['defuel'] = self.ORCC.defuel
 
+    def define_FuelA1(self, temp, name):
+        # ---------------------------------------------------------
+        # fuel zone
+        # --------------------------------------------------------
+        self.FuelA1.comp_dict = {}
+        self.FuelA1.zb_act = self.OR.zt_div
+        self.FuelA1.zt_act = self.CR.zt_act
+        self.FuelA1.ro_act = 46.1
+        self.FuelA1.act = AnnuCylComp(temp, name,
+                                   self.FuelA1.mat_list,
+                                   self.CR.r_act,
+                                   self.FuelA1.ro_act,
+                                   self.FuelA1.zb_act,
+                                   self.FuelA1.zt_act,
+                                   fill=self.FuelA1.fill)
+        self.FuelA1.comp_dict['act'] = self.FuelA1.act
+
+    def define_FuelA2(self, temp, name):
+        # ---------------------------------------------------------
+        # fuel zone
+        # --------------------------------------------------------
+        self.FuelA2.comp_dict = {}
+        # active zone
+        self.FuelA2.zb_act = self.FuelA1.zb_act
+        self.FuelA2.zt_act = self.FuelA1.zt_act
+        self.FuelA2.ri_act = self.FuelA1.ro_act
+        self.FuelA2.ro_act = 58.3
+        self.FuelA2.act = AnnuCylComp(temp, name,
+                                    self.FuelA2.mat_list,
+                                    self.FuelA2.ri_act,
+                                    self.FuelA2.ro_act,
+                                    self.FuelA2.zb_act,
+                                    self.FuelA2.zt_act,
+                                    fill=self.FuelA2.fill)
+        self.FuelA2.comp_dict['act'] = self.FuelA2.act
+
+    def define_FuelA3(self, temp, name):
+        # ---------------------------------------------------------
+        # fuel zone
+        # --------------------------------------------------------
+        self.FuelA3.comp_dict = {}
+        # active zone
+        self.FuelA3.zb_act = self.FuelA1.zb_act
+        self.FuelA3.zt_act = self.FuelA1.zt_act
+        self.FuelA3.ri_act = self.FuelA2.ro_act
+        self.FuelA3.ro_act = 96
+        self.FuelA3.act = AnnuCylComp(temp, name,
+                                    self.FuelA3.mat_list,
+                                    self.FuelA3.ri_act,
+                                    self.FuelA3.ro_act,
+                                    self.FuelA3.zb_act,
+                                    self.FuelA3.zt_act,
+                                    fill=self.FuelA3.fill)
+        self.FuelA3.comp_dict['act'] = self.FuelA3.act
+
+    def define_FuelA4(self, temp, name):
+        # ---------------------------------------------------------
+        # fuel zone
+        # --------------------------------------------------------
+        self.FuelA4.comp_dict = {}
+        # active zone
+        self.FuelA4.zb_act = self.FuelA1.zb_act
+        self.FuelA4.zt_act = self.FuelA1.zt_act
+        self.FuelA4.ri_act = self.FuelA3.ro_act
+        self.FuelA4.ro_act = 105
+        self.FuelA4.act = AnnuCylComp(temp, name,
+                                    self.FuelA4.mat_list,
+                                    self.FuelA4.ri_act,
+                                    self.FuelA4.ro_act,
+                                    self.FuelA4.zb_act,
+                                    self.FuelA4.zt_act,
+                                    fill=self.FuelA4.fill)
+        self.FuelA4.comp_dict['act'] = self.FuelA4.act
+
     def define_FuelW(self, temp, name):
         # ---------------------------------------------------------
         # fuel zone
@@ -527,20 +618,8 @@ class Core(Comp):
                                          fill=self.FuelW.fill)
         self.FuelW.comp_dict['div3'] = self.FuelW.div3
 
-        # active zone
-        self.FuelW.zb_act = self.FuelW.zt_div3
-        self.FuelW.zt_act = self.CR.zt_act
-        self.FuelW.ro_act = 46.1
-        self.FuelW.act = AnnuCylComp(temp, name,
-                                    self.FuelW.mat_list,
-                                    self.CR.r_act,
-                                    self.FuelW.ro_act,
-                                    self.FuelW.zb_act,
-                                    self.FuelW.zt_act,
-                                    fill=self.FuelW.fill)
-        self.FuelW.comp_dict['act'] = self.FuelW.act
         # convergeing zone
-        self.FuelW.zb_conv = self.FuelW.zt_act
+        self.FuelW.zb_conv = self.CR.zt_act
         self.FuelW.zt_conv = self.CR.zt_conv
         self.FuelW.ri_conv = self.CR.r_conv
         self.FuelW.ai_conv = 60.0 * math.pi/180
@@ -577,23 +656,6 @@ class Core(Comp):
                                        fill=self.FuelW.fill)
         self.FuelW.comp_dict['defuel'] = self.FuelW.defuel
 
-    def define_FuelA(self, temp, name):
-        # ---------------------------------------------------------
-        # fuel zone
-        # --------------------------------------------------------
-        self.FuelA.comp_dict = {}
-        # active zone
-        self.FuelA.zb_act = self.FuelW.zt_div3
-        self.FuelA.zt_act = self.CR.zt_act
-        self.FuelA.ro_act = self.FuelW.ro_div
-        self.FuelA.act = AnnuCylComp(temp, name,
-                                    self.FuelA.mat_list,
-                                    self.FuelW.ro_act,
-                                    self.FuelA.ro_act,
-                                    self.FuelA.zb_act,
-                                    self.FuelA.zt_act,
-                                    fill=self.FuelA.fill)
-        self.FuelA.comp_dict['act'] = self.FuelA.act
 
     def define_Blanket(self, temp, name):
         # -------------------------------------------------------------
@@ -639,7 +701,7 @@ class Core(Comp):
         self.Blanket.comp_dict['div'] = self.Blanket.div
 
         # active zone
-        self.Blanket.ri_act = self.FuelA.act.ro
+        self.Blanket.ri_act = self.FuelA4.act.ro
         self.Blanket.ro_act = self.ORCC.ri_act
         self.Blanket.zb_act = self.Blanket.zt_div
         self.Blanket.zt_act = self.CR.zt_act

@@ -29,8 +29,14 @@ class PBedGen(Gen):
 
 
 class FCCGen(Gen):
+    file_id = 0 # increment the name by 1 for multiple fuel unit cells
 
-    def generate_pos_file(self, a_fcc, dir_loc):
+    def __init__(self, dir_name='serp_input/',  verbose=False, pbed_file_prefix = 'fpb_pos'):
+        FCCGen.file_id += 1
+        Gen.__init__(self, dir_name, verbose)
+        self.pbed_file_prefix_and_id = pbed_file_prefix+str(FCCGen.file_id)
+
+    def generate_pos_file(self, a_fcc, dir_loc, pbed_file_prefix):
         ''' generate pebble position file for Serpent from packing fraction'''
         pb_pos_input = (
             '%f  %f  %f 1.5 %d\n' % (a_fcc.pitch,  a_fcc.pitch,  a_fcc.pitch, 0) +
@@ -47,7 +53,7 @@ class FCCGen(Gen):
             ' 0.  -%f 0. 1.5 %d\n' % (a_fcc.pitch, 0) +
             ' 0.  0. %f  1.5 %d\n' % (a_fcc.pitch, 0) +
             ' 0.  0. -%f 1.5 %d\n' % (a_fcc.pitch, 0))
-        file_name = 'fpb_pos_%d' % (a_fcc.packing_fraction * 100)
+        file_name = pbed_file_prefix+'_%d' % (a_fcc.packing_fraction * 100)
         f = open(dir_loc+file_name, 'w+')
         i = 0
         for line in pb_pos_input.splitlines(True):
@@ -61,7 +67,7 @@ class FCCGen(Gen):
     def parse(self, a_fcc, type):
         # dir_loc is the folder path for the generated position file
         dir_loc = self.dir_name
-        file_name = self.generate_pos_file(a_fcc, dir_loc)
+        file_name = self.generate_pos_file(a_fcc, dir_loc, self.pbed_file_prefix_and_id)
         return self.parse1(a_fcc, file_name, 's')
 
     def parse1(self, a_pbed, input_file, type):

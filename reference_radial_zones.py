@@ -140,52 +140,34 @@ def create_the_core(fuel_temps_w,
 
 
 if __name__ == "__main__":
-    output_folder = 'res/two_zones/no_rod/'
+    output_folder = 'res/two_zones/rod_xs/'
     pb_burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
     pb_burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
 
-    # sample fuel temperatures for each layer
-    from util.sample_temperature import sample_temperature
-    sample_nb = 50
-    fuel_nb = 3 
+    temps = np.ones((8, 6))*1000
+    fuel_nb = 1
     coating_nb = 5
-    burnup_nb = len(list(unique_everseen(pb_burnups_w)))
-    temps_mat = sample_temperature(burnup_nb, fuel_nb, coating_nb, sample_nb)
-    np.save(output_folder+'temp_multiR_cr', temps_mat)
+    tempsf = temps[:, 0:fuel_nb]
+    tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
+    tempcool = 950# 950 nominal
 
+    output_dir_name = output_folder + 'cr_all_up/'
+    fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
+    fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
 
-    # generating a set of input files for serpent
-    # to generat cross sections for different temperatures
-    # each of the 3 fuel layers in triso particles
-    # each of the 4 or 8 burnups
-    for case, temps in enumerate(temps_mat['sol']):
-      # reset incremental parameters for a new serpent input
-      Cell.id = 1
-      Universe.id = 1
-      Surface.id = 1
-      FuelPbGen.wrote_surf = False
-
-      tempsf = temps[:, 0:fuel_nb]
-      tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
-      tempcool = temps_mat['liq'][case]
-
-      output_dir_name = output_folder + 'input%d/' % case
-      fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
-      fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
-
-      # assuming all the layers have the same temperature
-      create_the_core(tempsf, 
-                      tempst,
-                      tempsf,
-                      tempst,
-                      tempsf,
-                      tempst,
-                      tempsf,
-                      tempst,
-                      tempsf,
-                      tempst,
-                      pb_burnups_w,
-                      pb_burnups_a,
-                      fuel_comp_folder_w,
-                      fuel_comp_folder_a,
-                      output_dir_name)
+    # assuming all the layers have the same temperature
+    create_the_core(tempsf, 
+                    tempst,
+                    tempsf,
+                    tempst,
+                    tempsf,
+                    tempst,
+                    tempsf,
+                    tempst,
+                    tempsf,
+                    tempst,
+                    pb_burnups_w,
+                    pb_burnups_a,
+                    fuel_comp_folder_w,
+                    fuel_comp_folder_a,
+                    output_dir_name)
