@@ -151,7 +151,7 @@ if __name__ == "__main__":
     tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
     tempcool = 950# 950 nominal
 
-    output_dir_name = output_folder + 'cr_all_up/'
+    output_dir_name = output_folder + 'cr_all_down/'
     fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
     fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
 
