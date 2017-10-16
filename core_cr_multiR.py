@@ -140,7 +140,7 @@ def create_the_core(fuel_temps_w,
 
 
 if __name__ == "__main__":
-    output_folder = 'res/two_zones/no_rod/'
+    output_folder = 'res/multi_zones/'
     pb_burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
     pb_burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
 
