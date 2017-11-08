@@ -1,0 +1,43 @@
+#!/bin/bash
+# Job name:
+#SBATCH --job-name=ref56all
+#
+# Partition:
+#SBATCH --partition=savio
+#
+# QoS:
+#SBATCH --qos=nuclear_savio_normal
+# #SBATCH --qos=savio_normal
+# #SBATCH --qos=savio_debug
+# #SBATCH --qos=savio_lowprio
+#
+# Account:
+#SBATCH --account=co_nuclear
+# #SBATCH --account=fc_neutronics
+#
+# Processors:
+#SBATCH --nodes=5
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=20
+#
+# Wall clock limit:
+#SBATCH --time=480:00:00
+#
+# SLURM Output File
+##SBATCH --output=/dev/null
+#SBATCH --output=slurm.out
+#
+# SLURM Error File
+#SBATCH --error=slurm.err
+#
+# Mail type:
+##SBATCH --mail-type=all
+#
+# Mail user:
+#SBATCH --mail-user=imwangxin@gmail.com
+module purge
+module load gcc/4.8.5
+module load openmpi/1.10.2-gcc
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+mpirun -np 5 --map-by ppr:1:node:pe=20 sss2 -omp 20 serp_full_core
+

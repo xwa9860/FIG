@@ -1,3 +1,7 @@
+'''
+config file that contains the file names for fuel material data
+'''
+
 INPUT_MCNP_FILE =               'fuel_mat/inputs/Mark1.txt'
 FLUX_CSV_PATH =                 'fuel_mat/inputs/flux.csv'
 FLUX_WALL_AVE_FOLDER =          'fuel_mat/fuel_comp/flux_wall_ave_serp/'

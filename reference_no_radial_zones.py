@@ -134,14 +134,14 @@ if __name__ == "__main__":
     Surface.id = 1
     FuelPbGen.wrote_surf = False
 
-    temps = np.ones((8, 6))*1000
+    temps = np.ones((8, 6))*300
     fuel_nb = 1
     coating_nb = 5
     tempsf = temps[:, 0:fuel_nb]
     tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
     tempcool = 950# 950 nominal
 
-    output_dir_name = 'res/rod_xs/no_rod/'
+    output_dir_name = 'res/temp_fb/fuel/300/'
     fuel_comp_folder = config.FLUX_ALL_AVE_FOLDER
 
     create_the_core(tempsf, 
