@@ -1,3 +1,12 @@
+'''
+main file to 
+
+1) read fuel composition from Mk1.txt MCNP input
+
+2) generate fuel composition files that can be used in FIG to 
+generate serpent input files
+
+'''
 import volume
 import config
 import pandas as pd
@@ -9,33 +18,48 @@ volmat = np.array(volume.get_volume()).reshape((4, 5, 1))
 volmat = np.swapaxes(volmat, 0, 1)
 print(volmat.shape)
 
+
+
+print('compute average fuel composition for near wall zones')
+
+# build a flux matrix for the wall regions by setting the
+# active region flux to 0 in the full core flux matrix
+
 # read volume*flux in each zone
 fluxdf = pd.read_csv(config.FLUX_CSV_PATH, header=None)
 fluxmat = fluxdf.values.reshape((5, 4, 8))
 print('fluxmat')
 print(fluxmat)
-print('one element')
-print(fluxmat[2,3,2])
-
-
-print('compute for zone wall')
 fluxmat_wall = fluxmat
 for passno in range(1, 9):
   for R in range(2, 5):
     fluxmat_wall[2][R-1][passno-1] = 0
 
+# for each pass, compute the weighted average(flux^2) fuel
+# composition and write to file
 for i in range(1, 9):
     flux_ave_fuel1 = sum_comp(fluxmat_wall*fluxmat_wall, passno=i)
     outputfile1 = config.FLUX_WALL_AVE_FOLDER + 'fuel_mat%d' % i
     flux_ave_fuel1.write_mat_to_file(comp_path=outputfile1)
 
-print('compute for zone act')
+print('compute (weighted) average fuel composition for center zones')
+# build a flux matrix for the act regions by setting the values to the
+# active regions and leave others to 0
+# read volume*flux in each zone
+fluxdf = pd.read_csv(config.FLUX_CSV_PATH, header=None)
+fluxmat = fluxdf.values.reshape((5, 4, 8))
+print('fluxmat')
+print(fluxmat)
 fluxmat_act = np.zeros((5, 4, 8))
 for passno in range(1, 9):
   for R in range(2, 5):
     print(fluxmat[2][R-1][passno-1])
     fluxmat_act[2][R-1][passno-1] = fluxmat[2][R-1][passno-1]
+print('flux mat for active region is\n')
 print(fluxmat_act)
+
+# for each pass, compute the weighted average(flux^2) fuel
+# composition and write to file
 for i in range(1, 9):
     flux_ave_fuel2 = sum_comp(fluxmat_act*fluxmat_act, passno=i)
     outputfile2 = config.FLUX_ACT_AVE_FOLDER + 'fuel_mat%d' % i

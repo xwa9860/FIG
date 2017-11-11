@@ -20,10 +20,10 @@ def sum_comp(weights,
             mat = FuelMat()
             mat_loc = ''.join(
                       [raw_comps_folder, 'm%d%d%d00' % (R, Z, passno)])
-            print(mat_loc)
+            # print(mat_loc)
             mat.import_comp_from_mcnp_file(mat_loc)
             new_mat = new_mat + mat * float(weights[Z-1][R-1][passno-1])
-            print(weights[Z-1][R-1][passno-1])
+            # print(weights[Z-1][R-1][passno-1])
     return new_mat
 
 def sum_comp_2_zones(weights,
@@ -46,8 +46,8 @@ def sum_comp_2_zones(weights,
             else:
               mat_loc = ''.join(
                         [raw_comps_folder, 'm%d%d%d00' % (R, Z, passno[0])])
-            print(mat_loc)
+            # print(mat_loc)
             mat.import_comp_from_mcnp_file(mat_loc)
             new_mat = new_mat + mat * float(weights[Z-1][R-1][pbnb-1])
-            print(weights[Z-1][R-1][pbnb-1])
+            # print(weights[Z-1][R-1][pbnb-1])
     return new_mat
