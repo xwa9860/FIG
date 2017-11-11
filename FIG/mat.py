@@ -132,7 +132,7 @@ class SS316(Mat):
     def __init__(self, temp, tmp_card=True, rgb=[0, 8, 20]):
         self.temp = temp
         self.density = 8.03
-        # isotope list: carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
+        # isotope list: car/on, Ni, Cr, Mo, Fe, Si, Mn, P, S
         isotopes = ['6000', '28000', '24000', '42000', '26000',
                     '14000', '25055', '15031', '16000']
         ratio_list = [0.08/12.0, 12/56.0, 17/48.0, 2.5/84.0, 65.345/52.0,
@@ -265,13 +265,72 @@ class CMatrix(Mat):
         Mat.__init__(self, name, 1.70386, temp, mat_comp=mat_comp,
                      tmp_card=tmp_card, rgb=rgb, flag='moder')
 
-class Graphite(Mat):
+class BGraphite(Mat):
 
     def __init__(self, temp, tmp_card=True, rgb=[139, 147, 147]):
         self.temp = temp
         self.density = 2.26
         isotopes = ['6000', '5010', '5011']
         ratio_list = [8.77414E-02, 9.64977E-09, 3.90864E-08]
+        #self.mat_comp = []
+        #lib_id = self.calc_lib_id(temp)
+        #self.mat_comp.append(
+        #    '%graphite in reflectors\n' +
+        #    '6000.%s 1.0\n' %
+        #    lib_id)
+        #self.mat_comp = ''.join(self.mat_comp)
+        self.name = 'BGraphite%d' % (math.ceil(temp))
+        Mat.__init__(
+            self,
+            self.name,
+            self.density,
+            temp,
+            tmp_card=tmp_card,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            flag='moder',
+            rgb=rgb)
+
+class ShieldMat(Mat):
+
+    def __init__(self, temp, tmp_card=True, rgb=[190, 147, 147]):
+        self.temp = temp
+        self.density = 2.26
+        isotopes = ['6000', '5010', '5011']
+        # ratio_list computed from summing the two temperatures in the following
+        # definition from Tommy's input file
+        #  m60 $ tmp=8.73150E+02K
+        #  5010.71c 7.88017E-03 5010.72c 9.00704E-02
+        #  5011.71c 7.16379E-03 5011.72c 8.18821E-02
+        #  6000.71c 3.76099E-03 6000.72c 4.29881E-02
+        ratio_list = [0.04674909, 0.09795057, 0.08904589]
+        #self.mat_comp = []
+        #lib_id = self.calc_lib_id(temp)
+        #self.mat_comp.append(
+        #    '%graphite in reflectors\n' +
+        #    '6000.%s 1.0\n' %
+        #    lib_id)
+        #self.mat_comp = ''.join(self.mat_comp)
+        self.name = 'shieldmat%d' % (math.ceil(temp))
+        Mat.__init__(
+            self,
+            self.name,
+            self.density,
+            temp,
+            tmp_card=tmp_card,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            flag='moder',
+            rgb=rgb)
+
+
+class Graphite(Mat):
+
+    def __init__(self, temp, tmp_card=True, rgb=[139, 147, 147]):
+        self.temp = temp
+        self.density = 2.26
+        isotopes = ['6000']
+        ratio_list = [1]
         #self.mat_comp = []
         #lib_id = self.calc_lib_id(temp)
         #self.mat_comp.append(

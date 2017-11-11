@@ -1,14 +1,14 @@
 from comp import Comp
-from mat import Graphite, GraphiteCoolMix
-from infu import GrU, FlibeGrU
+from mat import BGraphite, GraphiteCoolMix
+from infu import BGrU, FlibeGrU
 
 
 class OuterRef(Comp):
 
     def __init__(self, temp):
         name = 'OR'
-        gru = GrU(temp)
-        Comp.__init__(self, temp, name, [Graphite(temp)], fill=gru)
+        gru = BGrU(temp)
+        Comp.__init__(self, temp, name, [BGraphite(temp)], fill=gru)
 
 
 class OuterRef_CoolantChannel(Comp):

@@ -1,7 +1,7 @@
 '''
 create a universe of infinite volume of a material
 '''
-from mat import Graphite,B4C, Flibe, SS316, GraphiteCoolMix
+from mat import Graphite, BGraphite, B4C, Flibe, SS316, GraphiteCoolMix, ShieldMat
 from comp import Comp
 from inf_gen import InfGen
 
@@ -16,6 +16,10 @@ class GrU(InfU):
   def __init__(self, temp, name='Graphite'):
     InfU.__init__(self, temp, Graphite(temp), name)
 
+class BGrU(InfU):
+
+  def __init__(self, temp, name='BGraphite'):
+    InfU.__init__(self, temp, BGraphite(temp), name)
 
 class FlibeU(InfU):
 
@@ -39,3 +43,9 @@ class B4CU(InfU):
 
   def __init__(self, temp, name='B4C'):
     InfU.__init__(self, temp, B4C(temp), name)
+
+
+class ShieldU(InfU):
+
+  def __init__(self, temp, name='Shield'):
+    InfU.__init__(self, temp, ShieldMat(temp), name)

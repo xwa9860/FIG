@@ -1,9 +1,11 @@
 '''
 This file is used to generate cross-sections
 
-create core with two fuel zones
+create core with six fuel zones
 and control rods
 
+center fuel region are populated only with burnup 1-4
+while near wall fuel regions are populated with burnup 1-8
 '''
 #!/usr/bin/python
 from FIG import triso
@@ -140,32 +142,36 @@ def create_the_core(fuel_temps_w,
 
 
 if __name__ == "__main__":
-    output_folder = 'res/multi_zone_ref/'
+    output_folder = 'res/multi_zone_ref/two_fuels'
     pb_burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
-    pb_burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    pb_burnups_a = np.array([1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4])
+    fuel_comp_folder_w = config.FLUX_WALL_AVE_FOLDER
+    fuel_comp_folder_a = config.FLUX_ACT_AVE_FOLDER
 
-    temps = np.ones((8, 6))*1000
     fuel_nb = 1
     coating_nb = 5
-    tempsf = temps[:, 0:fuel_nb]
-    tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
+    temps_a = np.ones((4, 6))*1000
+    temps_a_f = temps_a[:, 0:fuel_nb]
+    temps_a_t = temps_a[:, fuel_nb:fuel_nb+coating_nb]
+    temps_w = np.ones((8, 6))*1000
+    temps_w_f = temps_w[:, 0:fuel_nb]
+    temps_w_t = temps_w[:, fuel_nb:fuel_nb+coating_nb]
     tempcool = 950# 950 nominal
 
-    output_dir_name = output_folder + 'cr_all_up/gr_rods/'
-    fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
-    fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
+    output_dir_name = output_folder + 'gr_rods/'
+
 
     # assuming all the layers have the same temperature
-    create_the_core(tempsf, 
-                    tempst,
-                    tempsf,
-                    tempst,
-                    tempsf,
-                    tempst,
-                    tempsf,
-                    tempst,
-                    tempsf,
-                    tempst,
+    create_the_core(temps_w_f, 
+                    temps_w_t,
+                    temps_a_f,
+                    temps_a_t,
+                    temps_a_f,
+                    temps_a_t,
+                    temps_a_f,
+                    temps_a_t,
+                    temps_a_f,
+                    temps_a_t,
                     pb_burnups_w,
                     pb_burnups_a,
                     fuel_comp_folder_w,

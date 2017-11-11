@@ -1,3 +1,7 @@
+'''
+changed all the flibe to graphite to see if the thermal flux in the
+center reflector is larger than that in the outer reflector
+'''
 from comp import *
 from mat import Graphite, Flibe, B4C, SS316
 from infu import GrU, FlibeU, SSU
@@ -98,8 +102,9 @@ class CRCC_Cool(Comp):
         coolant between the control rod(cross) and the liner
         '''
         name = 'CRCC_cool'
-        flibeu = FlibeU(temp)
-        Comp.__init__(self, temp, name, [Flibe(temp)], fill=flibeu)
+        # flibeu = FlibeU(temp)
+        gru = GrU(temp)
+        Comp.__init__(self, temp, name, [Graphite(temp)], fill=gru)
         self.define_comps(zb, zt, locations)
 
     def define_comps(self, zb, zt, locations):
@@ -130,8 +135,10 @@ class CRCC_liner(Comp):
           fillu = SSU(temp)
           mat = SS316(temp)
         else:
-          fillu = FlibeU(temp)
-          mat = Flibe(temp)
+          # fillu = FlibeU(temp)
+          # mat = Flibe(temp)
+          fillu = GrU(temp)
+          mat = Graphite(temp)
         Comp.__init__(self, temp, name, [mat], fill=fillu)
         self.define_comps(zb, zt, locations)
 
