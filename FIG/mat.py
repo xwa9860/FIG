@@ -251,6 +251,7 @@ class CMatrix(Mat):
     '''
     coatings and matrix
     used when the triso layers are combined into one material
+    the isotope ratios are taken from Tommy's mcnp input Mark1.txt material m11
     '''
 
     def __init__(self, temp, tmp_card=True, rgb=[255, 75, 134]):
@@ -267,29 +268,32 @@ class CMatrix(Mat):
 
 class BGraphite(Mat):
 
-    def __init__(self, temp, tmp_card=True, rgb=[139, 147, 147]):
-        self.temp = temp
-        self.density = 2.26
-        isotopes = ['6000', '5010', '5011']
-        ratio_list = [8.77414E-02, 9.64977E-09, 3.90864E-08]
-        #self.mat_comp = []
-        #lib_id = self.calc_lib_id(temp)
-        #self.mat_comp.append(
-        #    '%graphite in reflectors\n' +
-        #    '6000.%s 1.0\n' %
-        #    lib_id)
-        #self.mat_comp = ''.join(self.mat_comp)
-        self.name = 'BGraphite%d' % (math.ceil(temp))
-        Mat.__init__(
-            self,
-            self.name,
-            self.density,
-            temp,
-            tmp_card=tmp_card,
-            isotopes=isotopes,
-            ratio_list=ratio_list,
-            flag='moder',
-            rgb=rgb)
+    def __init__(self, temp, tmp_card=True, rgb=[141, 155, 178]):
+      '''
+      density and isotope fractions from ??
+      '''
+      self.temp = temp
+      self.density = 1.74 # tommy's thesis for (pure) graphite based components(reflectors, etc)
+      isotopes = ['6000', '5010', '5011']
+      ratio_list = [8.77414E-02, 9.64977E-09, 3.90864E-08]
+      #self.mat_comp = []
+      #lib_id = self.calc_lib_id(temp)
+      #self.mat_comp.append(
+      #    '%graphite in reflectors\n' +
+      #    '6000.%s 1.0\n' %
+      #    lib_id)
+      #self.mat_comp = ''.join(self.mat_comp)
+      self.name = 'BGraphite%d' % (math.ceil(temp))
+      Mat.__init__(
+          self,
+          self.name,
+          self.density,
+          temp,
+          tmp_card=tmp_card,
+          isotopes=isotopes,
+          ratio_list=ratio_list,
+          flag='moder',
+          rgb=rgb)
 
 class ShieldMat(Mat):
 
@@ -328,7 +332,7 @@ class Graphite(Mat):
 
     def __init__(self, temp, tmp_card=True, rgb=[139, 147, 147]):
         self.temp = temp
-        self.density = 2.26
+        self.density = 1.74 # from tommy's thesis graphite based components(reflectors, etc.) 
         isotopes = ['6000']
         ratio_list = [1]
         #self.mat_comp = []
@@ -537,6 +541,7 @@ class ZrH2(Mat):
             isotopes=isotopes,
             ratio_list=ratio_list,
             tmp_card=tmp_card)
+
 class Outside(Mat):
     # outside the defined domain
 
@@ -629,6 +634,29 @@ class GraphiteCoolMix(mixMat):
             tmp_card=tmp_card,
             flag=flag,
             rgb=rgb)
+
+
+class GraphiteCoolMixT(Mat):
+    ''' graphite coolant mix for outer reflector coolant channel region
+     isotope ratios and density from Tommy's input material m6
+    '''
+
+    def __init__(self, temp, tmp_card=True, rgb=[13, 226, 162]):
+        self.density = 1.81  # g/cm3
+        flag = 'moder'
+        isotopes = ['6000', '9019', '3006', '3007', '4009']
+        ratio_list = [8.7E-2, 3.132766E-2, 1.925451E-7, 1.566259E-2, 7.83132E-3]
+        Mat.__init__(
+            self,
+            'GraphiteCoolMixT',
+            self.density,
+            temp,
+            isotopes=isotopes,
+            ratio_list=ratio_list,
+            tmp_card=tmp_card,
+            flag=flag,
+            rgb=rgb)
+
 
 class GraphiteSSCoolMix(mixMat):
     # this is a 'virtual' material defined as a mix of graphite and FliBe and

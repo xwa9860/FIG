@@ -102,8 +102,11 @@ class CRCC_Cool(Comp):
         coolant between the control rod(cross shape) and the liner
         '''
         name = 'CRCC_cool'
-        flibeu = FlibeU(temp)
-        Comp.__init__(self, temp, name, [Flibe(temp)], fill=flibeu)
+        # fillu = FlibeU(temp)
+        # fillmat = Flibe(temp)
+        fillu = GrU(temp)
+        fillmat = Graphite(temp)
+        Comp.__init__(self, temp, name, [fillmat], fill=fillu)
         self.define_comps(zb, zt, locations)
 
     def define_comps(self, zb, zt, locations):
@@ -134,8 +137,11 @@ class CRCC_liner(Comp):
           fillu = SSU(temp)
           mat = SS316(temp)
         else:
-          fillu = FlibeU(temp)
-          mat = Flibe(temp)
+          # fillu = FlibeU(temp)
+          # mat = Flibe(temp)
+          # changed to graphite to see the effect of flibe in the liner
+          fillu = GrU(temp)
+          mat = Graphite(temp)
         Comp.__init__(self, temp, name, [mat], fill=fillu)
         self.define_comps(zb, zt, locations)
 
@@ -192,8 +198,10 @@ class Control_rod(Comp):
           fillu = B4CU(temp)
           mat = B4C(temp)
         else:
-          fillu = FlibeU(temp)
-          mat = Flibe(temp)
+          # fillu = FlibeU(temp)
+          # mat = Flibe(temp)
+          fillu = GrU(temp)
+          mat = Graphite(temp)
         Comp.__init__(self, temp, name, [mat], fill=fillu)
         self.define_comps(zb, zt, locations)
 

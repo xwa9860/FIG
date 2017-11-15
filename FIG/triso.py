@@ -110,7 +110,7 @@ class TrisoLattice(Comp):
         self.triso_particle = triso_particle
         self.temp = triso_particle.temp
         self.name = 'trisoLat'+triso_particle.name
-        self.pitch = (4/3.0*math.pi*max(triso_particle.r_config.values())**3/pf)**(1/3.0)
+        self.pitch = ((4/3.0*math.pi*0.0405**3)/pf)**(1/3.0)
         self.mat_list = self.triso_particle.mat_list
         Comp.__init__(self, self.temp, self.name, self.mat_list,
                       TrisoLatticeGen())
