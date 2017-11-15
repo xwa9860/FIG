@@ -3,6 +3,7 @@
 This is a core class, contains a FHR core
 control rods
 multple radial zones in the fuel region
+no shiled
 # all dimensions in cm
 # all temperatures in K
 '''
@@ -17,7 +18,7 @@ from vessel import Vessel
 from downcomer import Downcomer
 from corebarrel import Corebarrel
 from blanket import Blanket
-from shield import Shield
+# from shield import Shield
 from fuel import Fuel
 
 class Core(Comp):
@@ -46,51 +47,11 @@ class Core(Comp):
       fuel_prop: (fuel_mat_temps, coating_temps, central graphtie temp, shell temp, burnup_list)
       '''
       self.comp_dict = {}
-
-      self.CR = CenterRef(temp_CR)
-      self.CRCC = CRCC(temp_rod_CRCC, temp_cool_CRCC, temp_CR)
-      self.OR = OuterRef(temp_OR)
-      self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
-      self.FuelW = Fuel(fuel_prop_w, temp_cool_F, dir_name, name='wall')
-      self.FuelA1 = Fuel(fuel_prop_a1, temp_cool_F, dir_name, name='act1')
-      self.FuelA2 = Fuel(fuel_prop_a2, temp_cool_F, dir_name, name='act2')
-      self.FuelA3 = Fuel(fuel_prop_a3, temp_cool_F, dir_name, name='act3')
-      self.FuelA4 = Fuel(fuel_prop_a4, temp_cool_F, dir_name, name='act4')
-      self.Blanket = Blanket(temp_Blanket, temp_cool_B, dir_name)
-      self.Shield = Shield(temp_Vessel) # assume it has the same temperature as vessel, need to be separated in the future
-      self.Vessel = Vessel(temp_Vessel)
-      self.Downcomer = Downcomer(temp_Downcomer)
-      self.Corebarrel = Corebarrel(temp_Corebarrel)
-
-      self.define_CR(self.CR.temp, self.CR.name, liner=True)
-      self.define_OR(self.OR.temp, self.OR.name)
-      self.define_ORCC(self.ORCC.temp, self.ORCC.name)
-      self.define_FuelA1(self.FuelA1.temp, self.FuelA1.name)
-      self.define_FuelA2(self.FuelA2.temp, self.FuelA2.name)
-      self.define_FuelA3(self.FuelA3.temp, self.FuelA3.name)
-      self.define_FuelA4(self.FuelA4.temp, self.FuelA4.name)
-      self.define_FuelW(self.FuelW.temp, self.FuelW.name)
-      self.define_Blanket(self.Blanket.temp, self.Blanket.name)
-      self.define_Shield(self.Shield.temp, self.Shield.name)
-      self.define_Vessel(self.Vessel.temp, self.Vessel.name)
-      self.define_Downcomer(self.Downcomer.temp, self.Downcomer.name)
-      self.define_Corebarrel(self.Corebarrel.temp, self.Corebarrel.name)
-
-      self.comp_dict = {
-          'CR': self.CR,
-          'CRCC':self.CRCC,
-          'OR': self.OR,
-          'ORCC': self.ORCC,
-          'FuelW': self.FuelW,
-          'FuelA1': self.FuelA1,
-          'FuelA2': self.FuelA2,
-          'FuelA3': self.FuelA3,
-          'FuelA4': self.FuelA4,
-          'Blanket': self.Blanket,
-          'Shield': self.Shield,
-          'Vessel': self.Vessel,
-          'Downcomer': self.Downcomer,
-          'Corebarrel': self.Corebarrel}
+      self.add_CR()
+      self.add_OR()
+      self.add_Fuel()
+      self.add_blanket()
+      self.add_outer_layers(hasShield=False)
 
       self.whole_core = CylComp(900, # a placehold for temperature
                                 # of the whole core component because
@@ -112,10 +73,76 @@ class Core(Comp):
                           # not used in the serpent input files
                     name, mat_list, CoreGen(dir_name))
 
-    # def adding_CRCC_to_CR(self):
-    #   for key in self.CRCC.comp_dict:
-    #       name = 'cc%s'%key
-    #       self.CR.comp_dict[name] = self.CRCC.comp_dict[key]
+    def add_CR(self):
+      self.CR = CenterRef(temp_CR)
+      self.define_CR(self.CR.temp, self.CR.name, liner=True)
+      self.comp_dict['CR'] = self.CR
+      self.CRCC = CRCC(temp_rod_CRCC, temp_cool_CRCC, temp_CR)
+      self.comp_dict['CRCC'] = self.CRCC
+
+    def add_OR(self):
+      self.OR = OuterRef(temp_OR)
+      self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
+      self.define_OR(self.OR.temp, self.OR.name)
+      self.define_ORCC(self.ORCC.temp, self.ORCC.name)
+      self.comp_dict['OR'] = self.OR,
+      self.comp_dict['ORCC'] = self.ORCC
+
+    def add_Fuel(self):
+      self.FuelW = Fuel(fuel_prop_w, temp_cool_F, dir_name, name='wall')
+      self.FuelA1 = Fuel(fuel_prop_a1, temp_cool_F, dir_name, name='act1')
+      self.FuelA2 = Fuel(fuel_prop_a2, temp_cool_F, dir_name, name='act2')
+      self.FuelA3 = Fuel(fuel_prop_a3, temp_cool_F, dir_name, name='act3')
+      self.FuelA4 = Fuel(fuel_prop_a4, temp_cool_F, dir_name, name='act4')
+      self.define_FuelA1(self.FuelA1.temp, self.FuelA1.name)
+      self.define_FuelA2(self.FuelA2.temp, self.FuelA2.name)
+      self.define_FuelA3(self.FuelA3.temp, self.FuelA3.name)
+      self.define_FuelA4(self.FuelA4.temp, self.FuelA4.name)
+      self.define_FuelW(self.FuelW.temp, self.FuelW.name)
+      self.comp_dict.update({
+                            'FuelW': self.FuelW,
+                            'FuelA1': self.FuelA1,
+                            'FuelA2': self.FuelA2,
+                            'FuelA3': self.FuelA3,
+                            'FuelA4': self.FuelA4
+                            })
+
+    def add_blanket(self):
+      self.Blanket = Blanket(temp_Blanket, temp_cool_B, dir_name)
+      self.define_Blanket(self.Blanket.temp, self.Blanket.name)
+      self.comp_dict['Blanket'] = self.Blanket
+
+    def add_outer_layers(self):
+      self.Corebarrel = Corebarrel(temp_Corebarrel)
+      self.Downcomer = Downcomer(temp_Downcomer)
+      self.Vessel = Vessel(temp_Vessel)
+      if hasShield:
+        # outer radius taken from Tommy's input Mark1.txt
+        or_OR = 162
+        or_shield = 164.7
+        or_barrel = 168
+        or_downcomer = 170.8
+        or_vessel = 176.8
+
+        # shield
+        self.Shield = Shield(temp_Vessel) # assume it has the same temperature as vessel, need to be separated in the future
+        self.define_Shield(self.Shield.temp, self.Shield.name, or_OR, or_shield)
+        self.define_Corebarrel(self.Corebarrel.temp, self.Corebarrel.name, or_shield, or_barrel)
+        self.comp_dict['Shield'] = self.Shield
+      else:
+        or_OR = 165
+        or_barrel = 167.2
+        or_downcomer = 170
+        or_vessel = 175
+        self.define_Corebarrel(self.Corebarrel.temp, self.Corebarrel.name, or_OR, or_barrel)
+
+      self.define_Downcomer(self.Downcomer.temp, self.Downcomer.name, or_barrel, or_downcomer)
+      self.define_Vessel(self.Vessel.temp, self.Vessel.name, or_downcomer, or_vessel)
+      self.comp_dict.update({
+                            'Downcomer': self.Downcomer,
+                            'Corebarrel': self.Corebarrel,
+                            'Vessel': self.Vessel
+                            })
 
     def define_CR(self, temp, name, liner):
         '''
@@ -751,13 +778,11 @@ class Core(Comp):
                                           fill=self.Blanket.fill)
         self.Blanket.comp_dict['defuel'] = self.Blanket.defuel
 
-    def define_Shield(self, temp, name):
-        self.Shield.ri = 162
-        self.Shield.ro = 164
+    def define_Shield(self, temp, name, ri, ro):
         self.Shield.act = AnnuCylComp(temp, name,
                                       self.Shield.mat_list,
-                                      self.Shield.ri,
-                                      self.Shield.ro,
+                                      ri,
+                                      ro,
                                       self.CR.zb_ent,
                                       self.CR.zt_defuel,
                                       fill=self.Shield.fill
@@ -765,39 +790,33 @@ class Core(Comp):
         self.Shield.comp_dict = {}
         self.Shield.comp_dict['act'] = self.Shield.act
 
-    def define_Corebarrel(self, temp, name):
-        self.Corebarrel.ri = 164
-        self.Corebarrel.ro = 168
+    def define_Corebarrel(self, temp, name, ri, ro):
         self.Corebarrel.act = AnnuCylComp(temp, name,
                                           self.Corebarrel.mat_list,
-                                          self.Corebarrel.ri,
-                                          self.Corebarrel.ro,
+                                          ri, 
+                                          ro,
                                           self.CR.zb_ent,
                                           self.CR.zt_defuel,
                                           fill=self.Corebarrel.fill)
         self.Corebarrel.comp_dict = {}
         self.Corebarrel.comp_dict['act'] = self.Corebarrel.act
 
-    def define_Downcomer(self, temp, name):
-        self.Downcomer.ri = 168
-        self.Downcomer.ro = 170.8
+    def define_Downcomer(self, temp, name, ri, ro):
         self.Downcomer.act = AnnuCylComp(temp, name,
                                          self.Downcomer.mat_list,
-                                         self.Downcomer.ri,
-                                         self.Downcomer.ro,
+                                         ri,
+                                         ro,
                                          self.CR.zb_ent,
                                          self.CR.zt_defuel,
                                          fill=self.Downcomer.fill)
         self.Downcomer.comp_dict = {}
         self.Downcomer.comp_dict['act'] = self.Downcomer.act
 
-    def define_Vessel(self, temp, name):
-        self.Vessel.ri = 170.8
-        self.Vessel.ro = 176.8
+    def define_Vessel(self, temp, name, ri, ro):
         self.Vessel.act = AnnuCylComp(temp, name,
                                       self.Vessel.mat_list,
-                                      self.Vessel.ri,
-                                      self.Vessel.ro,
+                                      ri,
+                                      ro,
                                       self.CR.zb_ent,
                                       self.CR.zt_defuel,
                                       fill=self.Vessel.fill
