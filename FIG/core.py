@@ -37,21 +37,34 @@ class Core(Comp):
             temp_g_ORCC,
             temp_cool_ORCC,
             temp_cool_F,
-            temp_Blanket,
+            temp_blanket,
             temp_cool_B,
-            temp_Corebarrel,
-            temp_Downcomer,
-            temp_Vessel,
+            temp_corebarrel,
+            temp_downcomer,
+            temp_vessel,
             dir_name='res/serp_input/'):
       '''
       fuel_prop: (fuel_mat_temps, coating_temps, central graphtie temp, shell temp, burnup_list)
       '''
       self.comp_dict = {}
-      self.add_CR()
-      self.add_OR()
-      self.add_Fuel()
-      self.add_blanket()
-      self.add_outer_layers(hasShield=False)
+      self.add_CR(temp_CR, temp_rod_CRCC, temp_cool_CRCC)
+      self.add_OR(temp_OR, temp_g_ORCC, temp_cool_ORCC)
+      self.add_Fuel(
+                 fuel_prop_w,
+                 fuel_prop_a1,
+                 fuel_prop_a2,
+                 fuel_prop_a3,
+                 fuel_prop_a4,
+                 temp_cool_F,
+                 dir_name)
+      self.add_blanket(temp_blanket,
+                       temp_cool_B,
+                       dir_name)
+      self.add_outer_layers(temp_corebarrel,
+                            temp_downcomer,
+                            temp_vessel,
+                            hasShield=False,
+                            temp_shield=None)
 
       self.whole_core = CylComp(900, # a placehold for temperature
                                 # of the whole core component because
@@ -73,22 +86,29 @@ class Core(Comp):
                           # not used in the serpent input files
                     name, mat_list, CoreGen(dir_name))
 
-    def add_CR(self):
+    def add_CR(self, temp_CR, temp_rod_CRCC, temp_cool_CRCC):
       self.CR = CenterRef(temp_CR)
+      self.CRCC = CRCC(temp_rod_CRCC, temp_cool_CRCC, temp_CR)
       self.define_CR(self.CR.temp, self.CR.name, liner=True)
       self.comp_dict['CR'] = self.CR
-      self.CRCC = CRCC(temp_rod_CRCC, temp_cool_CRCC, temp_CR)
       self.comp_dict['CRCC'] = self.CRCC
 
-    def add_OR(self):
+    def add_OR(self, temp_OR, temp_g_ORCC, temp_cool_ORCC):
       self.OR = OuterRef(temp_OR)
       self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
       self.define_OR(self.OR.temp, self.OR.name)
       self.define_ORCC(self.ORCC.temp, self.ORCC.name)
-      self.comp_dict['OR'] = self.OR,
+      self.comp_dict['OR'] = self.OR
       self.comp_dict['ORCC'] = self.ORCC
 
-    def add_Fuel(self):
+    def add_Fuel(self,
+                 fuel_prop_w,
+                 fuel_prop_a1,
+                 fuel_prop_a2,
+                 fuel_prop_a3,
+                 fuel_prop_a4,
+                 temp_cool_F,
+                 dir_name):
       self.FuelW = Fuel(fuel_prop_w, temp_cool_F, dir_name, name='wall')
       self.FuelA1 = Fuel(fuel_prop_a1, temp_cool_F, dir_name, name='act1')
       self.FuelA2 = Fuel(fuel_prop_a2, temp_cool_F, dir_name, name='act2')
@@ -107,15 +127,23 @@ class Core(Comp):
                             'FuelA4': self.FuelA4
                             })
 
-    def add_blanket(self):
-      self.Blanket = Blanket(temp_Blanket, temp_cool_B, dir_name)
+    def add_blanket(self,
+                    temp_blanket,
+                    temp_cool_B,
+                    dir_name):
+      self.Blanket = Blanket(temp_blanket, temp_cool_B, dir_name)
       self.define_Blanket(self.Blanket.temp, self.Blanket.name)
       self.comp_dict['Blanket'] = self.Blanket
 
-    def add_outer_layers(self):
-      self.Corebarrel = Corebarrel(temp_Corebarrel)
-      self.Downcomer = Downcomer(temp_Downcomer)
-      self.Vessel = Vessel(temp_Vessel)
+    def add_outer_layers(self,
+                         temp_corebarrel,
+                         temp_downcomer,
+                         temp_vessel,
+                         hasShield,
+                         temp_shield=None):
+      self.Corebarrel = Corebarrel(temp_corebarrel)
+      self.Downcomer = Downcomer(temp_downcomer)
+      self.Vessel = Vessel(temp_vessel)
       if hasShield:
         # outer radius taken from Tommy's input Mark1.txt
         or_OR = 162
