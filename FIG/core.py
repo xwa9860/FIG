@@ -42,13 +42,17 @@ class Core(Comp):
             temp_corebarrel,
             temp_downcomer,
             temp_vessel,
-            dir_name='res/serp_input/'):
+            dir_name='res/serp_input/',
+            hasShield=False,
+            temp_shield=None,
+            hasRods=[False, False, False, False]):
       '''
       fuel_prop: (fuel_mat_temps, coating_temps, central graphtie temp, shell temp, burnup_list)
+      hasRods: if the rods are inserted in the four axial segments
       '''
       self.comp_dict = {}
-      self.add_CR(temp_CR, temp_rod_CRCC, temp_cool_CRCC)
-      self.add_OR(temp_OR, temp_g_ORCC, temp_cool_ORCC)
+      self.add_CR(temp_CR, temp_rod_CRCC, temp_cool_CRCC, hasRods)
+      self.add_OR(temp_OR, temp_g_ORCC, temp_cool_ORCC, hasShield)
       self.add_Fuel(
                  fuel_prop_w,
                  fuel_prop_a1,
@@ -63,8 +67,8 @@ class Core(Comp):
       self.add_outer_layers(temp_corebarrel,
                             temp_downcomer,
                             temp_vessel,
-                            hasShield=False,
-                            temp_shield=None)
+                            hasShield,
+                            temp_shield)
 
       self.whole_core = CylComp(900, # a placehold for temperature
                                 # of the whole core component because
@@ -74,7 +78,7 @@ class Core(Comp):
                                 self.FuelA1.act.mat_list,
                                 41.6,
                                 572.85,
-                                176.8,
+                                175,
                                 fill=self.FuelA1.act)
       # contains not only self.Fuel but other three component, but they are
       # in the same universe, only need it to get the univ id
@@ -86,17 +90,21 @@ class Core(Comp):
                           # not used in the serpent input files
                     name, mat_list, CoreGen(dir_name))
 
-    def add_CR(self, temp_CR, temp_rod_CRCC, temp_cool_CRCC):
+    def add_CR(self, temp_CR, temp_rod_CRCC, temp_cool_CRCC, hasRods):
       self.CR = CenterRef(temp_CR)
-      self.CRCC = CRCC(temp_rod_CRCC, temp_cool_CRCC, temp_CR)
+      self.CRCC = CRCC(temp_rod_CRCC, temp_cool_CRCC, temp_CR, hasRods)
       self.define_CR(self.CR.temp, self.CR.name, liner=True)
       self.comp_dict['CR'] = self.CR
       self.comp_dict['CRCC'] = self.CRCC
 
-    def add_OR(self, temp_OR, temp_g_ORCC, temp_cool_ORCC):
+    def add_OR(self, temp_OR, temp_g_ORCC, temp_cool_ORCC, hasShield):
       self.OR = OuterRef(temp_OR)
       self.ORCC = OuterRef_CoolantChannel(temp_g_ORCC, temp_cool_ORCC)
-      self.define_OR(self.OR.temp, self.OR.name)
+      if hasShield:
+        or_OR = 162
+      else:
+        or_OR = 165
+      self.define_OR(self.OR.temp, self.OR.name, or_OR)
       self.define_ORCC(self.ORCC.temp, self.ORCC.name)
       self.comp_dict['OR'] = self.OR
       self.comp_dict['ORCC'] = self.ORCC
@@ -149,8 +157,8 @@ class Core(Comp):
         or_OR = 162
         or_shield = 164.7
         or_barrel = 168
-        or_downcomer = 170.8
-        or_vessel = 176.8
+        or_downcomer = 170
+        or_vessel = 175
 
         # shield
         self.Shield = Shield(temp_Vessel) # assume it has the same temperature as vessel, need to be separated in the future
@@ -361,10 +369,10 @@ class Core(Comp):
 #                                       self.CRCC.zt_defuel)
 #        self.CRCC.comp_dict['defuel'] = self.CRCC.defuel
 #
-    def define_OR(self, temp, name):
+    def define_OR(self, temp, name, or_OR=165):
         # --------------------------------------------------------
         # Outer reflector
-        self.OR.r_outer = 162   # outer radius for the whole o_ref
+        self.OR.r_outer = or_OR   # outer radius for the whole o_ref
         self.OR.comp_dict = {}
 
         # entrance zone

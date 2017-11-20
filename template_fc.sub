@@ -1,0 +1,25 @@
+#!/bin/sh
+#SBATCH --job-name=serp_full
+#SBATCH --output=serp_full.log
+#SBATCH --error=serp_full.serr
+#SBATCH --partition=savio
+#SBATCH --time=40:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=20
+# #SBATCH --mem=60G
+# QoS:
+#SBATCH --qos=savio_normal
+##SBATCH --qos=nuclear_savio_normal
+# Account:
+#SBATCH --account=fc_neutronics
+##SBATCH -A co_nuclear
+
+# Mail type:
+#SBATCH --mail-type=all
+#
+# Mail user:
+#SBATCH --mail-user=imwangxin@gmail.com
+module load intel/2016.1.150
+module load openmpi/1.10.2-intel
+
+sss2 -omp 20 serp_full_core

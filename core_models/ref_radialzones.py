@@ -1,16 +1,25 @@
 '''
 This file is used to assemble the core from input file that contains model specifications
+in main.py
 
 '''
 #!/usr/bin/python
 from FIG.core import Core
+from FIG.pb_gen import FuelPbGen
+from FIG.pbed_gen import FCCGen
+from FIG.serp_concept import Cell, Universe, Detector, Surface
 from util.mkdir import mkdir
 import config
 import shutil
 import numpy as np
 
 
-def create_the_model(gen_dir_name, isOneFuel=True, isOneCoating=False):
+def create_the_model(gen_dir_name,
+                     isOneFuel=True,
+                     isOneCoating=False,
+                     hasRods=[False, False, False, False],
+                     hasShield=False):
+
     if isOneFuel: # all fuel pebble unit cells have the same fuel compositions
       burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
       burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
@@ -46,6 +55,12 @@ def create_the_model(gen_dir_name, isOneFuel=True, isOneCoating=False):
       temps_w_t = temps_w[:, fuel_nb:fuel_nb+coating_nb]
       tempcool = 950# 950 nominal
 
+    # set the counters back to 0
+    Cell.id = 1
+    Universe.id = 1
+    Surface.id = 1
+    FuelPbGen.wrote_surf = False
+    FCCGen.file_id = 0
 
     core = Core(
         (tempsf, tempst, 900, 900, 'w', burnups_w,  fuel_comp_folder_w),
@@ -65,7 +80,9 @@ def create_the_model(gen_dir_name, isOneFuel=True, isOneCoating=False):
         900,  # temp_Corebarrel
         900,  # temp_Downcomer
         900,  # temp_vessel
-        gen_dir_name)
+        gen_dir_name,
+        hasShield=hasShield,
+        hasRods=hasRods)
 
     # write the model to the gen_dir_name
     mkdir(gen_dir_name)

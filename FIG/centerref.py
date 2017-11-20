@@ -22,14 +22,14 @@ class CenterRef(Comp):
 
 class CRCC(Comp):
 
-    def __init__(self, temp_rod_CRCC, temp_cool_CRCC, temp_gr):
+    def __init__(self, temp_rod_CRCC, temp_cool_CRCC, temp_gr, hasRods):
         name = 'CRCC'
         Comp.__init__(self, temp_rod_CRCC, name, [B4C(temp_rod_CRCC)])
         # center reflector control rod channel, 4 axial zones
-        CRCC_1= CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 572.85, 430.85, hasCR=False)
-        CRCC_2 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 430.85, 272, hasCR=False)
-        CRCC_3 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 272, 112.5, hasCR=False)
-        CRCC_4 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 112.5, 41.6, hasCR=False)
+        CRCC_1= CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 572.85, 430.85, hasCR=hasRods[0])
+        CRCC_2 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 430.85, 272, hasCR=hasRods[1])
+        CRCC_3 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 272, 112.5, hasCR=hasRods[2])
+        CRCC_4 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 112.5, 41.6, hasCR=hasRods[3])
         self.comp_dict = {
             'CRCC1': CRCC_1,
             'CRCC2': CRCC_2,
@@ -88,11 +88,14 @@ class CRCC_axial_segment(Comp):
 
 
     def define_sub_comps(self, xandys):
-        self.sub_comps = {}
-        self.sub_comps['CRCC_cool'] = CRCC_Cool(self.temp_cool, self.zb, self.zt, xandys)
-        self.sub_comps['CRCC_gr'] = CRCC_gr(self.temp_gr, self.zb, self.zt, xandys)
-        self.sub_comps['CRCC_liner'] = CRCC_liner(self.temp_cool, self.zb, self.zt, self.hasLiner, xandys)
-        self.sub_comps['Control_rod'] = Control_rod(self.temp_rod, self.zb, self.zt, self.hasCR, xandys)
+      '''
+      sub-components in a channel
+      '''
+      self.sub_comps = {}
+      self.sub_comps['CRCC_cool'] = CRCC_Cool(self.temp_cool, self.zb, self.zt, xandys)
+      self.sub_comps['CRCC_gr'] = CRCC_gr(self.temp_gr, self.zb, self.zt, xandys)
+      self.sub_comps['CRCC_liner'] = CRCC_liner(self.temp_cool, self.zb, self.zt, self.hasLiner, xandys)
+      self.sub_comps['Control_rod'] = Control_rod(self.temp_rod, self.zb, self.zt, self.hasCR, xandys)
 
 
 class CRCC_Cool(Comp):
@@ -102,10 +105,8 @@ class CRCC_Cool(Comp):
         coolant between the control rod(cross shape) and the liner
         '''
         name = 'CRCC_cool'
-        # fillu = FlibeU(temp)
-        # fillmat = Flibe(temp)
-        fillu = GrU(temp)
-        fillmat = Graphite(temp)
+        fillu = FlibeU(temp)
+        fillmat = Flibe(temp)
         Comp.__init__(self, temp, name, [fillmat], fill=fillu)
         self.define_comps(zb, zt, locations)
 
@@ -137,11 +138,8 @@ class CRCC_liner(Comp):
           fillu = SSU(temp)
           mat = SS316(temp)
         else:
-          # fillu = FlibeU(temp)
-          # mat = Flibe(temp)
-          # changed to graphite to see the effect of flibe in the liner
-          fillu = GrU(temp)
-          mat = Graphite(temp)
+          fillu = FlibeU(temp)
+          mat = Flibe(temp)
         Comp.__init__(self, temp, name, [mat], fill=fillu)
         self.define_comps(zb, zt, locations)
 
@@ -198,10 +196,8 @@ class Control_rod(Comp):
           fillu = B4CU(temp)
           mat = B4C(temp)
         else:
-          # fillu = FlibeU(temp)
-          # mat = Flibe(temp)
-          fillu = GrU(temp)
-          mat = Graphite(temp)
+          fillu = FlibeU(temp)
+          mat = Flibe(temp)
         Comp.__init__(self, temp, name, [mat], fill=fillu)
         self.define_comps(zb, zt, locations)
 

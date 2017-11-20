@@ -13,7 +13,9 @@ class PBed(Comp):
 
     '''general pebble bed class, including unit cell'''
 
-    def __init__(self, coolant, pb_list, dir_name='serp_input/',
+    def __init__(self,
+                 coolant, pb_list,
+                 dir_name='serp_input/',
                  gen=PBedGen('serp_input/')):
         self.coolant = coolant
         self.pb_list = pb_list
