@@ -50,7 +50,7 @@ class FCC(PBed):
         assert(len(pb_list) == 14), "pb_list length is not 14, but %d" % len(
             pb_list)
         self.packing_fraction = packing_fraction 
-        self.pitch = math.pow(4/3.0*math.pi*math.pow(0.15, 3)*4/packing_fraction, 1/3.0)/2*10
+        self.pitch = round(math.pow(4/3.0*math.pi*math.pow(0.15, 3)*4/packing_fraction, 1/3.0)/2*10, 6)
         #2.27541  # fcc pitch for 3cm diam pb at packing frac = 40%
         PBed.__init__(self, coolant, pb_list,
                       dir_name=dir_name,
@@ -66,8 +66,6 @@ class FuelUnitCell(FCC):
         FCC.__init__(self, self.cool, fpb_list, packing_fraction,
                      dir_name=dir_name,
                      gen=FCCGen(dir_name))
-        # TODO: calculate pitch from packing fraction and update FCC class to
-        # receive pitch from constructor
 
 
 class GraphiteUnitCell(FCC):

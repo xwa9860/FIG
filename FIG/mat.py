@@ -132,7 +132,7 @@ class SS316(Mat):
     def __init__(self, temp, tmp_card=True, rgb=[0, 8, 20]):
         self.temp = temp
         self.density = 8.03
-        # isotope list: car/on, Ni, Cr, Mo, Fe, Si, Mn, P, S
+        # isotope list: carbon, Ni, Cr, Mo, Fe, Si, Mn, P, S
         isotopes = ['6000', '28000', '24000', '42000', '26000',
                     '14000', '25055', '15031', '16000']
         ratio_list = [0.08/12.0, 12/56.0, 17/48.0, 2.5/84.0, 65.345/52.0,

@@ -117,11 +117,17 @@ class Core(Comp):
                  fuel_prop_a4,
                  temp_cool_F,
                  dir_name):
-      self.FuelW = Fuel(fuel_prop_w, temp_cool_F, dir_name, name='wall')
-      self.FuelA1 = Fuel(fuel_prop_a1, temp_cool_F, dir_name, name='act1')
-      self.FuelA2 = Fuel(fuel_prop_a2, temp_cool_F, dir_name, name='act2')
-      self.FuelA3 = Fuel(fuel_prop_a3, temp_cool_F, dir_name, name='act3')
-      self.FuelA4 = Fuel(fuel_prop_a4, temp_cool_F, dir_name, name='act4')
+      pf = 0.6 # 0.7405 maximum attainable packing fraction in a FCC lattice
+      self.FuelW = Fuel(fuel_prop_w, temp_cool_F, dir_name, name='wall',
+                        packing_fraction=pf)
+      self.FuelA1 = Fuel(fuel_prop_a1, temp_cool_F, dir_name, name='act1',
+                         packing_fraction=pf)
+      self.FuelA2 = Fuel(fuel_prop_a2, temp_cool_F, dir_name, name='act2',
+                         packing_fraction=pf)
+      self.FuelA3 = Fuel(fuel_prop_a3, temp_cool_F, dir_name, name='act3',
+                         packing_fraction=pf)
+      self.FuelA4 = Fuel(fuel_prop_a4, temp_cool_F, dir_name, name='act4',
+                         packing_fraction=pf)
       self.define_FuelA1(self.FuelA1.temp, self.FuelA1.name)
       self.define_FuelA2(self.FuelA2.temp, self.FuelA2.name)
       self.define_FuelA3(self.FuelA3.temp, self.FuelA3.name)

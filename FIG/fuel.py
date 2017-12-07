@@ -90,7 +90,6 @@ class Fuel(Comp):
             fuel_name = 'fuel%d%s' % (i+1, pbname)
             fuel_input = '%s/fuel_mat%d' % (pb_comp_dir, burnup)
             fuels.append(mat.Fuel(temp, fuel_name, fuel_input))
-        
         # create triso particle
         if coating_temps.shape == (1,):
             tr = triso.Triso(coating_temps,

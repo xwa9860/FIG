@@ -153,7 +153,7 @@ class PBedLatGen(Gen):
                 (s.id, a_pbed_lat.pitch*2) +
                 'cell %d  %d fill %d -%d\n' %
                 (cell.id, univ.id, a_pbed_lat.pbed.gen.univ.id, s.id) +
-                'lat %d 6 0. 0. %.8f %d\n' %
+                'lat %d 6 0. 0. %f %d\n' %
                 (self.univ.id, a_pbed_lat.pitch*2,
                  univ.id))
             str_list.append(a_pbed_lat.pbed.generate_output())

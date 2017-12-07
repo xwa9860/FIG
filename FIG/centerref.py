@@ -3,8 +3,8 @@ changed all the flibe to graphite to see if the thermal flux in the
 center reflector is larger than that in the outer reflector
 '''
 from comp import *
-from mat import Graphite, Flibe, B4C, SS316
-from infu import GrU, FlibeU, SSU
+from mat import Graphite, Flibe, B4C, SS316, Zr, SiC
+from infu import GrU, FlibeU, SSU, ZrU, SiCU
 from crcc_seg_gen import CRCCSegGen
 from crcc_seg_univ import CRCCSegU
 from mat import B4CT
@@ -24,12 +24,12 @@ class CRCC(Comp):
 
     def __init__(self, temp_rod_CRCC, temp_cool_CRCC, temp_gr, hasRods):
         name = 'CRCC'
-        Comp.__init__(self, temp_rod_CRCC, name, [B4C(temp_rod_CRCC)])
+        Comp.__init__(self, temp_rod_CRCC, name, [B4C(temp_rod_CRCC), SiC(temp_rod_CRCC)])
         # center reflector control rod channel, 4 axial zones
-        CRCC_1= CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 572.85, 430.85, hasCR=hasRods[0])
-        CRCC_2 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 430.85, 272, hasCR=hasRods[1])
-        CRCC_3 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 272, 112.5, hasCR=hasRods[2])
-        CRCC_4 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 112.5, 41.6, hasCR=hasRods[3])
+        CRCC_1= CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 572.85, 430.85, hasCR=hasRods[0], hasLiner=False)
+        CRCC_2 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 430.85, 272, hasCR=hasRods[1], hasLiner=False)
+        CRCC_3 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 272, 112.5, hasCR=hasRods[2], hasLiner=False)
+        CRCC_4 = CRCC_axial_segment(temp_rod_CRCC, temp_cool_CRCC, temp_gr, 112.5, 41.6, hasCR=hasRods[3], hasLiner=False)
         self.comp_dict = {
             'CRCC1': CRCC_1,
             'CRCC2': CRCC_2,
@@ -40,12 +40,13 @@ class CRCC(Comp):
 
 class CRCC_axial_segment(Comp):
 
-    def __init__(self, temp_rod, temp_cool, temp_gr, zt, zb, hasCR=True, hasLiner=False):
+    def __init__(self, temp_rod, temp_cool, temp_gr, zt, zb, hasCR=True, hasLiner=False, liner_thickness=0.5):
         name = 'CRCC'
         self.zt = zt
         self.zb = zb
         self.hasCR = hasCR
         self.hasLiner = hasLiner
+        self.liner_thickness = liner_thickness
         self.temp_rod = temp_rod
         self.temp_cool = temp_cool
         self.temp_gr = temp_gr
@@ -92,21 +93,22 @@ class CRCC_axial_segment(Comp):
       sub-components in a channel
       '''
       self.sub_comps = {}
-      self.sub_comps['CRCC_cool'] = CRCC_Cool(self.temp_cool, self.zb, self.zt, xandys)
+      self.sub_comps['CRCC_cool'] = CRCC_Cool(self.temp_cool, self.zb, self.zt, xandys, self.liner_thickness)
       self.sub_comps['CRCC_gr'] = CRCC_gr(self.temp_gr, self.zb, self.zt, xandys)
-      self.sub_comps['CRCC_liner'] = CRCC_liner(self.temp_cool, self.zb, self.zt, self.hasLiner, xandys)
+      self.sub_comps['CRCC_liner'] = CRCC_liner(self.temp_cool, self.zb, self.zt, self.hasLiner, xandys, self.liner_thickness)
       self.sub_comps['Control_rod'] = Control_rod(self.temp_rod, self.zb, self.zt, self.hasCR, xandys)
 
 
 class CRCC_Cool(Comp):
 
-    def __init__(self, temp, zb, zt, locations):
+    def __init__(self, temp, zb, zt, locations, liner_thickness):
         '''
         coolant between the control rod(cross shape) and the liner
         '''
         name = 'CRCC_cool'
         fillu = FlibeU(temp)
         fillmat = Flibe(temp)
+        self.liner_thickness = liner_thickness
         Comp.__init__(self, temp, name, [fillmat], fill=fillu)
         self.define_comps(zb, zt, locations)
 
@@ -123,7 +125,7 @@ class CRCC_Cool(Comp):
                                       locations['y'][i],
                                       4,
                                       1,
-                                      5-0.5,
+                                      5-self.liner_thickness,
                                       fill=self.fill)
             self.comp_dict[str(i)+'cool'] = coolant
 
@@ -131,7 +133,7 @@ class CRCC_Cool(Comp):
 
 class CRCC_liner(Comp):
 
-    def __init__(self, temp, zb, zt, hasLiner, locations):
+    def __init__(self, temp, zb, zt, hasLiner, locations, liner_thickness):
         ''' control rod channel liner'''
         name = 'CRCC_liner'
         if hasLiner:
@@ -140,6 +142,7 @@ class CRCC_liner(Comp):
         else:
           fillu = FlibeU(temp)
           mat = Flibe(temp)
+        self.liner_thickness = liner_thickness 
         Comp.__init__(self, temp, name, [mat], fill=fillu)
         self.define_comps(zb, zt, locations)
 
@@ -149,7 +152,7 @@ class CRCC_liner(Comp):
                 name = ''.join(['liner', str(i)])
                 liner = AnnuCylComp(self.temp, name,
                                     self.mat_list,
-                                    5-0.5,
+                                    5-self.liner_thickness,
                                     5,
                                     zb,
                                     zt,
