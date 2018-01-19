@@ -40,6 +40,7 @@ class Fuel(Comp):
             cgt: central graphite temperature
             sht: shell temperature
             burnups: a list of 14 burnups
+        uc_name: unit cell name
         '''
         fuel_temps, coating_temps, cgt, sht, uc_name, burnups, pb_comp_dir = fpb_prop
         fpb_list = []
@@ -80,6 +81,7 @@ class Fuel(Comp):
         cgt: central graphite temperature
         sht: shell temperature
         burnup: used to choose the fuel mat composition file in pb_comp_dir
+        pb_comp_dir: path to the fuel composition in the pebble
         '''
         assert fuel_temps.shape == (1,) or fuel_temps.shape == (3,), 'wrong fuel temp shape:%r' %(fuel_temps.shape)
         assert coating_temps.shape == (1,) or coating_temps.shape == (5,), 'wrong coating temp shape:%r' %(fuel_temps.shape)

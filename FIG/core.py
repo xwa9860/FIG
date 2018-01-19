@@ -117,7 +117,7 @@ class Core(Comp):
                  fuel_prop_a4,
                  temp_cool_F,
                  dir_name):
-      pf = 0.6 # 0.7405 maximum attainable packing fraction in a FCC lattice
+      pf = 0.6 # 0.6 nominal pf in Mk1, 0.7405 maximum attainable packing fraction in a FCC lattice
       self.FuelW = Fuel(fuel_prop_w, temp_cool_F, dir_name, name='wall',
                         packing_fraction=pf)
       self.FuelA1 = Fuel(fuel_prop_a1, temp_cool_F, dir_name, name='act1',

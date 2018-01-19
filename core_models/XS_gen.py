@@ -14,18 +14,21 @@ import numpy as np
 from more_itertools import unique_everseen
 
 
-def create_models(gen_dir_name):
+def create_models(gen_dir_name, hasRods):
     '''
     one fuel unit cell for all the zones
     5 coatings
     '''
-    hasRods=[True, False, False, False]
     hasShield=False
-    fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
-    fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
+    #fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
+    #fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
+    fuel_comp_folder_w = config.FRESH_FOLDER
+    fuel_comp_folder_a = config.FRESH_FOLDER
 
-    burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
-    burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    #burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    #burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    burnups_w = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    burnups_a = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
     # sample fuel temperatures for each layer
     from util.sample_temperature import sample_temperature
@@ -61,18 +64,18 @@ def create_models(gen_dir_name):
           (tempsf, tempst, 900, 900, 'a2', burnups_a, fuel_comp_folder_a),
           (tempsf, tempst, 900, 900, 'a3', burnups_a, fuel_comp_folder_a),
           (tempsf, tempst, 900, 900, 'a4', burnups_a, fuel_comp_folder_a),
-          1000,  # temp_CR
-          1000,  # temp_g_CRCC
-          1000,  # temp_cool_CRCC, has to be equal to temp_cool_F or temp_cool_B for now, O/W flibeMaterial will be missing
-          1000,  # temp_OR
-          1000,  # temp_g_ORCC
-          1000,  # temp_cool_ORCC
-          1000,  # temp_cool_F
-          1000,  # temp_blanket
-          1000,  # temp_cool_B
-          900,  # temp_Corebarrel
-          900,  # temp_Downcomer
-          900,  # temp_vessel
+          600+273.15,  # temp_CR
+          600+273.15,  # temp_g_CRCC
+          600+273.15,  # temp_cool_CRCC, has to be equal to temp_cool_F or temp_cool_B for now, O/W flibeMaterial will be missing
+          600+273.15,  # temp_OR
+          600+273.15,  # temp_g_ORCC
+          600+273.15,  # temp_cool_ORCC
+          650+273.15,  # temp_cool_F
+          650+273.15,  # temp_blanket
+          650+273.15,  # temp_cool_B
+          600+273.15,  # temp_Corebarrel
+          600+273.15,  # temp_Downcomer
+          600+273.15,  # temp_vessel
           output_dir_name,
           hasShield=hasShield,
           hasRods=hasRods)

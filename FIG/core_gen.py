@@ -62,35 +62,41 @@ class CoreGen(Gen):
             str_list.append('set power 2.36E8\n')
 
             # generate group constants for comsol
-            #str_list.append('%OR, ORCC, CR, CRCC1, CRCC2, CRCC3, CRCC4, Barrel, Dcmer, Vessel, Blanket, FuelW, FuelA1, FuelA2, FuelA3, FuelA4\n')
-            #str_list.append('set gcu 196 197 1 2 48 94 140 378 377 379 370 230 258 286 314 342\n')
-            #str_list.append('set nfg 8\n')
-            #str_list.append('5.8e-8\n')
-            #str_list.append('1.9e-7\n')
-            #str_list.append('5e-7\n')
-            #str_list.append('4e-6\n')
-            #str_list.append('4.8e-5\n')
-            #str_list.append('2.5e-2\n')
-            #str_list.append('1.4\n')
-            #str_list.append('set opti 1\n')
+            str_list.append('% OR, ORCC, CR, CRCC1, CRCC2, CRCC3, CRCC4, Barrel, Dcmer, Vessel, Blanket, FuelW, FuelA1, FuelA2, FuelA3, FuelA4\n')
+            # str_list.append('set gcu 196 197 1 2 48 94 140 378 377 379 370 230 258 286 314 342\n')
+            str_list.append('set gcu 196 197 1 2 48 94 140 272 273 274 265 209 216 223 230 237\n')
+            str_list.append('set nfg 8\n')
+            str_list.append('5.8e-8\n')
+            str_list.append('1.9e-7\n')
+            str_list.append('5e-7\n')
+            str_list.append('4e-6\n')
+            str_list.append('4.8e-5\n')
+            str_list.append('2.5e-2\n')
+            str_list.append('1.4\n')
+            str_list.append('set opti 1\n')
 
-            #str_list.append('\n %% detectors\n')
-            #detnb = 1 
-            #for i in range(8):
-            #  str_list.append('det %d  dm fuel1pb%d dr -8 fuel1pb%d\n' %(i*3, i+1, i+1))
-            #  str_list.append('det %d  dm fuel2pb%d dr -8 fuel2pb%d\n' %(i*3+1, i+1, i+1))
-            #  str_list.append('det %d  dm fuel3pb%d dr -8 fuel3pb%d\n' %(i*3+2, i+1, i+1))
+            str_list.append('\n %% detectors\n')
+            detnb = 1 
+            for i in range(8):
+              str_list.append('det %d  dm fuel1pb%d dr -8 fuel1pb%d\n' %(i*3, i+1, i+1))
+              str_list.append('det %d  dm fuel2pb%d dr -8 fuel2pb%d\n' %(i*3+1, i+1, i+1))
+              str_list.append('det %d  dm fuel3pb%d dr -8 fuel3pb%d\n' %(i*3+2, i+1, i+1))
+            detnb = detnb + 8
 
             str_list.append('%% detector for power\n')
             str_list.append('%det <name> dn 1 <rmin> <rmax> <nr>  <amin> <amax> <na> <zmin> <zmax> <nz>\n')
-            str_list.append('det 1 dr -8 void dn 1 0  175 35 0 360 1 41 573 38\n')
+            str_list.append('det %d dr -8 void dn 1 0  175 35 0 360 1 41 573 38\n' %detnb)
+            detnb = detnb + 1
 
             str_list.append('%% detector for thermal neutron flux\n')
             str_list.append('ene 1 1 1E-11 0.625E-6\n')
-            str_list.append('det 2 de 1 dn 1 0  175 35 0 360 1 41 573 38\n')
+            str_list.append('det %d de 1 dn 1 0  175 35 0 360 1 41 573 38\n' %detnb)
+            detnb = detnb + 1
+
             str_list.append('%% detector for fast neutron flux\n')
             str_list.append('ene 2 1 0.625E-6 200\n')
-            str_list.append('det 3 de 2 dn 1 0  175 35 0 360 1 41 573 38\n')
+            str_list.append('det %d de 2 dn 1 0  175 35 0 360 1 41 573 38\n' %detnb)
+            detnb = detnb + 1
 
             str_list.append('\n%%---Plot the geometry\n')
             str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')
