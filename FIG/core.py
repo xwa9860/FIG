@@ -45,11 +45,15 @@ class Core(Comp):
             dir_name='res/serp_input/',
             hasShield=False,
             temp_shield=None,
-            hasRods=[False, False, False, False]):
+            hasRods=[False, False, False, False],
+            packing_fraction=0.6,
+            purpose='keff'):
       '''
       fuel_prop: (fuel_mat_temps, coating_temps, central graphtie temp, shell temp, burnup_list)
       hasRods: if the rods are inserted in the four axial segments
+      purpose: purpose of the model, can be for 'XS_gen', 'keff', ...
       '''
+      self.purpose = purpose
       self.comp_dict = {}
       self.add_CR(temp_CR, temp_rod_CRCC, temp_cool_CRCC, hasRods)
       self.add_OR(temp_OR, temp_g_ORCC, temp_cool_ORCC, hasShield)
@@ -60,9 +64,11 @@ class Core(Comp):
                  fuel_prop_a3,
                  fuel_prop_a4,
                  temp_cool_F,
+                 packing_fraction,
                  dir_name)
       self.add_blanket(temp_blanket,
                        temp_cool_B,
+                       packing_fraction,
                        dir_name)
       self.add_outer_layers(temp_corebarrel,
                             temp_downcomer,
@@ -116,8 +122,9 @@ class Core(Comp):
                  fuel_prop_a3,
                  fuel_prop_a4,
                  temp_cool_F,
+                 packing_fraction,
                  dir_name):
-      pf = 0.6 # 0.6 nominal pf in Mk1, 0.7405 maximum attainable packing fraction in a FCC lattice
+      pf = packing_fraction# 0.6 nominal pf in Mk1, 0.7405 maximum attainable packing fraction in a FCC lattice
       self.FuelW = Fuel(fuel_prop_w, temp_cool_F, dir_name, name='wall',
                         packing_fraction=pf)
       self.FuelA1 = Fuel(fuel_prop_a1, temp_cool_F, dir_name, name='act1',
@@ -144,8 +151,9 @@ class Core(Comp):
     def add_blanket(self,
                     temp_blanket,
                     temp_cool_B,
+                    packing_fraction,
                     dir_name):
-      self.Blanket = Blanket(temp_blanket, temp_cool_B, dir_name)
+      self.Blanket = Blanket(temp_blanket, temp_cool_B, packing_fraction, dir_name)
       self.define_Blanket(self.Blanket.temp, self.Blanket.name)
       self.comp_dict['Blanket'] = self.Blanket
 

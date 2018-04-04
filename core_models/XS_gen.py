@@ -14,25 +14,29 @@ import numpy as np
 from more_itertools import unique_everseen
 
 
-def create_models(gen_dir_name, hasRods):
+def create_models(sample_nb,
+                  gen_dir_name, hasRods=[False, False, False, False],
+                  fuel_type='eq', hasShield=False, packing_fraction=0.6):
     '''
-    one fuel unit cell for all the zones
-    5 coatings
+    create a number of models with sampled temperatures to fit a cross section model
+    sample_nb: number of models(data samples)
     '''
-    hasShield=False
-    #fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
-    #fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
-    fuel_comp_folder_w = config.FRESH_FOLDER
-    fuel_comp_folder_a = config.FRESH_FOLDER
+    isOneFuel = True
+    isOneCoating = False
 
-    #burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
-    #burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
-    burnups_w = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    burnups_a = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    if fuel_type == 'eq':
+      fuel_comp_folder_w = config.FLUX_ALL_AVE_FOLDER
+      fuel_comp_folder_a = config.FLUX_ALL_AVE_FOLDER
+      burnups_w = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+      burnups_a = np.array([1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8])
+    else:
+      fuel_comp_folder_w = config.FRESH_FOLDER
+      fuel_comp_folder_a = config.FRESH_FOLDER
+      burnups_w = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+      burnups_a = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
     # sample fuel temperatures for each layer
     from util.sample_temperature import sample_temperature
-    sample_nb = 50
     fuel_nb = 3 
     coating_nb = 5
     burnup_nb = len(list(unique_everseen(burnups_w)))
@@ -53,8 +57,10 @@ def create_models(gen_dir_name, hasRods):
       FCCGen.file_id = 0
 
       tempsf = temps[:, 0:fuel_nb]
-      tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
-      tempcool = temps_mat['liq'][case]
+      tempst = np.ones((burnup_nb, coating_nb)) * 900
+      
+      # tempst = temps[:, fuel_nb:fuel_nb+coating_nb]
+      temp_cool = temps_mat['liq'][case]
 
       output_dir_name = gen_dir_name + 'input%d/' % case
 
@@ -70,7 +76,7 @@ def create_models(gen_dir_name, hasRods):
           600+273.15,  # temp_OR
           600+273.15,  # temp_g_ORCC
           600+273.15,  # temp_cool_ORCC
-          650+273.15,  # temp_cool_F
+          temp_cool,  # temp_cool_F
           650+273.15,  # temp_blanket
           650+273.15,  # temp_cool_B
           600+273.15,  # temp_Corebarrel
@@ -78,7 +84,9 @@ def create_models(gen_dir_name, hasRods):
           600+273.15,  # temp_vessel
           output_dir_name,
           hasShield=hasShield,
-          hasRods=hasRods)
+          hasRods=hasRods,
+          packing_fraction=packing_fraction,
+          purpose='XS_gen')
     
       # write the model down
       mkdir(output_dir_name)
@@ -86,3 +94,18 @@ def create_models(gen_dir_name, hasRods):
       text = core.generate_output()
       f.write(text)
       f.close
+
+    # write a readme file in the folder
+    rd = open(''.join([gen_dir_name, '/readme']), 'w+')
+    text = []
+    text.append('Has rods: %s\n' %str(hasRods))
+    text.append('Packing fraction %f\n' % packing_fraction)
+    text.append('Same fuel composition in multi fuel zones: %s\n' % str(isOneFuel))
+    text.append('Combined triso coatings into one layer: %s\n' % str(isOneCoating))
+    # text.append('Coolant temperature %f\n' %temp_cool)
+    # text.append('Fuel temperature %f\n' %temp_fuel)
+    text.append('Fuel type %s\n' %fuel_type)
+    text.append('Has shield %s\n' %str(hasShield))
+
+    rd.write(''.join(text))
+    rd.close

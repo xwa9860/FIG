@@ -17,7 +17,5 @@
 #
 # Mail user:
 #SBATCH --mail-user=imwangxin@gmail.com
-module load intel/2016.1.150
-module load openmpi/1.10.2-intel
 
 sss2 -omp 20 serp_full_core
