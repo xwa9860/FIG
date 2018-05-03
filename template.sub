@@ -3,7 +3,7 @@
 #SBATCH --output=serp_full.log
 #SBATCH --error=serp_full.serr
 #SBATCH --partition=savio
-#SBATCH --time=480:00:00
+#SBATCH --time=3:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=20
 #SBATCH --mem=60G
@@ -13,9 +13,9 @@
 #SBATCH -A co_nuclear
 
 # Mail type:
-#SBATCH --mail-type=all
+##SBATCH --mail-type=all
 #
 # Mail user:
-#SBATCH --mail-user=imwangxin@gmail.com
+##SBATCH --mail-user=imwangxin@gmail.com
 
 sss2 -omp 20 serp_full_core

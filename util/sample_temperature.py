@@ -23,7 +23,7 @@ def LHS(burnup_nb, layer_nb, sample_nb):
   '''
   return tsample: a (burnup_nb x layernb) x sample_nb matrix of randomly sampled temperatures between 600 and 1200 K 
   '''
-  range = [300, 1800]  # range of the temperatures in K
+  range = [800, 1500]  # range of the temperatures in K
   np.random.seed(3)
   sample = lhs(burnup_nb*layer_nb+1, samples = sample_nb)
   tsample = uniform(loc=range[0], scale=(range[1]-range[0])).ppf(sample)

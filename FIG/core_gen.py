@@ -64,8 +64,9 @@ class CoreGen(Gen):
             if a_core.purpose == 'XS_gen':
               # generate group constants for comsol
               str_list.append('% OR, ORCC, CR, CRCC1, CRCC2, CRCC3, CRCC4, Barrel, Dcmer, Vessel, Blanket, FuelW, FuelA1, FuelA2, FuelA3, FuelA4\n')
-              ## str_list.append('set gcu 196 197 1 2 48 94 140 378 377 379 370 230 258 286 314 342\n')
-              str_list.append('set gcu 196 197 1 2 48 94 140 272 273 274 265 209 216 223 230 237\n')
+              # str_list.append('% OR 196, ORCC 197, CR 1, CRCC1, CRCC2, CRCC3, CRCC4, Barrel 377, Dcmer 378, Vessel 379, Blanket 370, FuelW 230, FuelA1 258, FuelA2 286, FuelA3 314, FuelA4 342\n')
+              str_list.append('set gcu 196 197 1 2 48 94 140 377 378 379 370 230 258 286 314 342\n')
+              # str_list.append('set gcu 196 197 1 2 48 94 140 272 273 274 265 209 216 223 230 237\n')
               str_list.append('set nfg 8\n')
               str_list.append('5.8e-8\n')
               str_list.append('1.9e-7\n')
@@ -111,10 +112,10 @@ class CoreGen(Gen):
             # str_list.append('det %d de 2 dm matrix\n' %detnb)
             # detnb = detnb + 1
 
-            str_list.append('\n%%---Plot the geometry\n')
-            str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')
-            str_list.append('plot 2 700 700 0 %% xz cross plane at y=0\n')
-            str_list.append('plot 3 700 700 300 %% xy cross plane at z=300\n')
+            #str_list.append('\n%%---Plot the geometry\n')
+            #str_list.append('plot 1 700 700 0 %% yz cross plane at x=0\n')
+            #str_list.append('plot 2 700 700 0 %% xz cross plane at y=0\n')
+            #str_list.append('plot 3 700 700 300 %% xy cross plane at z=300\n')
 
             return ''.join(str_list)
 
