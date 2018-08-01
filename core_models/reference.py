@@ -22,7 +22,7 @@ def create_the_model(gen_dir_name,
                      isOneCoating=False,
                      hasRods=[False, False, False, False],
                      hasShield=False,
-                     fuel_type='eq',
+                     fuel_type='fresh',
                      temp_cool = 923.15,
                      temp_fuel = 1073.15,
                      packing_fraction=0.6):

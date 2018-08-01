@@ -27,8 +27,8 @@
 
 from core_models.reference import create_the_model
 
-gen_dir_name = 'res/reference/'
+gen_dir_name = 'res/reference_no_xe/'
 create_the_model(gen_dir_name,
                 hasRods=[False, False, False, False],
-                fuel_type='fresh',
-                packing_fraction=0.6)
+                fuel_type='eq',
+                packing_fraction=0.60)
